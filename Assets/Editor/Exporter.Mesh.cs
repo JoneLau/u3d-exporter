@@ -132,10 +132,10 @@ namespace exsdk {
       }
 
       if ( _mesh.boneWeights.Length > 0 ) {
-        attributes.Add("JOINT", idx);
+        attributes.Add("JOINTS_0", idx);
         ++idx;
 
-        attributes.Add("WEIGHT", idx);
+        attributes.Add("WEIGHTS_0", idx);
         ++idx;
       }
 

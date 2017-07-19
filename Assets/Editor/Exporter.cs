@@ -137,7 +137,7 @@ namespace exsdk {
       List<GameObject> rootObjects = new List<GameObject>();
       _scene.GetRootGameObjects( rootObjects );
 
-      // collect nodes, cameras, lights, meshes, animations, sknnings and materials in the scene
+      // collect meshes, skins and animation-clips
       Walk(rootObjects, _go => {
         // TODO: get skins from prefabs and leave prefabs without any skeleton-mesh
 
@@ -154,6 +154,33 @@ namespace exsdk {
         //     }
         //   }
         // }
+
+        // =========================
+        // get mesh
+        // =========================
+
+        Mesh mesh = null;
+        MeshFilter meshFilter = _go.GetComponent<MeshFilter>();
+        if ( meshFilter ) {
+          mesh = meshFilter.sharedMesh;
+        }
+
+        if ( mesh != null ) {
+          // process meshAssets
+          Mesh founded = _meshes.Find(item => {
+            return item == mesh;
+          });
+          if ( founded == null ) {
+            _meshes.Add(mesh);
+          }
+        }
+
+        // continue children or not
+        return true;
+      });
+
+      // collect prefabs & nodes
+      Walk(rootObjects, _go => {
 
         // =========================
         // get prefabs
@@ -177,32 +204,11 @@ namespace exsdk {
         }
 
         // =========================
-        // get mesh
-        // =========================
-
-        Mesh mesh = null;
-        MeshFilter meshFilter = _go.GetComponent<MeshFilter>();
-        if ( meshFilter ) {
-          mesh = meshFilter.sharedMesh;
-        }
-
-        if ( mesh != null ) {
-          // process meshAssets
-          Mesh founded = _meshes.Find(item => {
-            return item == mesh;
-          });
-          if ( founded == null ) {
-            _meshes.Add(mesh);
-          }
-        }
-
-        // =========================
         // add nodes
         // =========================
 
         _nodes.Add(_go);
 
-        // continue children or not
         return true;
       });
     }

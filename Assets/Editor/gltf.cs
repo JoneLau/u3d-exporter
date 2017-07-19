@@ -427,10 +427,6 @@ namespace exsdk {
       return string.IsNullOrEmpty(name) == false;
     }
 
-    public bool ShouldSerializebyteOffset () {
-      return byteOffset != 0;
-    }
-
     public bool ShouldSerializebyteLength () {
       return byteLength != 0;
     }
