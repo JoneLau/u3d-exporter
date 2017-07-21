@@ -31,22 +31,22 @@ namespace exsdk {
     public GLTF_Asset asset;
     public string scene;
     public List<string> extensionsUsed;
-    public List<GLTF_Accessor> accessors;
-    public List<GLTF_Animation> animations;
-    public List<GLTF_Buffer> buffers;
-    public List<GLTF_BufferView> bufferViews;
-    public List<GLTF_Camera> cameras;
-    public List<GLTF_Image> images;
-    public List<GLTF_Material> materials;
-    public List<GLTF_Mesh> meshes;
-    public List<GLTF_Node> nodes;
-    public List<GLTF_Program> programs;
-    public List<GLTF_Sampler> samplers;
-    public List<GLTF_Scene> scenes;
-    public List<GLTF_Shader> shaders;
-    public List<GLTF_Skin> skins;
-    public List<GLTF_Technique> techniques;
-    public List<GLTF_Texture> textures;
+    public List<GLTF_Accessor> accessors = new List<GLTF_Accessor>();
+    public List<GLTF_Animation> animations = new List<GLTF_Animation>();
+    public List<GLTF_Buffer> buffers = new List<GLTF_Buffer>();
+    public List<GLTF_BufferView> bufferViews = new List<GLTF_BufferView>();
+    public List<GLTF_Camera> cameras = new List<GLTF_Camera>();
+    public List<GLTF_Image> images = new List<GLTF_Image>();
+    public List<GLTF_Material> materials = new List<GLTF_Material>();
+    public List<GLTF_Mesh> meshes = new List<GLTF_Mesh>();
+    public List<GLTF_Node> nodes = new List<GLTF_Node>();
+    public List<GLTF_Program> programs = new List<GLTF_Program>();
+    public List<GLTF_Sampler> samplers = new List<GLTF_Sampler>();
+    public List<GLTF_Scene> scenes = new List<GLTF_Scene>();
+    public List<GLTF_Shader> shaders = new List<GLTF_Shader>();
+    public List<GLTF_Skin> skins = new List<GLTF_Skin>();
+    public List<GLTF_Technique> techniques = new List<GLTF_Technique>();
+    public List<GLTF_Texture> textures = new List<GLTF_Texture>();
 
     public bool ShouldSerializeasset () {
       return asset != null;
@@ -176,16 +176,16 @@ namespace exsdk {
   [System.Serializable]
   public class GLTF_Node : GLTF_Base {
     public string name;
-    public string jointName;
-    public List<string> children;
+    public List<int> children;
     public float[] matrix = new float[16] {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
     public float[] translation = new float[3] {0,0,0};
     public float[] rotation = new float[4] {0,0,0,1};
     public float[] scale = new float[3] {1,1,1};
-    public List<string> meshes;
-    public List<string> skeletons;
-    public string camera;
-    public string skin;
+    // TODO
+    // public float[] weights = new float[3] {1,1,1};
+    public int mesh = -1;
+    public int skin = -1;
+    public int camera = -1;
 
     // DELME
     // [Newtonsoft.Json.JsonIgnore] public string id {
@@ -196,14 +196,6 @@ namespace exsdk {
 
     public bool ShouldSerializename () {
       return string.IsNullOrEmpty(name) == false;
-    }
-
-    public bool ShouldSerializejointName () {
-      return string.IsNullOrEmpty(jointName) == false;
-    }
-
-    public bool ShouldSerializeskin () {
-      return string.IsNullOrEmpty(skin) == false;
     }
 
     public bool ShouldSerializechildren () {
@@ -231,16 +223,16 @@ namespace exsdk {
       return scale[0] != 1 || scale[1] != 1 || scale[2] != 1;
     }
 
-    public bool ShouldSerializemeshes () {
-      return meshes != null && meshes.Count != 0;
+    public bool ShouldSerializemesh () {
+      return mesh != -1;
     }
 
-    public bool ShouldSerializeskeletons () {
-      return skeletons != null && skeletons.Count != 0;
+    public bool ShouldSerializeskin () {
+      return skin != -1;
     }
 
     public bool ShouldSerializecamera () {
-      return string.IsNullOrEmpty(camera) == false;
+      return camera != -1;
     }
   }
 
@@ -270,21 +262,20 @@ namespace exsdk {
   [System.Serializable]
   public class GLTF_Skin : GLTF_Base {
     public string name;
-    public float[] bindShapeMatrix = new float[16] {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
-    public string inverseBindMatrices;
-    public string[] jointNames;
+    public int inverseBindMatrices = -1;
+    public int skeleton = -1;
+    public int[] joints;
 
     public bool ShouldSerializename () {
       return string.IsNullOrEmpty(name) == false;
     }
 
-    public bool ShouldSerializebindShapeMatrix () {
-      return
-        bindShapeMatrix[0]  != 1 || bindShapeMatrix[1]  != 0 || bindShapeMatrix[2]  != 0 || bindShapeMatrix[3]  != 0 ||
-        bindShapeMatrix[4]  != 0 || bindShapeMatrix[5]  != 1 || bindShapeMatrix[6]  != 0 || bindShapeMatrix[7]  != 0 ||
-        bindShapeMatrix[8]  != 0 || bindShapeMatrix[9]  != 0 || bindShapeMatrix[10] != 1 || bindShapeMatrix[11] != 0 ||
-        bindShapeMatrix[12] != 0 || bindShapeMatrix[13] != 0 || bindShapeMatrix[14] != 0 || bindShapeMatrix[15] != 1
-        ;
+    public bool ShouldSerializeskeleton () {
+      return skeleton != -1;
+    }
+
+    public bool ShouldSerializeinverseBindMatrices () {
+      return inverseBindMatrices != -1;
     }
   }
 

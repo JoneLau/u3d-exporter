@@ -43,24 +43,58 @@ namespace exsdk {
       Scene scene = EditorSceneManager.GetActiveScene();
 
       // get data from scene
-      var meshes = new List<Mesh>();
-      var prefabs = new List<GameObject>();
       var nodes = new List<GameObject>();
+      var prefabs = new List<GameObject>();
+      var meshes = new List<Mesh>();
+      var animPrefabs = new List<GameObject>();
 
-      WalkScene(scene, nodes, meshes, prefabs );
+      WalkScene(scene, nodes, prefabs, meshes, animPrefabs);
 
       // save meshes
       var destMeshes = Path.Combine(dest, "meshes");
       foreach ( Mesh mesh in meshes ) {
-        GLTF gltf;
-        BufferInfo bufferInfo;
+        GLTF gltf = new GLTF();
+        gltf.asset = new GLTF_Asset {
+          version = "1.0.0",
+          generator = "u3d-exporter"
+        };
+        BufferInfo bufInfo = new BufferInfo {
+          id = Utils.AssetID(mesh),
+          name = mesh.name
+        };
 
-        DumpMesh(mesh, out gltf, out bufferInfo);
+        DumpMesh(mesh, gltf, bufInfo, 0);
+        DumpBuffer(bufInfo, gltf);
+
         Save(
           destMeshes,
           Utils.AssetID(mesh),
           gltf,
-          new List<BufferInfo> {bufferInfo}
+          new List<BufferInfo> {bufInfo}
+        );
+      }
+
+      // save animations
+      var destAnims = Path.Combine(dest, "animations");
+      foreach ( GameObject animPrefab in animPrefabs ) {
+        GLTF gltf = new GLTF();
+        gltf.asset = new GLTF_Asset {
+          version = "1.0.0",
+          generator = "u3d-exporter"
+        };
+        BufferInfo bufInfo = new BufferInfo {
+          id = Utils.AssetID(animPrefab),
+          name = animPrefab.name
+        };
+
+        DumpAnim(animPrefab, gltf, bufInfo);
+        DumpBuffer(bufInfo, gltf);
+
+        Save(
+          destAnims,
+          Utils.AssetID(animPrefab),
+          gltf,
+          new List<BufferInfo> {bufInfo}
         );
       }
     }
@@ -131,29 +165,36 @@ namespace exsdk {
     void WalkScene (
       Scene _scene,
       List<GameObject> _nodes,
+      List<GameObject> _prefabs,
       List<Mesh> _meshes,
-      List<GameObject> _prefabs
+      List<GameObject> _animPrefabs
     ) {
       List<GameObject> rootObjects = new List<GameObject>();
       _scene.GetRootGameObjects( rootObjects );
 
       // collect meshes, skins and animation-clips
       Walk(rootObjects, _go => {
-        // TODO: get skins from prefabs and leave prefabs without any skeleton-mesh
 
-        // TODO: get AnimationClip(s) from skins-prefab
-        // List<AnimationClip> clips = Utils.GetAnimationClips(_go);
-        // if ( clips != null ) {
-        //   // process animclipAssets
-        //   foreach ( AnimationClip clip in clips ) {
-        //     AnimationClip foundedClip = animclipAssets.Find(a => {
-        //       return a == clip;
-        //     });
-        //     if ( foundedClip == null ) {
-        //       animclipAssets.Add(clip);
-        //     }
-        //   }
-        // }
+        // =========================
+        // get animation prefab
+        // =========================
+
+        GameObject prefab = PrefabUtility.GetPrefabParent(_go) as GameObject;
+        if ( prefab ) {
+          prefab = prefab.transform.root.gameObject;
+
+          // process prefabInfos
+          var founded = _animPrefabs.Find(item => {
+            return item == prefab;
+          });
+          if ( founded == null ) {
+            bool isAnimPrefab = Utils.IsAnimPrefab(prefab);
+
+            if (isAnimPrefab) {
+              _animPrefabs.Add(prefab);
+            }
+          }
+        }
 
         // =========================
         // get mesh
@@ -190,8 +231,16 @@ namespace exsdk {
         if ( prefab ) {
           prefab = prefab.transform.root.gameObject;
 
+          // check if this is a animPrefab
+          var founded = _animPrefabs.Find(item => {
+            return item == prefab;
+          });
+          if ( founded != null ) {
+            return false;
+          }
+
           // process prefabInfos
-          GameObject founded = _prefabs.Find(item => {
+          founded = _prefabs.Find(item => {
             return item == prefab;
           });
           if ( founded == null ) {

@@ -183,8 +183,16 @@ namespace exsdk {
   public class BufferInfo {
     public string id;
     public string name;
-    public byte[] data;
-    public List<BufferViewInfo> bufferViews;
+    public byte[] data = new byte[0];
+    public List<BufferViewInfo> bufferViews = new List<BufferViewInfo>();
+
+    public int GetAccessorCount () {
+      int cnt = 0;
+      foreach ( BufferViewInfo bufView in bufferViews ) {
+        cnt += bufView.accessors.Count;
+      }
+      return cnt;
+    }
   }
 
   public class Utils {
@@ -375,6 +383,50 @@ namespace exsdk {
       }
 
       return null;
+    }
+
+    public static bool IsAnimPrefab (GameObject _prefab) {
+      var animComp = _prefab.GetComponent<Animation>();
+      if (animComp == null) {
+        return false;
+      }
+
+      foreach (Transform child in _prefab.transform) {
+        GameObject gameObject = child.gameObject;
+        SkinnedMeshRenderer smr = gameObject.GetComponent<SkinnedMeshRenderer>();
+        if ( smr != null ) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    public static Transform GetRootBone (SkinnedMeshRenderer _smr, GameObject _prefab) {
+      int minLevel = -1;
+      Transform rootBone = null;
+
+      for ( int i = 0; i < _smr.bones.Length; ++i ) {
+        Transform bone = _smr.bones[i];
+        int level = 0;
+
+        Transform parent = bone;
+        while (true) {
+          parent = parent.parent;
+          ++level;
+
+          if ( parent == _prefab || parent == null ) {
+            break;
+          }
+        }
+
+        if ( minLevel == -1 || level < minLevel ) {
+          minLevel = level;
+          rootBone = bone;
+        }
+      }
+
+      return rootBone;
     }
   }
 }

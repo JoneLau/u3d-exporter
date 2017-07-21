@@ -12,74 +12,20 @@ namespace exsdk {
     // DumpMesh
     // -----------------------------------------
 
-    void DumpMesh (Mesh _mesh, out GLTF _gltf, out BufferInfo _bufInfo) {
-      BufferInfo bufInfo = DumpBufferInfoFromMesh(_mesh);
-      GLTF_Mesh gltfMesh = DumpGltfMesh(_mesh);
+    void DumpMesh (Mesh _mesh, GLTF _gltf, BufferInfo _bufInfo, int _accOffset) {
+      // dump buffer info
+      DumpBufferInfoFromMesh(_mesh, _bufInfo);
 
-      // buffers
-      GLTF_Buffer gltfBuffer = new GLTF_Buffer();
-
-      gltfBuffer.name = bufInfo.name;
-      gltfBuffer.uri = bufInfo.id + ".bin";
-      gltfBuffer.byteLength = bufInfo.data.Length;
-
-      int bufViewIdx = 0;
-      var bufferViews = new List<GLTF_BufferView>();
-      var accessors = new List<GLTF_Accessor>();
-
-      // bufferViews
-      foreach ( BufferViewInfo bufView in bufInfo.bufferViews ) {
-        GLTF_BufferView gltfBufferView = new GLTF_BufferView();
-
-        gltfBufferView.name = bufView.name;
-        gltfBufferView.buffer = 0;
-        gltfBufferView.byteOffset = bufView.offset;
-        gltfBufferView.byteLength = bufView.length;
-        gltfBufferView.byteStride = bufView.stride;
-        gltfBufferView.target = (int)bufView.type;
-
-        bufferViews.Add(gltfBufferView);
-
-        // accessors
-        foreach ( AccessorInfo acc in bufView.accessors ) {
-          GLTF_Accessor gltfAccessor = new GLTF_Accessor();
-
-          gltfAccessor.name = acc.name;
-          gltfAccessor.bufferView = bufViewIdx;
-          gltfAccessor.byteOffset = acc.offset;
-          gltfAccessor.componentType = (int)acc.compType;
-          gltfAccessor.count = acc.count;
-          gltfAccessor.type = acc.attrType.ToString();
-          gltfAccessor.min = acc.min;
-          gltfAccessor.max = acc.max;
-
-          accessors.Add(gltfAccessor);
-        }
-
-        ++bufViewIdx;
-      }
-
-      // GLTF
-      GLTF gltf = new GLTF();
-      gltf.asset = new GLTF_Asset {
-        version = "1.0.0",
-        generator = "u3d-exporter"
-      };
-      gltf.accessors = accessors;
-      gltf.bufferViews = bufferViews;
-      gltf.buffers = new List<GLTF_Buffer> {gltfBuffer};
-      gltf.meshes = new List<GLTF_Mesh> {gltfMesh};
-
-      // assignment
-      _gltf = gltf;
-      _bufInfo = bufInfo;
+      // dump mesh
+      GLTF_Mesh gltfMesh = DumpGltfMesh(_mesh, _accOffset);
+      _gltf.meshes.Add(gltfMesh);
     }
 
     // -----------------------------------------
     // DumpGltfMesh
     // -----------------------------------------
 
-    GLTF_Mesh DumpGltfMesh (Mesh _mesh) {
+    GLTF_Mesh DumpGltfMesh (Mesh _mesh, int _accOffset) {
       GLTF_Mesh result = new GLTF_Mesh();
       Dictionary<string,int> attributes = new Dictionary<string,int>();
       int idx = 0;
@@ -92,50 +38,50 @@ namespace exsdk {
 
       // attributes
       if ( _mesh.vertices.Length > 0 ) {
-        attributes.Add("POSITION", idx);
+        attributes.Add("POSITION", _accOffset + idx);
         ++idx;
       }
 
       if ( _mesh.normals.Length > 0 ) {
-        attributes.Add("NORMAL", idx);
+        attributes.Add("NORMAL", _accOffset + idx);
         ++idx;
       }
 
       if ( _mesh.tangents.Length > 0 ) {
-        attributes.Add("TANGENT", idx);
+        attributes.Add("TANGENT", _accOffset + idx);
         ++idx;
       }
 
       if ( _mesh.colors.Length > 0 ) {
-        attributes.Add("COLOR", idx);
+        attributes.Add("COLOR", _accOffset + idx);
         ++idx;
       }
 
       if ( _mesh.uv.Length > 0 ) {
-        attributes.Add("TEXCOORD_0", idx);
+        attributes.Add("TEXCOORD_0", _accOffset + idx);
         ++idx;
       }
 
       if ( _mesh.uv2.Length > 0 ) {
-        attributes.Add("TEXCOORD_1", idx);
+        attributes.Add("TEXCOORD_1", _accOffset + idx);
         ++idx;
       }
 
       if ( _mesh.uv3.Length > 0 ) {
-        attributes.Add("TEXCOORD_2", idx);
+        attributes.Add("TEXCOORD_2", _accOffset + idx);
         ++idx;
       }
 
       if ( _mesh.uv4.Length > 0 ) {
-        attributes.Add("TEXCOORD_3", idx);
+        attributes.Add("TEXCOORD_3", _accOffset + idx);
         ++idx;
       }
 
       if ( _mesh.boneWeights.Length > 0 ) {
-        attributes.Add("JOINTS_0", idx);
+        attributes.Add("JOINTS_0", _accOffset + idx);
         ++idx;
 
-        attributes.Add("WEIGHTS_0", idx);
+        attributes.Add("WEIGHTS_0", _accOffset + idx);
         ++idx;
       }
 
@@ -146,7 +92,7 @@ namespace exsdk {
         for ( int i = 0; i < cnt; ++i ) {
           GLTF_Primitive primitive = new GLTF_Primitive();
           primitive.attributes = attributes;
-          primitive.indices = idx;
+          primitive.indices = _accOffset + idx;
           ++idx;
 
           result.primitives.Add(primitive);
@@ -165,11 +111,11 @@ namespace exsdk {
     // DumpBufferInfoFromMesh
     // -----------------------------------------
 
-    BufferInfo DumpBufferInfoFromMesh (Mesh _mesh) {
-      string id = Utils.AssetID(_mesh);
+    void DumpBufferInfoFromMesh (Mesh _mesh, BufferInfo _bufInfo) {
       int vertexBytes = 0;
       byte[] vertexData;
       List<byte[]> indexDataList = new List<byte[]>();
+      byte[] bindposesData;
       Vector3[] vertices = _mesh.vertices;
       Vector3[] normals = _mesh.normals;
       Vector4[] tangents = _mesh.tangents;
@@ -356,125 +302,173 @@ namespace exsdk {
         }
       }
 
+      // bindposesData
+      using( MemoryStream stream = new MemoryStream( 4 * 16 * _mesh.bindposes.Length ) ) {
+        using ( BinaryWriter writer = new BinaryWriter(stream) ) {
+          for ( int i = 0; i < _mesh.bindposes.Length; ++i ) {
+            Matrix4x4 bindpose = _mesh.bindposes[i];
+
+            // NOTE: convert LH to RH
+            writer.Write( bindpose[0 ]);
+            writer.Write( bindpose[1 ]);
+            writer.Write(-bindpose[2 ]); // a02
+            writer.Write( bindpose[3 ]);
+            writer.Write( bindpose[4 ]);
+            writer.Write( bindpose[5 ]);
+            writer.Write(-bindpose[6 ]); // a12
+            writer.Write( bindpose[7 ]);
+            writer.Write(-bindpose[8 ]); // a20
+            writer.Write(-bindpose[9 ]); // a21
+            writer.Write( bindpose[10]);
+            writer.Write( bindpose[11]);
+            writer.Write( bindpose[12]);
+            writer.Write( bindpose[13]);
+            writer.Write(-bindpose[14]); // b2
+            writer.Write( bindpose[15]);
+          }
+        }
+        bindposesData = stream.ToArray();
+      }
+
       // bufferViews
       List<BufferViewInfo> bufferViews = new List<BufferViewInfo>();
 
       // vbView
-      BufferViewInfo vbView = new BufferViewInfo();
-      vbView.name = "vb";
-      vbView.offset = 0;
-      vbView.length = vertexData.Length;
-      vbView.stride = vertexBytes;
-      vbView.type = BufferType.VERTEX;
-      vbView.accessors = new List<AccessorInfo>();
+      BufferViewInfo vbView = new BufferViewInfo {
+        name = "vb@" + _mesh.name,
+        offset = 0,
+        length = vertexData.Length,
+        stride = vertexBytes,
+        type = BufferType.VERTEX,
+        accessors = new List<AccessorInfo>(),
+      };
 
       if ( vertices.Length > 0 ) {
-        AccessorInfo acc = new AccessorInfo();
-        acc.name = "position";
-        acc.offset = 0;
-        acc.count = _mesh.vertexCount;
-        acc.compType = ComponentType.FLOAT32;
-        acc.attrType = AttrType.VEC3;
-        acc.min = new object[3] { minPos.x, minPos.y, minPos.z };
-        acc.max = new object[3] { maxPos.x, maxPos.y, maxPos.z };
+        AccessorInfo acc = new AccessorInfo {
+          name = "position@" + _mesh.name,
+          offset = 0,
+          count = _mesh.vertexCount,
+          compType = ComponentType.FLOAT32,
+          attrType = AttrType.VEC3,
+          min = new object[3] { minPos.x, minPos.y, minPos.z },
+          max = new object[3] { maxPos.x, maxPos.y, maxPos.z },
+        };
 
         vbView.accessors.Add(acc);
       }
 
       if ( normals.Length > 0 ) {
-        AccessorInfo acc = new AccessorInfo();
-        acc.name = "normal";
-        acc.offset = offsetNormal;
-        acc.count = _mesh.vertexCount;
-        acc.compType = ComponentType.FLOAT32;
-        acc.attrType = AttrType.VEC3;
-        // TODO: min, max
+        AccessorInfo acc = new AccessorInfo {
+          name = "normal@" + _mesh.name,
+          offset = offsetNormal,
+          count = _mesh.vertexCount,
+          compType = ComponentType.FLOAT32,
+          attrType = AttrType.VEC3,
+          // TODO: min, max
+        };
+
         vbView.accessors.Add(acc);
       }
 
       if ( tangents.Length > 0 ) {
-        AccessorInfo acc = new AccessorInfo();
-        acc.name = "tangent";
-        acc.offset = offsetTangent;
-        acc.count = _mesh.vertexCount;
-        acc.compType = ComponentType.FLOAT32;
-        acc.attrType = AttrType.VEC4;
-        // TODO: min, max
+        AccessorInfo acc = new AccessorInfo {
+          name = "tangent@" + _mesh.name,
+          offset = offsetTangent,
+          count = _mesh.vertexCount,
+          compType = ComponentType.FLOAT32,
+          attrType = AttrType.VEC4,
+          // TODO: min, max
+        };
+
         vbView.accessors.Add(acc);
       }
 
       if ( colors.Length > 0 ) {
-        AccessorInfo acc = new AccessorInfo();
-        acc.name = "color";
-        acc.offset = offsetColor;
-        acc.count = _mesh.vertexCount;
-        acc.compType = ComponentType.FLOAT32;
-        acc.attrType = AttrType.VEC4;
-        // TODO: min, max
+        AccessorInfo acc = new AccessorInfo {
+          name = "color@" + _mesh.name,
+          offset = offsetColor,
+          count = _mesh.vertexCount,
+          compType = ComponentType.FLOAT32,
+          attrType = AttrType.VEC4,
+          // TODO: min, max
+        };
+
         vbView.accessors.Add(acc);
       }
 
       if ( uv.Length > 0 ) {
-        AccessorInfo acc = new AccessorInfo();
-        acc.name = "uv0";
-        acc.offset = offsetUV;
-        acc.count = _mesh.vertexCount;
-        acc.compType = ComponentType.FLOAT32;
-        acc.attrType = AttrType.VEC2;
-        // TODO: min, max
+        AccessorInfo acc = new AccessorInfo {
+          name = "uv0@" + _mesh.name,
+          offset = offsetUV,
+          count = _mesh.vertexCount,
+          compType = ComponentType.FLOAT32,
+          attrType = AttrType.VEC2,
+          // TODO: min, max
+        };
+
         vbView.accessors.Add(acc);
       }
 
       if ( uv2.Length > 0 ) {
-        AccessorInfo acc = new AccessorInfo();
-        acc.name = "uv1";
-        acc.offset = offsetUV2;
-        acc.count = _mesh.vertexCount;
-        acc.compType = ComponentType.FLOAT32;
-        acc.attrType = AttrType.VEC2;
-        // TODO: min, max
+        AccessorInfo acc = new AccessorInfo {
+          name = "uv1@" + _mesh.name,
+          offset = offsetUV2,
+          count = _mesh.vertexCount,
+          compType = ComponentType.FLOAT32,
+          attrType = AttrType.VEC2,
+          // TODO: min, max
+        };
+
         vbView.accessors.Add(acc);
       }
 
       if ( uv3.Length > 0 ) {
-        AccessorInfo acc = new AccessorInfo();
-        acc.name = "uv2";
-        acc.offset = offsetUV3;
-        acc.count = _mesh.vertexCount;
-        acc.compType = ComponentType.FLOAT32;
-        acc.attrType = AttrType.VEC2;
-        // TODO: min, max
+        AccessorInfo acc = new AccessorInfo {
+          name = "uv2@" + _mesh.name,
+          offset = offsetUV3,
+          count = _mesh.vertexCount,
+          compType = ComponentType.FLOAT32,
+          attrType = AttrType.VEC2,
+          // TODO: min, max
+        };
+
         vbView.accessors.Add(acc);
       }
 
       if ( uv4.Length > 0 ) {
-        AccessorInfo acc = new AccessorInfo();
-        acc.name = "uv3";
-        acc.offset = offsetUV4;
-        acc.count = _mesh.vertexCount;
-        acc.compType = ComponentType.FLOAT32;
-        acc.attrType = AttrType.VEC2;
-        // TODO: min, max
+        AccessorInfo acc = new AccessorInfo {
+          name = "uv3@" + _mesh.name,
+          offset = offsetUV4,
+          count = _mesh.vertexCount,
+          compType = ComponentType.FLOAT32,
+          attrType = AttrType.VEC2,
+          // TODO: min, max
+        };
+
         vbView.accessors.Add(acc);
       }
 
       if ( boneWeights.Length > 0 ) {
-        AccessorInfo acc = new AccessorInfo();
-        acc.name = "joint";
-        acc.offset = offsetJoint;
-        acc.count = _mesh.vertexCount;
-        acc.compType = ComponentType.UINT16;
-        acc.attrType = AttrType.VEC4;
-        // TODO: min, max
+        AccessorInfo acc = new AccessorInfo {
+          name = "joints@" + _mesh.name,
+          offset = offsetJoint,
+          count = _mesh.vertexCount,
+          compType = ComponentType.UINT16,
+          attrType = AttrType.VEC4,
+          // TODO: min, max
+        };
+
         vbView.accessors.Add(acc);
 
-        acc = new AccessorInfo();
-        acc.name = "weight";
-        acc.offset = offsetWeight;
-        acc.count = _mesh.vertexCount;
-        acc.compType = ComponentType.FLOAT32;
-        acc.attrType = AttrType.VEC4;
-        // TODO: min, max
+        acc = new AccessorInfo {
+          name = "weights@" + _mesh.name,
+          offset = offsetWeight,
+          count = _mesh.vertexCount,
+          compType = ComponentType.FLOAT32,
+          attrType = AttrType.VEC4,
+          // TODO: min, max
+        };
+
         vbView.accessors.Add(acc);
       }
 
@@ -486,28 +480,58 @@ namespace exsdk {
       for ( int i = 0; i < indexDataList.Count; ++i ) {
         byte[] indexData = indexDataList[i];
 
-        BufferViewInfo ibView = new BufferViewInfo();
-        ibView.name = "ib" + i;
-        ibView.offset = offsetBuffer;
-        ibView.length = indexData.Length;
-        ibView.type = BufferType.INDEX;
-        ibView.accessors = new List<AccessorInfo>();
+        BufferViewInfo ibView = new BufferViewInfo {
+          name = "ib" + i + "@" + _mesh.name,
+          offset = offsetBuffer,
+          length = indexData.Length,
+          type = BufferType.INDEX,
+          accessors = new List<AccessorInfo>(),
+        };
 
-        AccessorInfo acc = new AccessorInfo();
-        acc.name = "indices" + i;
-        acc.offset = 0;
-        acc.count = indexData.Length / 2;
-        acc.compType = ComponentType.UINT16;
-        acc.attrType = AttrType.SCALAR;
+        AccessorInfo acc = new AccessorInfo {
+          name = "indices" + i + "@" + _mesh.name,
+          offset = 0,
+          count = indexData.Length / 2,
+          compType = ComponentType.UINT16,
+          attrType = AttrType.SCALAR,
+        };
+
         ibView.accessors.Add(acc);
 
         bufferViews.Add(ibView);
         offsetBuffer += ibView.length;
       }
 
+      // bpView
+      if ( bindposesData.Length > 0 ) {
+        BufferViewInfo bpView = new BufferViewInfo {
+          name = "bp@" + _mesh.name,
+          offset = offsetBuffer,
+          length = bindposesData.Length,
+          type = BufferType.NONE,
+          accessors = new List<AccessorInfo>(),
+        };
+
+        AccessorInfo acc = new AccessorInfo {
+          name = "bindposes@" + _mesh.name,
+          offset = 0,
+          count = bindposesData.Length / (4*16),
+          compType = ComponentType.FLOAT32,
+          attrType = AttrType.MAT4,
+        };
+
+        bpView.accessors.Add(acc);
+
+        bufferViews.Add(bpView);
+        offsetBuffer += bpView.length;
+      }
+
       // data
-      byte[] data = new byte[offsetBuffer];
+      byte[] data = new byte[_bufInfo.data.Length + offsetBuffer];
       int offset = 0;
+
+      System.Buffer.BlockCopy( _bufInfo.data, 0, data, offset, _bufInfo.data.Length );
+      offset += _bufInfo.data.Length;
 
       System.Buffer.BlockCopy( vertexData, 0, data, offset, vertexData.Length );
       offset += vertexData.Length;
@@ -518,13 +542,8 @@ namespace exsdk {
       }
 
       //
-      BufferInfo buffer = new BufferInfo();
-      buffer.id = id;
-      buffer.name = _mesh.name;
-      buffer.data = data;
-      buffer.bufferViews = bufferViews;
-
-      return buffer;
+      _bufInfo.data = data;
+      _bufInfo.bufferViews.AddRange(bufferViews);
     }
   }
 }
