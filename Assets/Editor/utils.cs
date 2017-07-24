@@ -195,6 +195,19 @@ namespace exsdk {
     }
   }
 
+  public class NodeFrames {
+    public GameObject node;
+    public List<Vector3> tlist = new List<Vector3>();
+    public List<Vector3> slist = new List<Vector3>();
+    public List<Quaternion> rlist = new List<Quaternion>();
+  }
+
+  public class AnimData {
+    public string name;
+    public List<float> times = new List<float>();
+    public Dictionary<string,NodeFrames> nameToFrames = new Dictionary<string,NodeFrames>();
+  }
+
   public class Utils {
     public static string AssetExt (Object _obj) {
       string assetPath = AssetDatabase.GetAssetPath(_obj);

@@ -32,7 +32,8 @@ namespace exsdk {
     public string scene;
     public List<string> extensionsUsed;
     public List<GLTF_Accessor> accessors = new List<GLTF_Accessor>();
-    public List<GLTF_Animation> animations = new List<GLTF_Animation>();
+    // public List<GLTF_Animation> animations = new List<GLTF_Animation>();
+    public List<GLTF_AnimationEx> animations = new List<GLTF_AnimationEx>();
     public List<GLTF_Buffer> buffers = new List<GLTF_Buffer>();
     public List<GLTF_BufferView> bufferViews = new List<GLTF_BufferView>();
     public List<GLTF_Camera> cameras = new List<GLTF_Camera>();
@@ -40,6 +41,7 @@ namespace exsdk {
     public List<GLTF_Material> materials = new List<GLTF_Material>();
     public List<GLTF_Mesh> meshes = new List<GLTF_Mesh>();
     public List<GLTF_Node> nodes = new List<GLTF_Node>();
+    public List<GLTF_Node> joints = new List<GLTF_Node>(); // NOTE: not standard
     public List<GLTF_Program> programs = new List<GLTF_Program>();
     public List<GLTF_Sampler> samplers = new List<GLTF_Sampler>();
     public List<GLTF_Scene> scenes = new List<GLTF_Scene>();
@@ -86,6 +88,10 @@ namespace exsdk {
 
     public bool ShouldSerializenodes () {
       return nodes != null && nodes.Count != 0;
+    }
+
+    public bool ShouldSerializejoints () {
+      return joints != null && joints.Count != 0;
     }
 
     public bool ShouldSerializeprograms () {
@@ -280,6 +286,41 @@ namespace exsdk {
   }
 
   // =========================
+  // GLTF_AnimationEx
+  // =========================
+
+  [System.Serializable]
+  public class GLTF_AnimationEx : GLTF_Base {
+    public string name;
+    public List<GLTF_AnimChannelEx> channels;
+
+    public bool ShouldSerializename () {
+      return string.IsNullOrEmpty(name) == false;
+    }
+
+    public bool ShouldSerializechannels () {
+      return channels != null && channels.Count != 0;
+    }
+  }
+
+  // =========================
+  // GLTF_AnimChannelEx
+  // =========================
+
+  [System.Serializable]
+  public class GLTF_AnimChannelEx : GLTF_Base {
+    public int input;
+    public string interpolation; // should be "LINEAR", "STEP", "CATMULLROMSPLINE" or "CUBICSPLINE"
+    public int output;
+    public int node;
+    public string path; // should be "translation", "rotation", "scale" or "weights"
+
+    public bool ShouldSerializeinterpolation () {
+      return string.IsNullOrEmpty(interpolation) == false;
+    }
+  }
+
+  // =========================
   // GLTF_Animation
   // =========================
 
@@ -287,15 +328,14 @@ namespace exsdk {
   public class GLTF_Animation : GLTF_Base {
     public string name;
     public List<GLTF_AnimChannel> channels;
-    public Dictionary<string,string> parameters;
-    public Dictionary<string,GLTF_AnimSampler> samplers;
+    public List<GLTF_AnimSampler> samplers;
+
+    public bool ShouldSerializename () {
+      return string.IsNullOrEmpty(name) == false;
+    }
 
     public bool ShouldSerializechannels () {
       return channels != null && channels.Count != 0;
-    }
-
-    public bool ShouldSerializeparameters () {
-      return parameters != null && parameters.Count != 0;
     }
 
     public bool ShouldSerializesamplers () {
@@ -309,7 +349,7 @@ namespace exsdk {
 
   [System.Serializable]
   public class GLTF_AnimChannel : GLTF_Base {
-    public string sampler;
+    public int sampler;
     public GLTF_AnimTarget target;
   }
 
@@ -319,8 +359,8 @@ namespace exsdk {
 
   [System.Serializable]
   public class GLTF_AnimTarget : GLTF_Base {
-    public string id;
-    public string path;
+    public int node;
+    public string path; // should be "translation", "rotation", "scale" or "weights"
   }
 
   // =========================
@@ -329,9 +369,9 @@ namespace exsdk {
 
   [System.Serializable]
   public class GLTF_AnimSampler : GLTF_Base {
-    public string input;
-    public string interpolation;
-    public string output;
+    public int input;
+    public string interpolation; // should be "LINEAR", "STEP", "CATMULLROMSPLINE" or "CUBICSPLINE"
+    public int output;
 
     public bool ShouldSerializeinterpolation () {
       return string.IsNullOrEmpty(interpolation) == false;

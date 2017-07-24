@@ -74,8 +74,8 @@ namespace exsdk {
         );
       }
 
-      // save animations
-      var destAnims = Path.Combine(dest, "animations");
+      // save skins
+      var destSkins = Path.Combine(dest, "skins");
       foreach ( GameObject animPrefab in animPrefabs ) {
         GLTF gltf = new GLTF();
         gltf.asset = new GLTF_Asset {
@@ -87,7 +87,31 @@ namespace exsdk {
           name = animPrefab.name
         };
 
-        DumpAnim(animPrefab, gltf, bufInfo);
+        DumpSkin(animPrefab, gltf, bufInfo);
+        DumpBuffer(bufInfo, gltf);
+
+        Save(
+          destSkins,
+          Utils.AssetID(animPrefab),
+          gltf,
+          new List<BufferInfo> {bufInfo}
+        );
+      }
+
+      // save animations
+      var destAnims = Path.Combine(dest, "anims");
+      foreach ( GameObject animPrefab in animPrefabs ) {
+        GLTF gltf = new GLTF();
+        gltf.asset = new GLTF_Asset {
+          version = "1.0.0",
+          generator = "u3d-exporter"
+        };
+        BufferInfo bufInfo = new BufferInfo {
+          id = Utils.AssetID(animPrefab),
+          name = animPrefab.name
+        };
+
+        DumpAnims(animPrefab, gltf, bufInfo);
         DumpBuffer(bufInfo, gltf);
 
         Save(
