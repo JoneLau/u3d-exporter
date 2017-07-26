@@ -209,6 +209,10 @@ namespace exsdk {
   }
 
   public class Utils {
+    public static int Align (int _size, int _align) {
+      return (int) Mathf.Ceil((float)_size/_align) * _align;
+    }
+
     public static string AssetExt (Object _obj) {
       string assetPath = AssetDatabase.GetAssetPath(_obj);
       if ( string.IsNullOrEmpty(assetPath) ) {

@@ -474,7 +474,7 @@ namespace exsdk {
 
       //
       bufferViews.Add(vbView);
-      offsetBuffer += vbView.length;
+      offsetBuffer += Utils.Align(vbView.length, 4);
 
       // ibView
       for ( int i = 0; i < indexDataList.Count; ++i ) {
@@ -499,7 +499,7 @@ namespace exsdk {
         ibView.accessors.Add(acc);
 
         bufferViews.Add(ibView);
-        offsetBuffer += ibView.length;
+        offsetBuffer += Utils.Align(ibView.length, 4);
       }
 
       // bpView
@@ -523,7 +523,7 @@ namespace exsdk {
         bpView.accessors.Add(acc);
 
         bufferViews.Add(bpView);
-        offsetBuffer += bpView.length;
+        offsetBuffer += Utils.Align(bpView.length, 4);
       }
 
       // data
@@ -534,12 +534,15 @@ namespace exsdk {
       offset += _bufInfo.data.Length;
 
       System.Buffer.BlockCopy( vertexData, 0, data, offset, vertexData.Length );
-      offset += vertexData.Length;
+      offset += Utils.Align(vertexData.Length, 4);
 
       for ( int i = 0; i < indexDataList.Count; ++i ) {
         System.Buffer.BlockCopy( indexDataList[i], 0, data, offset, indexDataList[i].Length );
-        offset += indexDataList[i].Length;
+        offset += Utils.Align(indexDataList[i].Length, 4);
       }
+
+      System.Buffer.BlockCopy( bindposesData, 0, data, offset, bindposesData.Length );
+      offset += Utils.Align(bindposesData.Length, 4);
 
       //
       _bufInfo.data = data;
