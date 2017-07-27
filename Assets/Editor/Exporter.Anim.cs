@@ -79,7 +79,7 @@ namespace exsdk {
         if ( frames.slist.Count > 0 ) {
           // NOTE: index 0 = "time0", index 1 = "time1"
           GLTF_AnimChannelEx channel = new GLTF_AnimChannelEx {
-            input = (frames.tlist.Count == 1 ? 0 : 1) + _accOffset,
+            input = (frames.slist.Count == 1 ? 0 : 1) + _accOffset,
             output = offset + _accOffset,
             node = _joints.IndexOf(frames.node),
             path = "scale",
@@ -92,7 +92,7 @@ namespace exsdk {
         if ( frames.rlist.Count > 0 ) {
           // NOTE: index 0 = "time0", index 1 = "time1"
           GLTF_AnimChannelEx channel = new GLTF_AnimChannelEx {
-            input = (frames.tlist.Count == 1 ? 0 : 1) + _accOffset,
+            input = (frames.rlist.Count == 1 ? 0 : 1) + _accOffset,
             output = offset + _accOffset,
             node = _joints.IndexOf(frames.node),
             path = "rotation",
