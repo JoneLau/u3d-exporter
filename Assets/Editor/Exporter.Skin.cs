@@ -72,7 +72,7 @@ namespace exsdk {
       int accOffset = 0;
       foreach ( SkinnedMeshRenderer smr in smrList ) {
         // dump mesh
-        accOffset += _bufInfo.GetAccessorCount();
+        accOffset = _bufInfo.GetAccessorCount();
         DumpMesh(smr.sharedMesh, _gltf, _bufInfo, accOffset);
 
         // dump skin

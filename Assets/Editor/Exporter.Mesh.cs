@@ -134,7 +134,7 @@ namespace exsdk {
       int offsetUV4 = 0;
       int offsetJoint = 0;
       int offsetWeight = 0;
-      int offsetBuffer = 0;
+      int offsetBuffer = _bufInfo.data.Length;
       Vector3 minPos = Vector3.zero;
       Vector3 maxPos = Vector3.zero;
 
@@ -336,7 +336,7 @@ namespace exsdk {
       // vbView
       BufferViewInfo vbView = new BufferViewInfo {
         name = "vb@" + _mesh.name,
-        offset = 0,
+        offset = offsetBuffer,
         length = vertexData.Length,
         stride = vertexBytes,
         type = BufferType.VERTEX,
