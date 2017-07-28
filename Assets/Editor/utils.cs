@@ -403,8 +403,8 @@ namespace exsdk {
     }
 
     public static bool IsAnimPrefab (GameObject _prefab) {
-      var animComp = _prefab.GetComponent<Animation>();
-      if (animComp == null) {
+      if ( _prefab.GetComponent<Animation>() == null &&
+           _prefab.GetComponent<Animator>() == null ) {
         return false;
       }
 
