@@ -75,7 +75,7 @@ namespace exsdk {
       }
 
       // save skins
-      var destSkins = Path.Combine(dest, "skins");
+      var destSkins = Path.Combine(dest, "skinnings");
       foreach ( GameObject animPrefab in animPrefabs ) {
         GLTF gltf = new GLTF();
         gltf.asset = new GLTF_Asset {
@@ -120,6 +120,20 @@ namespace exsdk {
           gltf,
           new List<BufferInfo> {bufInfo}
         );
+      }
+
+      // save scene
+      {
+        var sceneJson = DumpScene(nodes);
+        string path;
+        string json = JsonConvert.SerializeObject(sceneJson, Formatting.Indented);
+
+        path = Path.Combine(dest, scene.name + ".json");
+        StreamWriter writer = new StreamWriter(path);
+        writer.Write(json);
+        writer.Close();
+
+        Debug.Log(Path.GetFileName(path) + " saved.");
       }
     }
 
@@ -260,6 +274,7 @@ namespace exsdk {
             return item == prefab;
           });
           if ( founded != null ) {
+            _nodes.Add(_go);
             return false;
           }
 
