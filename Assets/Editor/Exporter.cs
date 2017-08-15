@@ -122,13 +122,33 @@ namespace exsdk {
         );
       }
 
+      // save prefabs
+      var destPrefabs = Path.Combine(dest, "prefabs");
+      // create dest directory
+      if ( !Directory.Exists(destPrefabs) ) {
+        Directory.CreateDirectory(destPrefabs);
+      }
+      foreach ( GameObject prefab in prefabs ) {
+        var prefabJson = DumpPrefab(prefab);
+        string path;
+        string json = JsonConvert.SerializeObject(prefabJson, Formatting.Indented);
+
+        path = Path.Combine(destPrefabs, prefab.name + ".json");
+        StreamWriter writer = new StreamWriter(path);
+        writer.Write(json);
+        writer.Close();
+
+        Debug.Log(Path.GetFileName(path) + " saved.");
+      }
+
       // save scene
       {
         var sceneJson = DumpScene(nodes);
         string path;
+        string sceneName = string.IsNullOrEmpty(scene.name) ? "scene" : scene.name;
         string json = JsonConvert.SerializeObject(sceneJson, Formatting.Indented);
 
-        path = Path.Combine(dest, scene.name + ".json");
+        path = Path.Combine(dest, sceneName + ".json");
         StreamWriter writer = new StreamWriter(path);
         writer.Write(json);
         writer.Close();

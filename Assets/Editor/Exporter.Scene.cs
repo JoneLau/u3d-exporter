@@ -71,7 +71,7 @@ namespace exsdk {
         string id = Utils.AssetID(prefab);
         string url = isAnimPrefab ?
           "skinnings/" + id + ".gltf" :
-          "prefabs/" + id + ".gltf"
+          "prefabs/" + id + ".json"
           ;
 
         result.prefab = url;
@@ -100,6 +100,31 @@ namespace exsdk {
           light.color.g,
           light.color.b
         });
+
+        result.Add(comp);
+      }
+
+      // Camera
+      var camera = _go.GetComponent<Camera>();
+      if (camera) {
+        JSON_Component comp = new JSON_Component();
+        comp.type = "Camera";
+        comp.properties.Add("backgroundColor", new float[3] {
+          camera.backgroundColor.r,
+          camera.backgroundColor.g,
+          camera.backgroundColor.b
+        });
+
+        result.Add(comp);
+      }
+
+      // Mesh
+      var meshFilter = _go.GetComponent<MeshFilter>();
+      if (meshFilter) {
+        JSON_Component comp = new JSON_Component();
+        comp.type = "Model";
+        var id = Utils.AssetID(meshFilter.sharedMesh);
+        comp.properties.Add("mesh", "meshes/" + id + ".gltf");
 
         result.Add(comp);
       }

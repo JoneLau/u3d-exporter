@@ -14,6 +14,15 @@ namespace exsdk {
   }
 
   // =========================
+  // JSON_Prefab
+  // =========================
+
+  [System.Serializable]
+  public class JSON_Prefab {
+    public List<JSON_Entity> entities = new List<JSON_Entity>();
+  }
+
+  // =========================
   // JSON_Entity
   // =========================
 

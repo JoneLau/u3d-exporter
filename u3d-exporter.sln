@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "u3d-exporter", "Assembly-CSharp.csproj", "{5EDDA6B5-6A49-2AB5-F33E-FF4112D6A096}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "u3d-exporter", "Assembly-CSharp-Editor.csproj", "{83CC0143-6CCB-7963-34BC-3D89F4922867}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5EDDA6B5-6A49-2AB5-F33E-FF4112D6A096}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EDDA6B5-6A49-2AB5-F33E-FF4112D6A096}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EDDA6B5-6A49-2AB5-F33E-FF4112D6A096}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EDDA6B5-6A49-2AB5-F33E-FF4112D6A096}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83CC0143-6CCB-7963-34BC-3D89F4922867}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83CC0143-6CCB-7963-34BC-3D89F4922867}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83CC0143-6CCB-7963-34BC-3D89F4922867}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83CC0143-6CCB-7963-34BC-3D89F4922867}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
+	EndGlobalSection
+EndGlobal
