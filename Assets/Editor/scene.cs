@@ -10,6 +10,7 @@ namespace exsdk {
 
   [System.Serializable]
   public class JSON_Scene {
+    public List<int> children = new List<int>();
     public List<JSON_Entity> entities = new List<JSON_Entity>();
   }
 
@@ -30,7 +31,7 @@ namespace exsdk {
   public class JSON_Entity {
     // basic
     public string name;
-    public string prefab;
+    public JSON_Asset prefab;
     public float[] translation = new float[3] {0,0,0};
     public float[] rotation = new float[4] {0,0,0,1};
     public float[] scale = new float[3] {1,1,1};
@@ -42,7 +43,7 @@ namespace exsdk {
     }
 
     public bool ShouldSerializeprefab () {
-      return string.IsNullOrEmpty(prefab) == false;
+      return prefab != null;
     }
 
     public bool ShouldSerializetranslation () {
@@ -78,5 +79,15 @@ namespace exsdk {
     public bool ShouldSerializeproperties () {
       return properties != null && properties.Count != 0;
     }
+  }
+
+  // =========================
+  // JSON_Asset
+  // =========================
+
+  [System.Serializable]
+  public class JSON_Asset {
+    public string type;
+    public Dictionary<string,string> urls = new Dictionary<string,string>();
   }
 }

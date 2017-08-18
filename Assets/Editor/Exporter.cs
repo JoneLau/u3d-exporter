@@ -133,7 +133,7 @@ namespace exsdk {
         string path;
         string json = JsonConvert.SerializeObject(prefabJson, Formatting.Indented);
 
-        path = Path.Combine(destPrefabs, prefab.name + ".json");
+        path = Path.Combine(destPrefabs, Utils.AssetID(prefab) + ".json");
         StreamWriter writer = new StreamWriter(path);
         writer.Write(json);
         writer.Close();

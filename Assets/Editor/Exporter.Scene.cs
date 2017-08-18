@@ -17,10 +17,15 @@ namespace exsdk {
       JSON_Scene scene = new JSON_Scene();
 
       // dump entities
+      int index = 0;
       foreach ( GameObject go in _nodes ) {
         JSON_Entity ent = DumpEntity(go, _nodes);
 
+        if (go.transform.parent == null) {
+          scene.children.Add(index);
+        }
         scene.entities.Add(ent);
+        index += 1;
       }
 
       return scene;
@@ -69,16 +74,29 @@ namespace exsdk {
         prefab = prefab.transform.root.gameObject;
         bool isAnimPrefab = Utils.IsAnimPrefab(prefab);
         string id = Utils.AssetID(prefab);
-        string url = isAnimPrefab ?
-          "skinnings/" + id + ".gltf" :
-          "prefabs/" + id + ".json"
-          ;
 
-        result.prefab = url;
+        if ( isAnimPrefab ) {
+          JSON_Asset jsonAsset = new JSON_Asset {
+            type = "anim-prefab",
+            urls = new Dictionary<string,string> {
+              { "gltf", "skinnings/" + id + ".gltf" }
+            }
+          };
+          result.prefab = jsonAsset;
+        } else {
+          JSON_Asset jsonAsset = new JSON_Asset {
+            type = "prefab",
+            urls = new Dictionary<string,string> {
+              { "json", "prefabs/" + id + ".json" }
+            }
+          };
+          result.prefab = jsonAsset;
+        }
+      } else {
+        // NOTE: if we are prefab, do not serailize its components
+        // serialize components
+        result.components = DumpComponents(_go);
       }
-
-      // serialize components
-      result.components = DumpComponents(_go);
 
       return result;
     }
@@ -124,7 +142,14 @@ namespace exsdk {
         JSON_Component comp = new JSON_Component();
         comp.type = "Model";
         var id = Utils.AssetID(meshFilter.sharedMesh);
-        comp.properties.Add("mesh", "meshes/" + id + ".gltf");
+        JSON_Asset jsonAsset = new JSON_Asset {
+          type = "mesh",
+          urls = new Dictionary<string,string> {
+            { "gltf", "meshes/" + id + ".gltf" },
+            { "bin", "meshes/" + id + ".bin" }
+          }
+        };
+        comp.properties.Add("mesh", jsonAsset);
 
         result.Add(comp);
       }
