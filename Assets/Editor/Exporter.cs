@@ -45,10 +45,20 @@ namespace exsdk {
       // get data from scene
       var nodes = new List<GameObject>();
       var prefabs = new List<GameObject>();
-      var meshes = new List<Mesh>();
       var animPrefabs = new List<GameObject>();
+      var meshes = new List<Mesh>();
+      var materials = new List<Material>();
+      var textures = new List<Texture>();
 
-      WalkScene(scene, nodes, prefabs, meshes, animPrefabs);
+      WalkScene(
+        scene,
+        nodes,
+        prefabs,
+        animPrefabs,
+        meshes,
+        materials,
+        textures
+      );
 
       // save meshes
       var destMeshes = Path.Combine(dest, "meshes");
@@ -141,6 +151,28 @@ namespace exsdk {
         Debug.Log(Path.GetFileName(path) + " saved.");
       }
 
+      // save textures
+      var destTextures = Path.Combine(dest, "textures");
+      // create dest directory
+      if ( !Directory.Exists(destTextures) ) {
+        Directory.CreateDirectory(destTextures);
+      }
+      foreach ( Texture tex in textures ) {
+        var textureJson = DumpTexture(tex);
+        string path;
+        string json = JsonConvert.SerializeObject(textureJson, Formatting.Indented);
+
+        path = Path.Combine(destTextures, Utils.AssetID(tex) + ".json");
+        StreamWriter writer = new StreamWriter(path);
+        writer.Write(json);
+        writer.Close();
+
+        Debug.Log(Path.GetFileName(path) + " saved.");
+      }
+
+      // save materials
+
+
       // save scene
       {
         var sceneJson = DumpScene(nodes);
@@ -224,13 +256,15 @@ namespace exsdk {
       Scene _scene,
       List<GameObject> _nodes,
       List<GameObject> _prefabs,
+      List<GameObject> _animPrefabs,
       List<Mesh> _meshes,
-      List<GameObject> _animPrefabs
+      List<Material> _materials,
+      List<Texture> _textures
     ) {
       List<GameObject> rootObjects = new List<GameObject>();
       _scene.GetRootGameObjects( rootObjects );
 
-      // collect meshes, skins and animation-clips
+      // collect meshes, skins, materials, textures and animation-clips
       Walk(rootObjects, _go => {
 
         // =========================
@@ -271,6 +305,33 @@ namespace exsdk {
           });
           if ( founded == null ) {
             _meshes.Add(mesh);
+          }
+        }
+
+        // =========================
+        // get material & textures
+        // =========================
+
+        Renderer renderer = _go.GetComponent<Renderer>();
+        if ( renderer ) {
+          foreach ( Material mat in renderer.sharedMaterials ) {
+            Material foundedMaterial = _materials.Find(m => {
+              return m == mat;
+            });
+            if ( foundedMaterial == null ) {
+              _materials.Add(mat);
+
+              // handle textures
+              List<Texture> textures = Utils.GetTextures(mat);
+              foreach ( Texture tex in textures ) {
+                Texture foundedTexture = _textures.Find(t => {
+                  return t == tex;
+                });
+                if ( foundedTexture == null ) {
+                  _textures.Add(tex);
+                }
+              }
+            }
           }
         }
 

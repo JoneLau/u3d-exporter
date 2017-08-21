@@ -208,7 +208,51 @@ namespace exsdk {
     public Dictionary<string,NodeFrames> nameToFrames = new Dictionary<string,NodeFrames>();
   }
 
+  public class ShaderProperty {
+    public string name;
+    public string type;
+    public string mapping;
+  }
+
+  public class ShaderInfo {
+    public List<ShaderProperty> properties;
+  }
+
   public class Utils {
+    public static Dictionary<string, ShaderInfo> shaderInfos = new Dictionary<string, ShaderInfo> {
+      {
+         "gltf/diffuse",
+         new ShaderInfo() {
+           properties = new List<ShaderProperty>() {
+             new ShaderProperty() { name = "_Color", type = "color", mapping = "color" },
+             new ShaderProperty() { name = "_MainTex", type = "texture", mapping = "diffuse" },
+           }
+         }
+      }
+    };
+
+    public static List<Texture> GetTextures (Material _mat) {
+      List<Texture> results = new List<Texture>();
+
+      // get shader info
+      ShaderInfo shaderInfo;
+      if ( shaderInfos.TryGetValue(_mat.shader.name, out shaderInfo) == false ) {
+        Debug.LogWarning("Unregisterred Shader: " + _mat.shader.name );
+        return results;
+      }
+
+      //
+      if ( shaderInfo.properties != null ) {
+        foreach ( ShaderProperty prop in shaderInfo.properties ) {
+          if ( prop.type == "texture" ) {
+            results.Add(_mat.GetTexture(prop.name));
+          }
+        }
+      }
+
+      return results;
+    }
+
     public static int Align (int _size, int _align) {
       return (int) Mathf.Ceil((float)_size/_align) * _align;
     }

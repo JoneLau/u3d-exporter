@@ -90,4 +90,53 @@ namespace exsdk {
     public string type;
     public Dictionary<string,string> urls = new Dictionary<string,string>();
   }
+
+  // =========================
+  // JSON_Texture
+  // =========================
+
+  [System.Serializable]
+  public class JSON_Texture {
+    public string type = "2d";
+    public int anisotropy = -1;
+    public string minFilter;
+    public string magFilter;
+    public string mipFilter;
+    public string wrapS;
+    public string wrapT;
+    public string wrapR;
+    public bool mipmap = true;
+
+    public bool ShouldSerializeanisotropy () {
+      return anisotropy != -1;
+    }
+
+    public bool ShouldSerializeminFilter () {
+      return string.IsNullOrEmpty(minFilter) == false;
+    }
+
+    public bool ShouldSerializemagFilter () {
+      return string.IsNullOrEmpty(magFilter) == false;
+    }
+
+    public bool ShouldSerializemipFilter () {
+      return string.IsNullOrEmpty(mipFilter) == false;
+    }
+
+    public bool ShouldSerializewrapS () {
+      return string.IsNullOrEmpty(wrapS) == false;
+    }
+
+    public bool ShouldSerializewrapT () {
+      return string.IsNullOrEmpty(wrapT) == false;
+    }
+
+    public bool ShouldSerializewrapR () {
+      return string.IsNullOrEmpty(wrapR) == false;
+    }
+
+    public bool ShouldSerializemipmap () {
+      return mipmap == false;
+    }
+  }
 }
