@@ -143,6 +143,8 @@ namespace exsdk {
       if (meshFilter) {
         JSON_Component comp = new JSON_Component();
         comp.type = "Model";
+
+        // mesh
         var id = Utils.AssetID(meshFilter.sharedMesh);
         JSON_Asset jsonAsset = new JSON_Asset
         {
@@ -153,6 +155,22 @@ namespace exsdk {
           }
         };
         comp.properties.Add("mesh", jsonAsset);
+
+        // materials
+        Renderer renderer = _go.GetComponent<Renderer>();
+        if (renderer) {
+          List<JSON_Asset> matAssets = new List<JSON_Asset>();
+          foreach (Material mat in renderer.sharedMaterials) {
+            id = Utils.AssetID(mat);
+            matAssets.Add(new JSON_Asset {
+              type = "material",
+              urls = new Dictionary<string, string> {
+                { "json", "materials/" + id + ".json"  }
+              }
+            });
+          }
+          comp.properties.Add("materials", matAssets);
+        }
 
         result.Add(comp);
       }

@@ -215,6 +215,7 @@ namespace exsdk {
   }
 
   public class ShaderInfo {
+    public string type = "phong";
     public List<ShaderProperty> properties;
   }
 
@@ -223,13 +224,24 @@ namespace exsdk {
       {
          "gltf/diffuse",
          new ShaderInfo() {
+           type = "phong",
            properties = new List<ShaderProperty>() {
-             new ShaderProperty() { name = "_Color", type = "color", mapping = "color" },
-             new ShaderProperty() { name = "_MainTex", type = "texture", mapping = "diffuse" },
+             new ShaderProperty() { name = "_Color", type = "color", mapping = "diffuseColor" },
+             new ShaderProperty() { name = "_MainTex", type = "tex2d", mapping = "diffuse" },
            }
          }
       }
     };
+
+    public static ShaderInfo GetShaderInfo(Material _mat) {
+      ShaderInfo shaderInfo;
+      if (shaderInfos.TryGetValue(_mat.shader.name, out shaderInfo) == false) {
+        return null;
+      }
+
+      return shaderInfo;
+    }
+
 
     public static List<Texture> GetTextures(Material _mat) {
       List<Texture> results = new List<Texture>();
@@ -244,7 +256,7 @@ namespace exsdk {
       //
       if (shaderInfo.properties != null) {
         foreach (ShaderProperty prop in shaderInfo.properties) {
-          if (prop.type == "texture") {
+          if (prop.type == "tex2d") {
             results.Add(_mat.GetTexture(prop.name));
           }
         }

@@ -139,4 +139,23 @@ namespace exsdk {
       return mipmap == false;
     }
   }
+
+  // =========================
+  // JSON_Material
+  // =========================
+
+  [System.Serializable]
+  public class JSON_Material {
+    public string type = "phong";
+    public string blendType = "none";
+    public Dictionary<string,object> properties = new Dictionary<string,object>();
+
+    public bool ShouldSerializeblendType() {
+      return blendType != "none";
+    }
+
+    public bool ShouldSerializeproperties() {
+      return properties.Count != 0;
+    }
+  }
 }

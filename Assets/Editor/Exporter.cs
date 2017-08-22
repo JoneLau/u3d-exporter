@@ -154,7 +154,7 @@ namespace exsdk {
         writer.Write(json);
         writer.Close();
 
-        Debug.Log(Path.GetFileName(path) + " saved.");
+        // Debug.Log(Path.GetFileName(path) + " saved.");
       }
 
       // save textures
@@ -180,11 +180,29 @@ namespace exsdk {
         path = Path.Combine(destTextures,  id + Utils.AssetExt(tex));
         File.Copy(assetPath, path);
 
-        Debug.Log(Path.GetFileName(path) + " saved.");
+        // Debug.Log(Path.GetFileName(path) + " saved.");
       }
 
       // save materials
+      var destMaterials = Path.Combine(dest, "materials");
+      // create dest directory
+      if (!Directory.Exists(destMaterials)) {
+        Directory.CreateDirectory(destMaterials);
+      }
+      foreach (Material mat in materials) {
+        var materialJson = DumpMaterial(mat);
+        string path;
+        string json = JsonConvert.SerializeObject(materialJson, Formatting.Indented);
+        string id = Utils.AssetID(mat);
 
+        // json
+        path = Path.Combine(destMaterials,  id + ".json");
+        StreamWriter writer = new StreamWriter(path);
+        writer.Write(json);
+        writer.Close();
+
+        // Debug.Log(Path.GetFileName(path) + " saved.");
+      }
 
       // save scene
       {
@@ -235,14 +253,12 @@ namespace exsdk {
       // =========================
 
       string json = JsonConvert.SerializeObject(_gltf, Formatting.Indented);
-      // Debug.Log(json);
-
       path = Path.Combine(_dest, _name + ".gltf");
       StreamWriter writer = new StreamWriter(path);
       writer.Write(json);
       writer.Close();
 
-      Debug.Log(Path.GetFileName(path) + " saved.");
+      // Debug.Log(Path.GetFileName(path) + " saved.");
 
       // =========================
       // buffers (.bin)
@@ -254,7 +270,7 @@ namespace exsdk {
         bwriter.Write(buf.data);
         bwriter.Close();
 
-        Debug.Log(Path.GetFileName(path) + " saved.");
+        // Debug.Log(Path.GetFileName(path) + " saved.");
       }
 
       // =========================
