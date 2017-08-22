@@ -12,7 +12,7 @@ namespace exsdk {
     // DumpMesh
     // -----------------------------------------
 
-    void DumpMesh (Mesh _mesh, GLTF _gltf, BufferInfo _bufInfo, int _accOffset) {
+    void DumpMesh(Mesh _mesh, GLTF _gltf, BufferInfo _bufInfo, int _accOffset) {
       // dump buffer info
       DumpBufferInfoFromMesh(_mesh, _bufInfo);
 
@@ -25,9 +25,9 @@ namespace exsdk {
     // DumpGltfMesh
     // -----------------------------------------
 
-    GLTF_Mesh DumpGltfMesh (Mesh _mesh, int _accOffset) {
+    GLTF_Mesh DumpGltfMesh(Mesh _mesh, int _accOffset) {
       GLTF_Mesh result = new GLTF_Mesh();
-      Dictionary<string,int> attributes = new Dictionary<string,int>();
+      Dictionary<string, int> attributes = new Dictionary<string, int>();
       int idx = 0;
 
       // name
@@ -37,47 +37,47 @@ namespace exsdk {
       result.primitives = new List<GLTF_Primitive>();
 
       // attributes
-      if ( _mesh.vertices.Length > 0 ) {
+      if (_mesh.vertices.Length > 0) {
         attributes.Add("POSITION", _accOffset + idx);
         ++idx;
       }
 
-      if ( _mesh.normals.Length > 0 ) {
+      if (_mesh.normals.Length > 0) {
         attributes.Add("NORMAL", _accOffset + idx);
         ++idx;
       }
 
-      if ( _mesh.tangents.Length > 0 ) {
+      if (_mesh.tangents.Length > 0) {
         attributes.Add("TANGENT", _accOffset + idx);
         ++idx;
       }
 
-      if ( _mesh.colors.Length > 0 ) {
+      if (_mesh.colors.Length > 0) {
         attributes.Add("COLOR", _accOffset + idx);
         ++idx;
       }
 
-      if ( _mesh.uv.Length > 0 ) {
+      if (_mesh.uv.Length > 0) {
         attributes.Add("TEXCOORD_0", _accOffset + idx);
         ++idx;
       }
 
-      if ( _mesh.uv2.Length > 0 ) {
+      if (_mesh.uv2.Length > 0) {
         attributes.Add("TEXCOORD_1", _accOffset + idx);
         ++idx;
       }
 
-      if ( _mesh.uv3.Length > 0 ) {
+      if (_mesh.uv3.Length > 0) {
         attributes.Add("TEXCOORD_2", _accOffset + idx);
         ++idx;
       }
 
-      if ( _mesh.uv4.Length > 0 ) {
+      if (_mesh.uv4.Length > 0) {
         attributes.Add("TEXCOORD_3", _accOffset + idx);
         ++idx;
       }
 
-      if ( _mesh.boneWeights.Length > 0 ) {
+      if (_mesh.boneWeights.Length > 0) {
         attributes.Add("JOINTS_0", _accOffset + idx);
         ++idx;
 
@@ -86,10 +86,10 @@ namespace exsdk {
       }
 
       // primitives
-      if ( _mesh.triangles.Length > 0 ) {
+      if (_mesh.triangles.Length > 0) {
         int cnt = _mesh.subMeshCount;
 
-        for ( int i = 0; i < cnt; ++i ) {
+        for (int i = 0; i < cnt; ++i) {
           GLTF_Primitive primitive = new GLTF_Primitive();
           primitive.attributes = attributes;
           primitive.indices = _accOffset + idx;
@@ -111,7 +111,7 @@ namespace exsdk {
     // DumpBufferInfoFromMesh
     // -----------------------------------------
 
-    void DumpBufferInfoFromMesh (Mesh _mesh, BufferInfo _bufInfo) {
+    void DumpBufferInfoFromMesh(Mesh _mesh, BufferInfo _bufInfo) {
       int vertexBytes = 0;
       byte[] vertexData;
       List<byte[]> indexDataList = new List<byte[]>();
@@ -138,47 +138,47 @@ namespace exsdk {
       Vector3 minPos = Vector3.zero;
       Vector3 maxPos = Vector3.zero;
 
-      if ( vertices.Length > 0 ) {
+      if (vertices.Length > 0) {
         minPos = maxPos = vertices[0];
         vertexBytes += 12; // float32 * 3
       }
 
-      if ( normals.Length > 0 ) {
+      if (normals.Length > 0) {
         offsetNormal = vertexBytes;
         vertexBytes += 12; // float32 * 3
       }
 
-      if ( tangents.Length > 0 ) {
+      if (tangents.Length > 0) {
         offsetTangent = vertexBytes;
         vertexBytes += 16; // float32 * 4
       }
 
-      if ( colors.Length > 0 ) {
+      if (colors.Length > 0) {
         offsetColor = vertexBytes;
         vertexBytes += 16; // float32 * 4
       }
 
-      if ( uv.Length > 0 ) {
+      if (uv.Length > 0) {
         offsetUV = vertexBytes;
         vertexBytes += 8; // float32 * 2
       }
 
-      if ( uv2.Length > 0 ) {
+      if (uv2.Length > 0) {
         offsetUV2 = vertexBytes;
         vertexBytes += 8; // float32 * 2
       }
 
-      if ( uv3.Length > 0 ) {
+      if (uv3.Length > 0) {
         offsetUV3 = vertexBytes;
         vertexBytes += 8; // float32 * 2
       }
 
-      if ( uv4.Length > 0 ) {
+      if (uv4.Length > 0) {
         offsetUV4 = vertexBytes;
         vertexBytes += 8; // float32 * 2
       }
 
-      if ( boneWeights.Length > 0 ) {
+      if (boneWeights.Length > 0) {
         offsetJoint = vertexBytes;
         vertexBytes += 8; // uint16 * 4
 
@@ -187,10 +187,10 @@ namespace exsdk {
       }
 
       // vertexData
-      using( MemoryStream stream = new MemoryStream( vertexBytes * _mesh.vertexCount ) ) {
-        using ( BinaryWriter writer = new BinaryWriter(stream) ) {
-          for ( int i = 0; i < _mesh.vertexCount; ++i ) {
-            if ( vertices.Length > 0 ) {
+      using (MemoryStream stream = new MemoryStream(vertexBytes * _mesh.vertexCount)) {
+        using (BinaryWriter writer = new BinaryWriter(stream)) {
+          for (int i = 0; i < _mesh.vertexCount; ++i) {
+            if (vertices.Length > 0) {
               Vector3 vert = vertices[i];
               // NOTE: convert LH to RH
               vert.z = -vert.z;
@@ -199,34 +199,34 @@ namespace exsdk {
               writer.Write(vert.y);
               writer.Write(vert.z);
 
-              if ( vert.x < minPos.x ) {
+              if (vert.x < minPos.x) {
                 minPos.x = vert.x;
               }
-              if ( vert.y < minPos.y ) {
+              if (vert.y < minPos.y) {
                 minPos.y = vert.y;
               }
-              if ( vert.z < minPos.z ) {
+              if (vert.z < minPos.z) {
                 minPos.z = vert.z;
               }
-              if ( vert.x > maxPos.x ) {
+              if (vert.x > maxPos.x) {
                 maxPos.x = vert.x;
               }
-              if ( vert.y > maxPos.y ) {
+              if (vert.y > maxPos.y) {
                 maxPos.y = vert.y;
               }
-              if ( vert.z > maxPos.z ) {
+              if (vert.z > maxPos.z) {
                 maxPos.z = vert.z;
               }
             }
 
-            if ( normals.Length > 0 ) {
+            if (normals.Length > 0) {
               // NOTE: convert LH to RH
               writer.Write(normals[i].x);
               writer.Write(normals[i].y);
               writer.Write(-normals[i].z);
             }
 
-            if ( tangents.Length > 0 ) {
+            if (tangents.Length > 0) {
               // NOTE: convert LH to RH
               writer.Write(tangents[i].x);
               writer.Write(tangents[i].y);
@@ -234,34 +234,34 @@ namespace exsdk {
               writer.Write(tangents[i].w);
             }
 
-            if ( colors.Length > 0 ) {
+            if (colors.Length > 0) {
               writer.Write(colors[i].r);
               writer.Write(colors[i].g);
               writer.Write(colors[i].b);
               writer.Write(colors[i].a);
             }
 
-            if ( uv.Length > 0 ) {
+            if (uv.Length > 0) {
               writer.Write(uv[i].x);
               writer.Write(uv[i].y);
             }
 
-            if ( uv2.Length > 0 ) {
+            if (uv2.Length > 0) {
               writer.Write(uv2[i].x);
               writer.Write(uv2[i].y);
             }
 
-            if ( uv3.Length > 0 ) {
+            if (uv3.Length > 0) {
               writer.Write(uv3[i].x);
               writer.Write(uv3[i].y);
             }
 
-            if ( uv4.Length > 0 ) {
+            if (uv4.Length > 0) {
               writer.Write(uv4[i].x);
               writer.Write(uv4[i].y);
             }
 
-            if ( boneWeights.Length > 0 ) {
+            if (boneWeights.Length > 0) {
               writer.Write((ushort)boneWeights[i].boneIndex0);
               writer.Write((ushort)boneWeights[i].boneIndex1);
               writer.Write((ushort)boneWeights[i].boneIndex2);
@@ -278,22 +278,22 @@ namespace exsdk {
       }
 
       // indexDataList
-      for ( int i = 0; i < _mesh.subMeshCount; ++i ) {
+      for (int i = 0; i < _mesh.subMeshCount; ++i) {
         int[] subTriangles = _mesh.GetTriangles(i);
 
-        if ( subTriangles.Length > 0 ) {
-          using( MemoryStream stream = new MemoryStream( 2 * subTriangles.Length ) ) {
-            using ( BinaryWriter writer = new BinaryWriter(stream) ) {
+        if (subTriangles.Length > 0) {
+          using (MemoryStream stream = new MemoryStream(2 * subTriangles.Length)) {
+            using (BinaryWriter writer = new BinaryWriter(stream)) {
               // DISABLE
               // for ( int ii = 0; ii < subTriangles.Length; ++ii ) {
               //   writer.Write((ushort)subTriangles[ii]);
               // }
 
               // NOTE: convert mesh winding order from CW (Unity3D's) to CCW (most webgl programs)
-              for ( int ii = 0; ii < subTriangles.Length/3; ++ii ) {
-                writer.Write((ushort)subTriangles[3*ii]);
-                writer.Write((ushort)subTriangles[3*ii + 2]);
-                writer.Write((ushort)subTriangles[3*ii + 1]);
+              for (int ii = 0; ii < subTriangles.Length / 3; ++ii) {
+                writer.Write((ushort)subTriangles[3 * ii]);
+                writer.Write((ushort)subTriangles[3 * ii + 2]);
+                writer.Write((ushort)subTriangles[3 * ii + 1]);
               }
             }
 
@@ -303,28 +303,28 @@ namespace exsdk {
       }
 
       // bindposesData
-      using( MemoryStream stream = new MemoryStream( 4 * 16 * _mesh.bindposes.Length ) ) {
-        using ( BinaryWriter writer = new BinaryWriter(stream) ) {
-          for ( int i = 0; i < _mesh.bindposes.Length; ++i ) {
+      using (MemoryStream stream = new MemoryStream(4 * 16 * _mesh.bindposes.Length)) {
+        using (BinaryWriter writer = new BinaryWriter(stream)) {
+          for (int i = 0; i < _mesh.bindposes.Length; ++i) {
             Matrix4x4 bindpose = _mesh.bindposes[i];
 
             // NOTE: convert LH to RH
-            writer.Write( bindpose[0 ]);
-            writer.Write( bindpose[1 ]);
-            writer.Write(-bindpose[2 ]); // a02
-            writer.Write( bindpose[3 ]);
-            writer.Write( bindpose[4 ]);
-            writer.Write( bindpose[5 ]);
-            writer.Write(-bindpose[6 ]); // a12
-            writer.Write( bindpose[7 ]);
-            writer.Write(-bindpose[8 ]); // a20
-            writer.Write(-bindpose[9 ]); // a21
-            writer.Write( bindpose[10]);
-            writer.Write( bindpose[11]);
-            writer.Write( bindpose[12]);
-            writer.Write( bindpose[13]);
+            writer.Write(bindpose[0]);
+            writer.Write(bindpose[1]);
+            writer.Write(-bindpose[2]); // a02
+            writer.Write(bindpose[3]);
+            writer.Write(bindpose[4]);
+            writer.Write(bindpose[5]);
+            writer.Write(-bindpose[6]); // a12
+            writer.Write(bindpose[7]);
+            writer.Write(-bindpose[8]); // a20
+            writer.Write(-bindpose[9]); // a21
+            writer.Write(bindpose[10]);
+            writer.Write(bindpose[11]);
+            writer.Write(bindpose[12]);
+            writer.Write(bindpose[13]);
             writer.Write(-bindpose[14]); // b2
-            writer.Write( bindpose[15]);
+            writer.Write(bindpose[15]);
           }
         }
         bindposesData = stream.ToArray();
@@ -334,7 +334,8 @@ namespace exsdk {
       List<BufferViewInfo> bufferViews = new List<BufferViewInfo>();
 
       // vbView
-      BufferViewInfo vbView = new BufferViewInfo {
+      BufferViewInfo vbView = new BufferViewInfo
+      {
         name = "vb@" + _mesh.name,
         offset = offsetBuffer,
         length = vertexData.Length,
@@ -343,8 +344,9 @@ namespace exsdk {
         accessors = new List<AccessorInfo>(),
       };
 
-      if ( vertices.Length > 0 ) {
-        AccessorInfo acc = new AccessorInfo {
+      if (vertices.Length > 0) {
+        AccessorInfo acc = new AccessorInfo
+        {
           name = "position@" + _mesh.name,
           offset = 0,
           count = _mesh.vertexCount,
@@ -357,8 +359,9 @@ namespace exsdk {
         vbView.accessors.Add(acc);
       }
 
-      if ( normals.Length > 0 ) {
-        AccessorInfo acc = new AccessorInfo {
+      if (normals.Length > 0) {
+        AccessorInfo acc = new AccessorInfo
+        {
           name = "normal@" + _mesh.name,
           offset = offsetNormal,
           count = _mesh.vertexCount,
@@ -370,8 +373,9 @@ namespace exsdk {
         vbView.accessors.Add(acc);
       }
 
-      if ( tangents.Length > 0 ) {
-        AccessorInfo acc = new AccessorInfo {
+      if (tangents.Length > 0) {
+        AccessorInfo acc = new AccessorInfo
+        {
           name = "tangent@" + _mesh.name,
           offset = offsetTangent,
           count = _mesh.vertexCount,
@@ -383,8 +387,9 @@ namespace exsdk {
         vbView.accessors.Add(acc);
       }
 
-      if ( colors.Length > 0 ) {
-        AccessorInfo acc = new AccessorInfo {
+      if (colors.Length > 0) {
+        AccessorInfo acc = new AccessorInfo
+        {
           name = "color@" + _mesh.name,
           offset = offsetColor,
           count = _mesh.vertexCount,
@@ -396,8 +401,9 @@ namespace exsdk {
         vbView.accessors.Add(acc);
       }
 
-      if ( uv.Length > 0 ) {
-        AccessorInfo acc = new AccessorInfo {
+      if (uv.Length > 0) {
+        AccessorInfo acc = new AccessorInfo
+        {
           name = "uv0@" + _mesh.name,
           offset = offsetUV,
           count = _mesh.vertexCount,
@@ -409,8 +415,9 @@ namespace exsdk {
         vbView.accessors.Add(acc);
       }
 
-      if ( uv2.Length > 0 ) {
-        AccessorInfo acc = new AccessorInfo {
+      if (uv2.Length > 0) {
+        AccessorInfo acc = new AccessorInfo
+        {
           name = "uv1@" + _mesh.name,
           offset = offsetUV2,
           count = _mesh.vertexCount,
@@ -422,8 +429,9 @@ namespace exsdk {
         vbView.accessors.Add(acc);
       }
 
-      if ( uv3.Length > 0 ) {
-        AccessorInfo acc = new AccessorInfo {
+      if (uv3.Length > 0) {
+        AccessorInfo acc = new AccessorInfo
+        {
           name = "uv2@" + _mesh.name,
           offset = offsetUV3,
           count = _mesh.vertexCount,
@@ -435,8 +443,9 @@ namespace exsdk {
         vbView.accessors.Add(acc);
       }
 
-      if ( uv4.Length > 0 ) {
-        AccessorInfo acc = new AccessorInfo {
+      if (uv4.Length > 0) {
+        AccessorInfo acc = new AccessorInfo
+        {
           name = "uv3@" + _mesh.name,
           offset = offsetUV4,
           count = _mesh.vertexCount,
@@ -448,8 +457,9 @@ namespace exsdk {
         vbView.accessors.Add(acc);
       }
 
-      if ( boneWeights.Length > 0 ) {
-        AccessorInfo acc = new AccessorInfo {
+      if (boneWeights.Length > 0) {
+        AccessorInfo acc = new AccessorInfo
+        {
           name = "joints@" + _mesh.name,
           offset = offsetJoint,
           count = _mesh.vertexCount,
@@ -460,7 +470,8 @@ namespace exsdk {
 
         vbView.accessors.Add(acc);
 
-        acc = new AccessorInfo {
+        acc = new AccessorInfo
+        {
           name = "weights@" + _mesh.name,
           offset = offsetWeight,
           count = _mesh.vertexCount,
@@ -477,10 +488,11 @@ namespace exsdk {
       offsetBuffer += Utils.Align(vbView.length, 4);
 
       // ibView
-      for ( int i = 0; i < indexDataList.Count; ++i ) {
+      for (int i = 0; i < indexDataList.Count; ++i) {
         byte[] indexData = indexDataList[i];
 
-        BufferViewInfo ibView = new BufferViewInfo {
+        BufferViewInfo ibView = new BufferViewInfo
+        {
           name = "ib" + i + "@" + _mesh.name,
           offset = offsetBuffer,
           length = indexData.Length,
@@ -488,7 +500,8 @@ namespace exsdk {
           accessors = new List<AccessorInfo>(),
         };
 
-        AccessorInfo acc = new AccessorInfo {
+        AccessorInfo acc = new AccessorInfo
+        {
           name = "indices" + i + "@" + _mesh.name,
           offset = 0,
           count = indexData.Length / 2,
@@ -503,8 +516,9 @@ namespace exsdk {
       }
 
       // bpView
-      if ( bindposesData.Length > 0 ) {
-        BufferViewInfo bpView = new BufferViewInfo {
+      if (bindposesData.Length > 0) {
+        BufferViewInfo bpView = new BufferViewInfo
+        {
           name = "bp@" + _mesh.name,
           offset = offsetBuffer,
           length = bindposesData.Length,
@@ -512,10 +526,11 @@ namespace exsdk {
           accessors = new List<AccessorInfo>(),
         };
 
-        AccessorInfo acc = new AccessorInfo {
+        AccessorInfo acc = new AccessorInfo
+        {
           name = "bindposes@" + _mesh.name,
           offset = 0,
-          count = bindposesData.Length / (4*16),
+          count = bindposesData.Length / (4 * 16),
           compType = ComponentType.FLOAT32,
           attrType = AttrType.MAT4,
         };
@@ -530,18 +545,18 @@ namespace exsdk {
       byte[] data = new byte[_bufInfo.data.Length + offsetBuffer];
       int offset = 0;
 
-      System.Buffer.BlockCopy( _bufInfo.data, 0, data, offset, _bufInfo.data.Length );
+      System.Buffer.BlockCopy(_bufInfo.data, 0, data, offset, _bufInfo.data.Length);
       offset += _bufInfo.data.Length;
 
-      System.Buffer.BlockCopy( vertexData, 0, data, offset, vertexData.Length );
+      System.Buffer.BlockCopy(vertexData, 0, data, offset, vertexData.Length);
       offset += Utils.Align(vertexData.Length, 4);
 
-      for ( int i = 0; i < indexDataList.Count; ++i ) {
-        System.Buffer.BlockCopy( indexDataList[i], 0, data, offset, indexDataList[i].Length );
+      for (int i = 0; i < indexDataList.Count; ++i) {
+        System.Buffer.BlockCopy(indexDataList[i], 0, data, offset, indexDataList[i].Length);
         offset += Utils.Align(indexDataList[i].Length, 4);
       }
 
-      System.Buffer.BlockCopy( bindposesData, 0, data, offset, bindposesData.Length );
+      System.Buffer.BlockCopy(bindposesData, 0, data, offset, bindposesData.Length);
       offset += Utils.Align(bindposesData.Length, 4);
 
       //

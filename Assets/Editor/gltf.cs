@@ -10,14 +10,14 @@ namespace exsdk {
 
   [System.Serializable]
   public class GLTF_Base {
-    public Dictionary<string,object> extensions;
-    public Dictionary<string,object> extras;
+    public Dictionary<string, object> extensions;
+    public Dictionary<string, object> extras;
 
-    public bool ShouldSerializeextensions () {
+    public bool ShouldSerializeextensions() {
       return extensions != null && extensions.Count != 0;
     }
 
-    public bool ShouldSerializeextras () {
+    public bool ShouldSerializeextras() {
       return extras != null && extras.Count != 0;
     }
   }
@@ -50,83 +50,83 @@ namespace exsdk {
     public List<GLTF_Technique> techniques = new List<GLTF_Technique>();
     public List<GLTF_Texture> textures = new List<GLTF_Texture>();
 
-    public bool ShouldSerializeasset () {
+    public bool ShouldSerializeasset() {
       return asset != null;
     }
 
-    public bool ShouldSerializescene () {
+    public bool ShouldSerializescene() {
       return string.IsNullOrEmpty(scene) == false;
     }
 
-    public bool ShouldSerializeextensionsUsed () {
+    public bool ShouldSerializeextensionsUsed() {
       return extensionsUsed != null && extensionsUsed.Count != 0;
     }
 
-    public bool ShouldSerializeaccessors () {
+    public bool ShouldSerializeaccessors() {
       return accessors != null && accessors.Count != 0;
     }
 
-    public bool ShouldSerializebuffers () {
+    public bool ShouldSerializebuffers() {
       return buffers != null && buffers.Count != 0;
     }
 
-    public bool ShouldSerializebufferViews () {
+    public bool ShouldSerializebufferViews() {
       return bufferViews != null && bufferViews.Count != 0;
     }
 
-    public bool ShouldSerializecameras () {
+    public bool ShouldSerializecameras() {
       return cameras != null && cameras.Count != 0;
     }
 
-    public bool ShouldSerializematerials () {
+    public bool ShouldSerializematerials() {
       return materials != null && materials.Count != 0;
     }
 
-    public bool ShouldSerializemeshes () {
+    public bool ShouldSerializemeshes() {
       return meshes != null && meshes.Count != 0;
     }
 
-    public bool ShouldSerializenodes () {
+    public bool ShouldSerializenodes() {
       return nodes != null && nodes.Count != 0;
     }
 
-    public bool ShouldSerializejoints () {
+    public bool ShouldSerializejoints() {
       return joints != null && joints.Count != 0;
     }
 
-    public bool ShouldSerializeprograms () {
+    public bool ShouldSerializeprograms() {
       return programs != null && programs.Count != 0;
     }
 
-    public bool ShouldSerializescenes () {
+    public bool ShouldSerializescenes() {
       return scenes != null && scenes.Count != 0;
     }
 
-    public bool ShouldSerializeshaders () {
+    public bool ShouldSerializeshaders() {
       return shaders != null && shaders.Count != 0;
     }
 
-    public bool ShouldSerializetechniques () {
+    public bool ShouldSerializetechniques() {
       return techniques != null && techniques.Count != 0;
     }
 
-    public bool ShouldSerializesamplers () {
+    public bool ShouldSerializesamplers() {
       return samplers != null && samplers.Count != 0;
     }
 
-    public bool ShouldSerializetextures () {
+    public bool ShouldSerializetextures() {
       return textures != null && textures.Count != 0;
     }
 
-    public bool ShouldSerializeimages () {
+    public bool ShouldSerializeimages() {
       return images != null && images.Count != 0;
     }
 
-    public bool ShouldSerializeanimations () {
+    public bool ShouldSerializeanimations() {
       return animations != null && animations.Count != 0;
     }
 
-    public bool ShouldSerializeskins () {
+    public bool ShouldSerializeskins() {
       return skins != null && skins.Count != 0;
     }
   }
@@ -142,15 +142,15 @@ namespace exsdk {
     public string version = "1.0.0";
     public string minVersion;
 
-    public bool ShouldSerializecopyright () {
+    public bool ShouldSerializecopyright() {
       return string.IsNullOrEmpty(copyright) == false;
     }
 
-    public bool ShouldSerializegenerator () {
+    public bool ShouldSerializegenerator() {
       return string.IsNullOrEmpty(generator) == false;
     }
 
-    public bool ShouldSerializeminVersion () {
+    public bool ShouldSerializeminVersion() {
       return string.IsNullOrEmpty(minVersion) == false;
     }
   }
@@ -183,10 +183,10 @@ namespace exsdk {
   public class GLTF_Node : GLTF_Base {
     public string name;
     public List<int> children;
-    public float[] matrix = new float[16] {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
-    public float[] translation = new float[3] {0,0,0};
-    public float[] rotation = new float[4] {0,0,0,1};
-    public float[] scale = new float[3] {1,1,1};
+    public float[] matrix = new float[16] { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+    public float[] translation = new float[3] { 0, 0, 0 };
+    public float[] rotation = new float[4] { 0, 0, 0, 1 };
+    public float[] scale = new float[3] { 1, 1, 1 };
     // TODO
     // public float[] weights = new float[3] {1,1,1};
     public int mesh = -1;
@@ -200,44 +200,44 @@ namespace exsdk {
     //   }
     // }
 
-    public bool ShouldSerializename () {
+    public bool ShouldSerializename() {
       return string.IsNullOrEmpty(name) == false;
     }
 
-    public bool ShouldSerializechildren () {
+    public bool ShouldSerializechildren() {
       return children != null && children.Count != 0;
     }
 
-    public bool ShouldSerializematrix () {
+    public bool ShouldSerializematrix() {
       return
-        matrix[0]  != 1 || matrix[1]  != 0 || matrix[2]  != 0 || matrix[3]  != 0 ||
-        matrix[4]  != 0 || matrix[5]  != 1 || matrix[6]  != 0 || matrix[7]  != 0 ||
-        matrix[8]  != 0 || matrix[9]  != 0 || matrix[10] != 1 || matrix[11] != 0 ||
+        matrix[0] != 1 || matrix[1] != 0 || matrix[2] != 0 || matrix[3] != 0 ||
+        matrix[4] != 0 || matrix[5] != 1 || matrix[6] != 0 || matrix[7] != 0 ||
+        matrix[8] != 0 || matrix[9] != 0 || matrix[10] != 1 || matrix[11] != 0 ||
         matrix[12] != 0 || matrix[13] != 0 || matrix[14] != 0 || matrix[15] != 1
         ;
     }
 
-    public bool ShouldSerializetranslation () {
+    public bool ShouldSerializetranslation() {
       return translation[0] != 0 || translation[1] != 0 || translation[2] != 0;
     }
 
-    public bool ShouldSerializerotation () {
+    public bool ShouldSerializerotation() {
       return rotation[0] != 0 || rotation[1] != 0 || rotation[2] != 0 || rotation[3] != 1;
     }
 
-    public bool ShouldSerializescale () {
+    public bool ShouldSerializescale() {
       return scale[0] != 1 || scale[1] != 1 || scale[2] != 1;
     }
 
-    public bool ShouldSerializemesh () {
+    public bool ShouldSerializemesh() {
       return mesh != -1;
     }
 
-    public bool ShouldSerializeskin () {
+    public bool ShouldSerializeskin() {
       return skin != -1;
     }
 
-    public bool ShouldSerializecamera () {
+    public bool ShouldSerializecamera() {
       return camera != -1;
     }
   }
@@ -252,11 +252,11 @@ namespace exsdk {
     public List<GLTF_Primitive> primitives;
     // public List<int> weights;
 
-    public bool ShouldSerializename () {
+    public bool ShouldSerializename() {
       return string.IsNullOrEmpty(name) == false;
     }
 
-    public bool ShouldSerializeprimitives () {
+    public bool ShouldSerializeprimitives() {
       return primitives != null && primitives.Count != 0;
     }
   }
@@ -272,15 +272,15 @@ namespace exsdk {
     public int skeleton = -1;
     public int[] joints;
 
-    public bool ShouldSerializename () {
+    public bool ShouldSerializename() {
       return string.IsNullOrEmpty(name) == false;
     }
 
-    public bool ShouldSerializeskeleton () {
+    public bool ShouldSerializeskeleton() {
       return skeleton != -1;
     }
 
-    public bool ShouldSerializeinverseBindMatrices () {
+    public bool ShouldSerializeinverseBindMatrices() {
       return inverseBindMatrices != -1;
     }
   }
@@ -294,11 +294,11 @@ namespace exsdk {
     public string name;
     public List<GLTF_AnimChannelEx> channels;
 
-    public bool ShouldSerializename () {
+    public bool ShouldSerializename() {
       return string.IsNullOrEmpty(name) == false;
     }
 
-    public bool ShouldSerializechannels () {
+    public bool ShouldSerializechannels() {
       return channels != null && channels.Count != 0;
     }
   }
@@ -315,7 +315,7 @@ namespace exsdk {
     public int node;
     public string path; // should be "translation", "rotation", "scale" or "weights"
 
-    public bool ShouldSerializeinterpolation () {
+    public bool ShouldSerializeinterpolation() {
       return string.IsNullOrEmpty(interpolation) == false;
     }
   }
@@ -330,15 +330,15 @@ namespace exsdk {
     public List<GLTF_AnimChannel> channels;
     public List<GLTF_AnimSampler> samplers;
 
-    public bool ShouldSerializename () {
+    public bool ShouldSerializename() {
       return string.IsNullOrEmpty(name) == false;
     }
 
-    public bool ShouldSerializechannels () {
+    public bool ShouldSerializechannels() {
       return channels != null && channels.Count != 0;
     }
 
-    public bool ShouldSerializesamplers () {
+    public bool ShouldSerializesamplers() {
       return samplers != null && samplers.Count != 0;
     }
   }
@@ -373,7 +373,7 @@ namespace exsdk {
     public string interpolation; // should be "LINEAR", "STEP", "CATMULLROMSPLINE" or "CUBICSPLINE"
     public int output;
 
-    public bool ShouldSerializeinterpolation () {
+    public bool ShouldSerializeinterpolation() {
       return string.IsNullOrEmpty(interpolation) == false;
     }
   }
@@ -384,25 +384,25 @@ namespace exsdk {
 
   [System.Serializable]
   public class GLTF_Primitive : GLTF_Base {
-    public Dictionary<string,int> attributes;
+    public Dictionary<string, int> attributes;
     public int indices = -1;
     public int material = -1;
     public int mode = 4;
     // TODO: public List<int> targets;
 
-    public bool ShouldSerializeattributes () {
+    public bool ShouldSerializeattributes() {
       return attributes != null && attributes.Count != 0;
     }
 
-    public bool ShouldSerializeindices () {
+    public bool ShouldSerializeindices() {
       return indices != -1;
     }
 
-    public bool ShouldSerializematerial () {
+    public bool ShouldSerializematerial() {
       return material != -1;
     }
 
-    public bool ShouldSerializemode () {
+    public bool ShouldSerializemode() {
       return mode != 4;
     }
   }
@@ -424,19 +424,19 @@ namespace exsdk {
     public object[] max;
     // public object sparse;
 
-    public bool ShouldSerializename () {
+    public bool ShouldSerializename() {
       return string.IsNullOrEmpty(name) == false;
     }
 
-    public bool ShouldSerializenormalized () {
+    public bool ShouldSerializenormalized() {
       return normalized != false;
     }
 
-    public bool ShouldSerializemin () {
+    public bool ShouldSerializemin() {
       return min != null && min.Length != 0;
     }
 
-    public bool ShouldSerializemax () {
+    public bool ShouldSerializemax() {
       return max != null && max.Length != 0;
     }
   }
@@ -454,19 +454,19 @@ namespace exsdk {
     public int byteStride;
     public int target = -1;
 
-    public bool ShouldSerializename () {
+    public bool ShouldSerializename() {
       return string.IsNullOrEmpty(name) == false;
     }
 
-    public bool ShouldSerializebyteLength () {
+    public bool ShouldSerializebyteLength() {
       return byteLength != 0;
     }
 
-    public bool ShouldSerializebyteStride () {
+    public bool ShouldSerializebyteStride() {
       return byteStride != 0;
     }
 
-    public bool ShouldSerializetarget () {
+    public bool ShouldSerializetarget() {
       return target != -1;
     }
   }
@@ -481,11 +481,11 @@ namespace exsdk {
     public string uri;
     public int byteLength = 0;
 
-    public bool ShouldSerializename () {
+    public bool ShouldSerializename() {
       return string.IsNullOrEmpty(name) == false;
     }
 
-    public bool ShouldSerializebyteLength () {
+    public bool ShouldSerializebyteLength() {
       return byteLength != 0;
     }
   }
@@ -498,17 +498,17 @@ namespace exsdk {
   public class GLTF_Material : GLTF_Base {
     public string name;
     public string technique;
-    public Dictionary<string,object> values;
+    public Dictionary<string, object> values;
 
-    public bool ShouldSerializename () {
+    public bool ShouldSerializename() {
       return string.IsNullOrEmpty(name) == false;
     }
 
-    public bool ShouldSerializetechnique () {
+    public bool ShouldSerializetechnique() {
       return string.IsNullOrEmpty(technique) == false;
     }
 
-    public bool ShouldSerializevalues () {
+    public bool ShouldSerializevalues() {
       return values != null && values.Count != 0;
     }
   }
@@ -521,24 +521,24 @@ namespace exsdk {
   public class GLTF_Technique : GLTF_Base {
     public string program = "default";
     public string name;
-    public Dictionary<string,string> attributes;
-    public Dictionary<string,GLTF_Parameter> parameters;
-    public Dictionary<string,string> uniforms;
+    public Dictionary<string, string> attributes;
+    public Dictionary<string, GLTF_Parameter> parameters;
+    public Dictionary<string, string> uniforms;
     public GLTF_States states;
 
-    public bool ShouldSerializename () {
+    public bool ShouldSerializename() {
       return string.IsNullOrEmpty(name) == false;
     }
 
-    public bool ShouldSerializeattributes () {
+    public bool ShouldSerializeattributes() {
       return attributes != null && attributes.Count != 0;
     }
 
-    public bool ShouldSerializeuniforms () {
+    public bool ShouldSerializeuniforms() {
       return uniforms != null && uniforms.Count != 0;
     }
 
-    public bool ShouldSerializestates () {
+    public bool ShouldSerializestates() {
       return states != null;
     }
   }
@@ -555,19 +555,19 @@ namespace exsdk {
     public string semantic;
     public object value;
 
-    public bool ShouldSerializetecount () {
+    public bool ShouldSerializetecount() {
       return count > 0;
     }
 
-    public bool ShouldSerializetenode () {
+    public bool ShouldSerializetenode() {
       return string.IsNullOrEmpty(node) == false;
     }
 
-    public bool ShouldSerializetesemantic () {
+    public bool ShouldSerializetesemantic() {
       return string.IsNullOrEmpty(semantic) == false;
     }
 
-    public bool ShouldSerializetevalule () {
+    public bool ShouldSerializetevalule() {
       return value != null;
     }
   }
@@ -581,11 +581,11 @@ namespace exsdk {
     public int[] enable;
     public GLTF_Functions functions;
 
-    public bool ShouldSerializeenable () {
+    public bool ShouldSerializeenable() {
       return enable != null && enable.Length != 0;
     }
 
-    public bool ShouldSerializefunctions () {
+    public bool ShouldSerializefunctions() {
       return functions != null;
     }
   }
@@ -613,7 +613,7 @@ namespace exsdk {
     public float[] polygonOffset = new float[2] { 0, 0 };
     public float[] scissor = new float[4] { 0, 0, 0, 0 };
 
-    public bool ShouldSerializeblendColor () {
+    public bool ShouldSerializeblendColor() {
       return
         blendColor[0] != 0 ||
         blendColor[1] != 0 ||
@@ -622,14 +622,14 @@ namespace exsdk {
         ;
     }
 
-    public bool ShouldSerializeblendEquationSeparate () {
+    public bool ShouldSerializeblendEquationSeparate() {
       return
         blendEquationSeparate[0] != (int)BlendEquation.FUNC_ADD ||
         blendEquationSeparate[1] != (int)BlendEquation.FUNC_ADD
         ;
     }
 
-    public bool ShouldSerializecolorMask () {
+    public bool ShouldSerializecolorMask() {
       return
         colorMask[0] != true ||
         colorMask[1] != true ||
@@ -638,37 +638,37 @@ namespace exsdk {
         ;
     }
 
-    public bool ShouldSerializecullFace () {
+    public bool ShouldSerializecullFace() {
       return cullFace[0] != (int)CullFace.BACK;
     }
 
-    public bool ShouldSerializedepthFunc () {
+    public bool ShouldSerializedepthFunc() {
       return depthFunc[0] != (int)DepthFunc.LESS;
     }
 
-    public bool ShouldSerializedepthMask () {
+    public bool ShouldSerializedepthMask() {
       return depthMask[0] != true;
     }
 
-    public bool ShouldSerializedepthRange () {
+    public bool ShouldSerializedepthRange() {
       return depthRange[0] != 0 || depthRange[1] != 1;
     }
 
-    public bool ShouldSerializefrontFace () {
+    public bool ShouldSerializefrontFace() {
       return frontFace[0] != (int)FrontFace.CCW;
     }
 
-    public bool ShouldSerializelineWidth () {
+    public bool ShouldSerializelineWidth() {
       return lineWidth[0] != 1;
     }
 
-    public bool ShouldSerializepolygonOffset () {
+    public bool ShouldSerializepolygonOffset() {
       return
         polygonOffset[0] != 0 ||
         polygonOffset[1] != 1;
     }
 
-    public bool ShouldSerializescissor () {
+    public bool ShouldSerializescissor() {
       return
         scissor[0] != 0 ||
         scissor[1] != 0 ||
@@ -689,11 +689,11 @@ namespace exsdk {
     public string fragmentShader = "shader_default";
     public string vertexShader = "shader_default";
 
-    public bool ShouldSerializename () {
+    public bool ShouldSerializename() {
       return string.IsNullOrEmpty(name) == false;
     }
 
-    public bool ShouldSerializeteattributes () {
+    public bool ShouldSerializeteattributes() {
       return attributes != null && attributes.Count != 0;
     }
   }
@@ -708,7 +708,7 @@ namespace exsdk {
     public string uri;
     public int type;
 
-    public bool ShouldSerializename () {
+    public bool ShouldSerializename() {
       return string.IsNullOrEmpty(name) == false;
     }
   }
@@ -727,23 +727,23 @@ namespace exsdk {
     public int target = (int)TextureTarget.TEXTURE_2D;
     public int type = (int)TexturePixelType.UNSIGNED_BYTE;
 
-    public bool ShouldSerializename () {
+    public bool ShouldSerializename() {
       return string.IsNullOrEmpty(name) == false;
     }
 
-    public bool ShouldSerializeformat () {
+    public bool ShouldSerializeformat() {
       return format != (int)TextureFormat.RGBA;
     }
 
-    public bool ShouldSerializeinternalFormat () {
+    public bool ShouldSerializeinternalFormat() {
       return internalFormat != (int)TextureFormat.RGBA;
     }
 
-    public bool ShouldSerializetarget () {
+    public bool ShouldSerializetarget() {
       return target != (int)TextureTarget.TEXTURE_2D;
     }
 
-    public bool ShouldSerializetype () {
+    public bool ShouldSerializetype() {
       return type != (int)TexturePixelType.UNSIGNED_BYTE;
     }
   }
@@ -760,23 +760,23 @@ namespace exsdk {
     public int wrapS = (int)WrapMode.REPEAT;
     public int wrapT = (int)WrapMode.REPEAT;
 
-    public bool ShouldSerializename () {
+    public bool ShouldSerializename() {
       return string.IsNullOrEmpty(name) == false;
     }
 
-    public bool ShouldSerializemagFilter () {
+    public bool ShouldSerializemagFilter() {
       return magFilter != (int)FilterMode.LINEAR;
     }
 
-    public bool ShouldSerializeminFilter () {
+    public bool ShouldSerializeminFilter() {
       return minFilter != (int)FilterMode.NEAREST_MIPMAP_LINEAR;
     }
 
-    public bool ShouldSerializewrapS () {
+    public bool ShouldSerializewrapS() {
       return wrapS != (int)WrapMode.REPEAT;
     }
 
-    public bool ShouldSerializewrapT () {
+    public bool ShouldSerializewrapT() {
       return wrapT != (int)WrapMode.REPEAT;
     }
   }
@@ -790,7 +790,7 @@ namespace exsdk {
     public string name;
     public string uri;
 
-    public bool ShouldSerializename () {
+    public bool ShouldSerializename() {
       return string.IsNullOrEmpty(name) == false;
     }
   }
@@ -818,7 +818,7 @@ namespace exsdk {
     public float zfar;
     public float znear;
 
-    public bool ShouldSerializeaspectRatio () {
+    public bool ShouldSerializeaspectRatio() {
       return aspectRatio > 0;
     }
   }
@@ -834,15 +834,15 @@ namespace exsdk {
     public GLTF_Orthographic orthographic;
     public GLTF_Perspective perspective;
 
-    public bool ShouldSerializename () {
+    public bool ShouldSerializename() {
       return string.IsNullOrEmpty(name) == false;
     }
 
-    public bool ShouldSerializeorthographic () {
+    public bool ShouldSerializeorthographic() {
       return orthographic != null;
     }
 
-    public bool ShouldSerializeorthperspective () {
+    public bool ShouldSerializeorthperspective() {
       return perspective != null;
     }
   }

@@ -32,37 +32,37 @@ namespace exsdk {
     // basic
     public string name;
     public JSON_Asset prefab;
-    public float[] translation = new float[3] {0,0,0};
-    public float[] rotation = new float[4] {0,0,0,1};
-    public float[] scale = new float[3] {1,1,1};
+    public float[] translation = new float[3] { 0, 0, 0 };
+    public float[] rotation = new float[4] { 0, 0, 0, 1 };
+    public float[] scale = new float[3] { 1, 1, 1 };
     public List<JSON_Component> components;
     public List<int> children;
 
-    public bool ShouldSerializename () {
+    public bool ShouldSerializename() {
       return string.IsNullOrEmpty(name) == false;
     }
 
-    public bool ShouldSerializeprefab () {
+    public bool ShouldSerializeprefab() {
       return prefab != null;
     }
 
-    public bool ShouldSerializetranslation () {
+    public bool ShouldSerializetranslation() {
       return translation[0] != 0 || translation[1] != 0 || translation[2] != 0;
     }
 
-    public bool ShouldSerializerotation () {
+    public bool ShouldSerializerotation() {
       return rotation[0] != 0 || rotation[1] != 0 || rotation[2] != 0 || rotation[3] != 1;
     }
 
-    public bool ShouldSerializescale () {
+    public bool ShouldSerializescale() {
       return scale[0] != 1 || scale[1] != 1 || scale[2] != 1;
     }
 
-    public bool ShouldSerializecomponents () {
+    public bool ShouldSerializecomponents() {
       return components != null && components.Count != 0;
     }
 
-    public bool ShouldSerializechildren () {
+    public bool ShouldSerializechildren() {
       return children != null && children.Count != 0;
     }
   }
@@ -74,9 +74,9 @@ namespace exsdk {
   [System.Serializable]
   public class JSON_Component {
     public string type;
-    public Dictionary<string,object> properties = new Dictionary<string,object>();
+    public Dictionary<string, object> properties = new Dictionary<string, object>();
 
-    public bool ShouldSerializeproperties () {
+    public bool ShouldSerializeproperties() {
       return properties != null && properties.Count != 0;
     }
   }
@@ -88,7 +88,7 @@ namespace exsdk {
   [System.Serializable]
   public class JSON_Asset {
     public string type;
-    public Dictionary<string,string> urls = new Dictionary<string,string>();
+    public Dictionary<string, string> urls = new Dictionary<string, string>();
   }
 
   // =========================
@@ -107,35 +107,35 @@ namespace exsdk {
     public string wrapR;
     public bool mipmap = true;
 
-    public bool ShouldSerializeanisotropy () {
+    public bool ShouldSerializeanisotropy() {
       return anisotropy != -1;
     }
 
-    public bool ShouldSerializeminFilter () {
+    public bool ShouldSerializeminFilter() {
       return string.IsNullOrEmpty(minFilter) == false;
     }
 
-    public bool ShouldSerializemagFilter () {
+    public bool ShouldSerializemagFilter() {
       return string.IsNullOrEmpty(magFilter) == false;
     }
 
-    public bool ShouldSerializemipFilter () {
+    public bool ShouldSerializemipFilter() {
       return string.IsNullOrEmpty(mipFilter) == false;
     }
 
-    public bool ShouldSerializewrapS () {
+    public bool ShouldSerializewrapS() {
       return string.IsNullOrEmpty(wrapS) == false;
     }
 
-    public bool ShouldSerializewrapT () {
+    public bool ShouldSerializewrapT() {
       return string.IsNullOrEmpty(wrapT) == false;
     }
 
-    public bool ShouldSerializewrapR () {
+    public bool ShouldSerializewrapR() {
       return string.IsNullOrEmpty(wrapR) == false;
     }
 
-    public bool ShouldSerializemipmap () {
+    public bool ShouldSerializemipmap() {
       return mipmap == false;
     }
   }

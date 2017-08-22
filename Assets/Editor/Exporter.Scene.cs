@@ -13,12 +13,12 @@ namespace exsdk {
     // DumpScene
     // -----------------------------------------
 
-    JSON_Scene DumpScene (List<GameObject> _nodes) {
+    JSON_Scene DumpScene(List<GameObject> _nodes) {
       JSON_Scene scene = new JSON_Scene();
 
       // dump entities
       int index = 0;
-      foreach ( GameObject go in _nodes ) {
+      foreach (GameObject go in _nodes) {
         JSON_Entity ent = DumpEntity(go, _nodes);
 
         if (go.transform.parent == null) {
@@ -43,16 +43,16 @@ namespace exsdk {
 
       // translation
       // NOTE: convert LH to RH
-      result.translation[0] =  _go.transform.localPosition.x;
-      result.translation[1] =  _go.transform.localPosition.y;
+      result.translation[0] = _go.transform.localPosition.x;
+      result.translation[1] = _go.transform.localPosition.y;
       result.translation[2] = -_go.transform.localPosition.z;
 
       // rotation
       // NOTE: convert LH to RH
       result.rotation[0] = -_go.transform.localRotation.x;
       result.rotation[1] = -_go.transform.localRotation.y;
-      result.rotation[2] =  _go.transform.localRotation.z;
-      result.rotation[3] =  _go.transform.localRotation.w;
+      result.rotation[2] = _go.transform.localRotation.z;
+      result.rotation[3] = _go.transform.localRotation.w;
 
       // scale
       result.scale[0] = _go.transform.localScale.x;
@@ -63,30 +63,32 @@ namespace exsdk {
       result.children = new List<int>();
       foreach (Transform child in _go.transform) {
         int idx = _nodes.IndexOf(child.gameObject);
-        if ( idx != -1) {
+        if (idx != -1) {
           result.children.Add(idx);
         }
       }
 
       // check if it is a prefab
       GameObject prefab = PrefabUtility.GetPrefabParent(_go) as GameObject;
-      if ( prefab ) {
+      if (prefab) {
         prefab = prefab.transform.root.gameObject;
         bool isAnimPrefab = Utils.IsAnimPrefab(prefab);
         string id = Utils.AssetID(prefab);
 
-        if ( isAnimPrefab ) {
-          JSON_Asset jsonAsset = new JSON_Asset {
+        if (isAnimPrefab) {
+          JSON_Asset jsonAsset = new JSON_Asset
+          {
             type = "anim-prefab",
-            urls = new Dictionary<string,string> {
+            urls = new Dictionary<string, string> {
               { "gltf", "skinnings/" + id + ".gltf" }
             }
           };
           result.prefab = jsonAsset;
         } else {
-          JSON_Asset jsonAsset = new JSON_Asset {
+          JSON_Asset jsonAsset = new JSON_Asset
+          {
             type = "prefab",
-            urls = new Dictionary<string,string> {
+            urls = new Dictionary<string, string> {
               { "json", "prefabs/" + id + ".json" }
             }
           };
@@ -142,9 +144,10 @@ namespace exsdk {
         JSON_Component comp = new JSON_Component();
         comp.type = "Model";
         var id = Utils.AssetID(meshFilter.sharedMesh);
-        JSON_Asset jsonAsset = new JSON_Asset {
+        JSON_Asset jsonAsset = new JSON_Asset
+        {
           type = "mesh",
-          urls = new Dictionary<string,string> {
+          urls = new Dictionary<string, string> {
             { "gltf", "meshes/" + id + ".gltf" },
             { "bin", "meshes/" + id + ".bin" }
           }

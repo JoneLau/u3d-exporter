@@ -12,7 +12,7 @@ namespace exsdk {
     // DumpMesh
     // -----------------------------------------
 
-    void DumpBuffer (BufferInfo _bufInfo, GLTF _gltf) {
+    void DumpBuffer(BufferInfo _bufInfo, GLTF _gltf) {
       // buffers
       GLTF_Buffer gltfBuffer = new GLTF_Buffer();
 
@@ -25,7 +25,7 @@ namespace exsdk {
       var accessors = new List<GLTF_Accessor>();
 
       // bufferViews
-      foreach ( BufferViewInfo bufView in _bufInfo.bufferViews ) {
+      foreach (BufferViewInfo bufView in _bufInfo.bufferViews) {
         GLTF_BufferView gltfBufferView = new GLTF_BufferView();
 
         gltfBufferView.name = bufView.name;
@@ -38,7 +38,7 @@ namespace exsdk {
         bufferViews.Add(gltfBufferView);
 
         // accessors
-        foreach ( AccessorInfo acc in bufView.accessors ) {
+        foreach (AccessorInfo acc in bufView.accessors) {
           GLTF_Accessor gltfAccessor = new GLTF_Accessor();
 
           gltfAccessor.name = acc.name;

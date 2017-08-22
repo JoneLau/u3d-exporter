@@ -12,7 +12,7 @@ namespace exsdk {
     // DumpAnims
     // -----------------------------------------
 
-    void DumpAnims (GameObject _animPrefab, GLTF _gltf, BufferInfo _bufInfo) {
+    void DumpAnims(GameObject _animPrefab, GLTF _gltf, BufferInfo _bufInfo) {
       // get animations
       GameObject prefabInst = PrefabUtility.InstantiatePrefab(_animPrefab) as GameObject;
       List<AnimationClip> clips = Utils.GetAnimationClips(prefabInst);
@@ -21,7 +21,7 @@ namespace exsdk {
       List<GameObject> joints = new List<GameObject>();
       RecurseNode(prefabInst, _go => {
         // this is not a joint
-        if ( _go.GetComponent<SkinnedMeshRenderer>() != null ) {
+        if (_go.GetComponent<SkinnedMeshRenderer>() != null) {
           return false;
         }
 
@@ -30,9 +30,9 @@ namespace exsdk {
       });
 
       //
-      if ( clips != null ) {
+      if (clips != null) {
         // process AnimationClip(s)
-        foreach ( AnimationClip clip in clips ) {
+        foreach (AnimationClip clip in clips) {
           int accOffset = _bufInfo.GetAccessorCount();
 
           AnimData animData = DumpAnimData(prefabInst, clip);
@@ -50,7 +50,7 @@ namespace exsdk {
     // DumpGltfAnimationEx
     // -----------------------------------------
 
-    GLTF_AnimationEx DumpGltfAnimationEx (AnimData _animData, List<GameObject> _joints, int _accOffset) {
+    GLTF_AnimationEx DumpGltfAnimationEx(AnimData _animData, List<GameObject> _joints, int _accOffset) {
       GLTF_AnimationEx result = new GLTF_AnimationEx();
 
       result.name = _animData.name;
@@ -63,9 +63,10 @@ namespace exsdk {
         NodeFrames frames = entry.Value;
 
         // T
-        if ( frames.tlist.Count > 0 ) {
+        if (frames.tlist.Count > 0) {
           // NOTE: index 0 = "time0", index 1 = "time1"
-          GLTF_AnimChannelEx channel = new GLTF_AnimChannelEx {
+          GLTF_AnimChannelEx channel = new GLTF_AnimChannelEx
+          {
             input = (frames.tlist.Count == 1 ? 0 : 1) + _accOffset,
             output = offset + _accOffset,
             node = _joints.IndexOf(frames.node),
@@ -76,9 +77,10 @@ namespace exsdk {
         }
 
         // S
-        if ( frames.slist.Count > 0 ) {
+        if (frames.slist.Count > 0) {
           // NOTE: index 0 = "time0", index 1 = "time1"
-          GLTF_AnimChannelEx channel = new GLTF_AnimChannelEx {
+          GLTF_AnimChannelEx channel = new GLTF_AnimChannelEx
+          {
             input = (frames.slist.Count == 1 ? 0 : 1) + _accOffset,
             output = offset + _accOffset,
             node = _joints.IndexOf(frames.node),
@@ -89,9 +91,10 @@ namespace exsdk {
         }
 
         // R
-        if ( frames.rlist.Count > 0 ) {
+        if (frames.rlist.Count > 0) {
           // NOTE: index 0 = "time0", index 1 = "time1"
-          GLTF_AnimChannelEx channel = new GLTF_AnimChannelEx {
+          GLTF_AnimChannelEx channel = new GLTF_AnimChannelEx
+          {
             input = (frames.rlist.Count == 1 ? 0 : 1) + _accOffset,
             output = offset + _accOffset,
             node = _joints.IndexOf(frames.node),
@@ -111,7 +114,7 @@ namespace exsdk {
     // DumpGltfAnimation
     // -----------------------------------------
 
-    GLTF_Animation DumpGltfAnimation (AnimData _animData, List<GameObject> _joints, int _accOffset) {
+    GLTF_Animation DumpGltfAnimation(AnimData _animData, List<GameObject> _joints, int _accOffset) {
       GLTF_Animation result = new GLTF_Animation();
 
       result.name = _animData.name;
@@ -125,10 +128,12 @@ namespace exsdk {
         NodeFrames frames = entry.Value;
 
         // T
-        if ( frames.tlist.Count > 0 ) {
-          GLTF_AnimChannel channel = new GLTF_AnimChannel {
+        if (frames.tlist.Count > 0) {
+          GLTF_AnimChannel channel = new GLTF_AnimChannel
+          {
             sampler = samplers.Count,
-            target = new GLTF_AnimTarget {
+            target = new GLTF_AnimTarget
+            {
               node = _joints.IndexOf(frames.node),
               path = "translation",
             }
@@ -136,7 +141,8 @@ namespace exsdk {
           channels.Add(channel);
 
           // NOTE: index 0 = "time0", index 1 = "time1"
-          GLTF_AnimSampler sampler = new GLTF_AnimSampler {
+          GLTF_AnimSampler sampler = new GLTF_AnimSampler
+          {
             input = (frames.tlist.Count == 1 ? 0 : 1) + _accOffset,
             output = offset + _accOffset,
           };
@@ -146,10 +152,12 @@ namespace exsdk {
         }
 
         // S
-        if ( frames.slist.Count > 0 ) {
-          GLTF_AnimChannel channel = new GLTF_AnimChannel {
+        if (frames.slist.Count > 0) {
+          GLTF_AnimChannel channel = new GLTF_AnimChannel
+          {
             sampler = samplers.Count,
-            target = new GLTF_AnimTarget {
+            target = new GLTF_AnimTarget
+            {
               node = _joints.IndexOf(frames.node),
               path = "scale",
             }
@@ -157,7 +165,8 @@ namespace exsdk {
           channels.Add(channel);
 
           // NOTE: index 0 = "time0", index 1 = "time1"
-          GLTF_AnimSampler sampler = new GLTF_AnimSampler {
+          GLTF_AnimSampler sampler = new GLTF_AnimSampler
+          {
             input = (frames.tlist.Count == 1 ? 0 : 1) + _accOffset,
             output = offset + _accOffset,
           };
@@ -167,10 +176,12 @@ namespace exsdk {
         }
 
         // R
-        if ( frames.rlist.Count > 0 ) {
-          GLTF_AnimChannel channel = new GLTF_AnimChannel {
+        if (frames.rlist.Count > 0) {
+          GLTF_AnimChannel channel = new GLTF_AnimChannel
+          {
             sampler = samplers.Count,
-            target = new GLTF_AnimTarget {
+            target = new GLTF_AnimTarget
+            {
               node = _joints.IndexOf(frames.node),
               path = "rotation",
             }
@@ -178,7 +189,8 @@ namespace exsdk {
           channels.Add(channel);
 
           // NOTE: index 0 = "time0", index 1 = "time1"
-          GLTF_AnimSampler sampler = new GLTF_AnimSampler {
+          GLTF_AnimSampler sampler = new GLTF_AnimSampler
+          {
             input = (frames.tlist.Count == 1 ? 0 : 1) + _accOffset,
             output = offset + _accOffset,
           };
@@ -198,27 +210,27 @@ namespace exsdk {
     // DumpAnimData
     // -----------------------------------------
 
-    AnimData DumpAnimData (GameObject _prefabInst, AnimationClip _clip) {
+    AnimData DumpAnimData(GameObject _prefabInst, AnimationClip _clip) {
       AnimData animData = new AnimData();
 
       // name
       animData.name = _clip.name;
 
       // get frames
-      float step = 1.0f/_clip.frameRate;
-      for ( float t = 0.0f; t < _clip.length; t += step ) {
+      float step = 1.0f / _clip.frameRate;
+      for (float t = 0.0f; t < _clip.length; t += step) {
         animData.times.Add(t);
       }
       animData.times.Add(_clip.length);
 
       // sample frames
-      for ( int i = 0; i < animData.times.Count; ++i ) {
+      for (int i = 0; i < animData.times.Count; ++i) {
         float t = animData.times[i];
         _clip.SampleAnimation(_prefabInst, t);
 
         RecurseNode(_prefabInst, _go => {
           // this is not a joint
-          if ( _go.GetComponent<SkinnedMeshRenderer>() != null ) {
+          if (_go.GetComponent<SkinnedMeshRenderer>() != null) {
             return false;
           }
 
@@ -226,7 +238,7 @@ namespace exsdk {
           string name = _go.name;
           NodeFrames frames;
 
-          if ( animData.nameToFrames.TryGetValue(name, out frames) == false ) {
+          if (animData.nameToFrames.TryGetValue(name, out frames) == false) {
             frames = new NodeFrames();
             frames.node = _go;
 
@@ -247,57 +259,57 @@ namespace exsdk {
 
         // T
         bool hasFrameT = false;
-        for ( int i = 0; i < frames.tlist.Count; ++i ) {
-          if ( frames.tlist[i] != frames.tlist[0] ) {
+        for (int i = 0; i < frames.tlist.Count; ++i) {
+          if (frames.tlist[i] != frames.tlist[0]) {
             hasFrameT = true;
             break;
           }
         }
-        if ( hasFrameT == false ) {
-          if ( frames.tlist[0] == Vector3.zero ) {
+        if (hasFrameT == false) {
+          if (frames.tlist[0] == Vector3.zero) {
             frames.tlist.Clear();
           } else {
-            frames.tlist.RemoveRange(1, frames.tlist.Count-1);
+            frames.tlist.RemoveRange(1, frames.tlist.Count - 1);
             hasFrameT = true;
           }
         }
 
         // S
         bool hasFrameS = false;
-        for ( int i = 0; i < frames.slist.Count; ++i ) {
-          if ( frames.slist[i] != frames.slist[0] ) {
+        for (int i = 0; i < frames.slist.Count; ++i) {
+          if (frames.slist[i] != frames.slist[0]) {
             hasFrameS = true;
             break;
           }
         }
-        if ( hasFrameS == false ) {
-          if ( frames.slist[0] == Vector3.one ) {
+        if (hasFrameS == false) {
+          if (frames.slist[0] == Vector3.one) {
             frames.slist.Clear();
           } else {
-            frames.slist.RemoveRange(1, frames.slist.Count-1);
+            frames.slist.RemoveRange(1, frames.slist.Count - 1);
             hasFrameS = true;
           }
         }
 
         // R
         bool hasFrameR = false;
-        for ( int i = 0; i < frames.rlist.Count; ++i ) {
-          if ( frames.rlist[i] != frames.rlist[0] ) {
+        for (int i = 0; i < frames.rlist.Count; ++i) {
+          if (frames.rlist[i] != frames.rlist[0]) {
             hasFrameR = true;
             break;
           }
         }
-        if ( hasFrameR == false ) {
-          if ( frames.rlist[0] == Quaternion.identity ) {
+        if (hasFrameR == false) {
+          if (frames.rlist[0] == Quaternion.identity) {
             frames.rlist.Clear();
           } else {
-            frames.rlist.RemoveRange(1, frames.rlist.Count-1);
+            frames.rlist.RemoveRange(1, frames.rlist.Count - 1);
             hasFrameR = true;
           }
         }
 
         //
-        if ( !hasFrameT && !hasFrameS && !hasFrameR ) {
+        if (!hasFrameT && !hasFrameS && !hasFrameR) {
           animData.nameToFrames.Remove(name);
         }
       }
@@ -309,7 +321,7 @@ namespace exsdk {
     // DumpBufferInfoFromAnimData
     // -----------------------------------------
 
-    void DumpBufferInfoFromAnimData (AnimData _animData, BufferInfo _bufInfo) {
+    void DumpBufferInfoFromAnimData(AnimData _animData, BufferInfo _bufInfo) {
       List<AccessorInfo> accessors = new List<AccessorInfo>();
 
       // calculate total length of animation-data
@@ -317,7 +329,8 @@ namespace exsdk {
       AccessorInfo acc;
 
       // time0
-      acc = new AccessorInfo {
+      acc = new AccessorInfo
+      {
         name = "time0@" + _animData.name,
         offset = length,
         count = 1,
@@ -329,7 +342,8 @@ namespace exsdk {
       length += 4;
 
       // times
-      acc = new AccessorInfo {
+      acc = new AccessorInfo
+      {
         name = "times@" + _animData.name,
         offset = length,
         count = _animData.times.Count,
@@ -344,8 +358,9 @@ namespace exsdk {
       foreach (var entry in _animData.nameToFrames) {
         NodeFrames frames = entry.Value;
 
-        if ( frames.tlist.Count > 0 ) {
-          acc = new AccessorInfo {
+        if (frames.tlist.Count > 0) {
+          acc = new AccessorInfo
+          {
             name = frames.node.name + "_T@" + _animData.name,
             offset = length,
             count = frames.tlist.Count,
@@ -357,8 +372,9 @@ namespace exsdk {
           length += frames.tlist.Count * 12;
         }
 
-        if ( frames.slist.Count > 0 ) {
-          acc = new AccessorInfo {
+        if (frames.slist.Count > 0) {
+          acc = new AccessorInfo
+          {
             name = frames.node.name + "_S@" + _animData.name,
             offset = length,
             count = frames.slist.Count,
@@ -370,8 +386,9 @@ namespace exsdk {
           length += frames.slist.Count * 12;
         }
 
-        if ( frames.rlist.Count > 0 ) {
-          acc = new AccessorInfo {
+        if (frames.rlist.Count > 0) {
+          acc = new AccessorInfo
+          {
             name = frames.node.name + "_R@" + _animData.name,
             offset = length,
             count = frames.rlist.Count,
@@ -386,21 +403,21 @@ namespace exsdk {
 
       // write data
       byte[] clipData;
-      using( MemoryStream stream = new MemoryStream(length) ) {
-        using ( BinaryWriter writer = new BinaryWriter(stream) ) {
+      using (MemoryStream stream = new MemoryStream(length)) {
+        using (BinaryWriter writer = new BinaryWriter(stream)) {
           // time0
           writer.Write(0.0f);
 
           // times
-          for ( int i = 0; i < _animData.times.Count; ++i ) {
+          for (int i = 0; i < _animData.times.Count; ++i) {
             writer.Write(_animData.times[i]);
           }
 
           foreach (var entry in _animData.nameToFrames) {
             NodeFrames frames = entry.Value;
 
-            if ( frames.tlist.Count > 0 ) {
-              for ( int i = 0; i < frames.tlist.Count; ++i ) {
+            if (frames.tlist.Count > 0) {
+              for (int i = 0; i < frames.tlist.Count; ++i) {
                 // NOTE: convert LH to RH
                 writer.Write(frames.tlist[i].x);
                 writer.Write(frames.tlist[i].y);
@@ -408,16 +425,16 @@ namespace exsdk {
               }
             }
 
-            if ( frames.slist.Count > 0 ) {
-              for ( int i = 0; i < frames.slist.Count; ++i ) {
+            if (frames.slist.Count > 0) {
+              for (int i = 0; i < frames.slist.Count; ++i) {
                 writer.Write(frames.slist[i].x);
                 writer.Write(frames.slist[i].y);
                 writer.Write(frames.slist[i].z);
               }
             }
 
-            if ( frames.rlist.Count > 0 ) {
-              for ( int i = 0; i < frames.rlist.Count; ++i ) {
+            if (frames.rlist.Count > 0) {
+              for (int i = 0; i < frames.rlist.Count; ++i) {
                 // NOTE: convert LH to RH
                 writer.Write(-frames.rlist[i].x);
                 writer.Write(-frames.rlist[i].y);
@@ -431,7 +448,8 @@ namespace exsdk {
       }
 
       // buffer view
-      BufferViewInfo bufView = new BufferViewInfo {
+      BufferViewInfo bufView = new BufferViewInfo
+      {
         name = _animData.name,
         offset = _bufInfo.data.Length,
         length = clipData.Length,
@@ -443,10 +461,10 @@ namespace exsdk {
       byte[] data = new byte[_bufInfo.data.Length + clipData.Length];
       int offset = 0;
 
-      System.Buffer.BlockCopy( _bufInfo.data, 0, data, offset, _bufInfo.data.Length );
+      System.Buffer.BlockCopy(_bufInfo.data, 0, data, offset, _bufInfo.data.Length);
       offset += _bufInfo.data.Length;
 
-      System.Buffer.BlockCopy( clipData, 0, data, offset, clipData.Length );
+      System.Buffer.BlockCopy(clipData, 0, data, offset, clipData.Length);
       offset += clipData.Length;
 
       //
