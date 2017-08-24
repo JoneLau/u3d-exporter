@@ -15,6 +15,15 @@ namespace exsdk {
   }
 
   // =========================
+  // JSON_Assets
+  // =========================
+
+  [System.Serializable]
+  public class JSON_Assets {
+    public Dictionary<string, JSON_Asset> assets = new Dictionary<string, JSON_Asset>();
+  }
+
+  // =========================
   // JSON_Prefab
   // =========================
 
@@ -31,7 +40,7 @@ namespace exsdk {
   public class JSON_Entity {
     // basic
     public string name;
-    public JSON_Asset prefab;
+    public string prefab;
     public float[] translation = new float[3] { 0, 0, 0 };
     public float[] rotation = new float[4] { 0, 0, 0, 1 };
     public float[] scale = new float[3] { 1, 1, 1 };

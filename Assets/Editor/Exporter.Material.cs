@@ -34,14 +34,7 @@ namespace exsdk {
           var texture = _mat.GetTexture(prop.name);
           var offset = _mat.GetTextureOffset(prop.name);
           var scale = _mat.GetTextureScale(prop.name);
-          var id = Utils.AssetID(texture);
-          var textureAsset = new JSON_Asset {
-            type = "texture",
-            urls = new Dictionary<string, string> {
-              { "json", "textures/" + id + ".json" },
-              { "image", "textures/" + id + Utils.AssetExt(texture) },
-            }
-          };
+          var textureAsset = Utils.AssetIDNoName(texture);
 
           result.properties.Add(prop.mapping, textureAsset);
           result.properties.Add(prop.mapping + "Tiling", new float[2] {

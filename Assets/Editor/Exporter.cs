@@ -41,6 +41,7 @@ namespace exsdk {
 
       // get root objects in scene
       Scene scene = EditorSceneManager.GetActiveScene();
+      JSON_Assets assetsJson = new JSON_Assets();
 
       // get data from scene
       var nodes = new List<GameObject>();
@@ -63,6 +64,7 @@ namespace exsdk {
       // save meshes
       var destMeshes = Path.Combine(dest, "meshes");
       foreach (Mesh mesh in meshes) {
+        string id = Utils.AssetIDNoName(mesh);
         GLTF gltf = new GLTF();
         gltf.asset = new GLTF_Asset
         {
@@ -71,7 +73,7 @@ namespace exsdk {
         };
         BufferInfo bufInfo = new BufferInfo
         {
-          id = Utils.AssetID(mesh),
+          id = id,
           name = mesh.name
         };
 
@@ -80,15 +82,25 @@ namespace exsdk {
 
         Save(
           destMeshes,
-          Utils.AssetID(mesh),
+          id,
           gltf,
           new List<BufferInfo> { bufInfo }
         );
+
+        // add asset to table
+        assetsJson.assets.Add(id, new JSON_Asset {
+          type = "mesh",
+          urls = new Dictionary<string, string> {
+            { "gltf", "meshes/" + id + ".gltf" },
+            { "bin", "meshes/" + id + ".bin" }
+          }
+        });
       }
 
       // save skins
       var destSkins = Path.Combine(dest, "skinnings");
       foreach (GameObject animPrefab in animPrefabs) {
+        string id = Utils.AssetIDNoName(animPrefab);
         GLTF gltf = new GLTF();
         gltf.asset = new GLTF_Asset
         {
@@ -97,7 +109,7 @@ namespace exsdk {
         };
         BufferInfo bufInfo = new BufferInfo
         {
-          id = Utils.AssetID(animPrefab),
+          id = id,
           name = animPrefab.name
         };
 
@@ -106,36 +118,81 @@ namespace exsdk {
 
         Save(
           destSkins,
-          Utils.AssetID(animPrefab),
+          id,
           gltf,
           new List<BufferInfo> { bufInfo }
         );
+
+        // add asset to table
+        assetsJson.assets.Add(id, new JSON_Asset {
+          type = "anim-prefab",
+          urls = new Dictionary<string, string> {
+            { "gltf", "skinnings/" + id + ".gltf" }
+          }
+        });
       }
 
       // save animations
       var destAnims = Path.Combine(dest, "anims");
       foreach (GameObject animPrefab in animPrefabs) {
-        GLTF gltf = new GLTF();
-        gltf.asset = new GLTF_Asset
-        {
-          version = "1.0.0",
-          generator = "u3d-exporter"
-        };
-        BufferInfo bufInfo = new BufferInfo
-        {
-          id = Utils.AssetID(animPrefab),
-          name = animPrefab.name
-        };
+        // get animations
+        GameObject prefabInst = PrefabUtility.InstantiatePrefab(animPrefab) as GameObject;
+        List<AnimationClip> clips = Utils.GetAnimationClips(prefabInst);
 
-        DumpAnims(animPrefab, gltf, bufInfo);
-        DumpBuffer(bufInfo, gltf);
+        // get joints
+        List<GameObject> joints = new List<GameObject>();
+        RecurseNode(prefabInst, _go => {
+          // this is not a joint
+          if (_go.GetComponent<SkinnedMeshRenderer>() != null) {
+            return false;
+          }
 
-        Save(
-          destAnims,
-          Utils.AssetID(animPrefab),
-          gltf,
-          new List<BufferInfo> { bufInfo }
-        );
+          joints.Add(_go);
+          return true;
+        });
+
+        // dump animation clips
+        if (clips != null) {
+          // process AnimationClip(s)
+          foreach (AnimationClip clip in clips) {
+            string id = Utils.AssetIDNoName(clip);
+            GLTF gltf = new GLTF();
+            gltf.asset = new GLTF_Asset {
+              version = "1.0.0",
+              generator = "u3d-exporter"
+            };
+            BufferInfo bufInfo = new BufferInfo {
+              id = id,
+              name = animPrefab.name
+            };
+
+            AnimData animData = DumpAnimData(prefabInst, clip);
+            DumpBufferInfoFromAnimData(animData, bufInfo);
+
+            GLTF_AnimationEx gltfAnim = DumpGltfAnimationEx(animData, joints, 0);
+            gltf.animations.Add(gltfAnim);
+
+            DumpBuffer(bufInfo, gltf);
+
+            Save(
+              destAnims,
+              id,
+              gltf,
+              new List<BufferInfo> { bufInfo }
+            );
+
+            // add asset to table
+            assetsJson.assets.Add(id, new JSON_Asset {
+              type = "animation",
+              urls = new Dictionary<string, string> {
+                { "gltf", "anims/" + id + ".gltf" },
+                { "bin", "anims/" + id + ".bin" }
+              }
+            });
+          }
+        }
+
+        Object.DestroyImmediate(prefabInst);
       }
 
       // save prefabs
@@ -145,16 +202,25 @@ namespace exsdk {
         Directory.CreateDirectory(destPrefabs);
       }
       foreach (GameObject prefab in prefabs) {
+        string id = Utils.AssetIDNoName(prefab);
         var prefabJson = DumpPrefab(prefab);
         string path;
         string json = JsonConvert.SerializeObject(prefabJson, Formatting.Indented);
 
-        path = Path.Combine(destPrefabs, Utils.AssetID(prefab) + ".json");
+        path = Path.Combine(destPrefabs, id + ".json");
         StreamWriter writer = new StreamWriter(path);
         writer.Write(json);
         writer.Close();
 
         // Debug.Log(Path.GetFileName(path) + " saved.");
+
+        // add asset to table
+        assetsJson.assets.Add(id, new JSON_Asset {
+          type = "prefab",
+          urls = new Dictionary<string, string> {
+            { "json", "prefabs/" + id + ".json" },
+          }
+        });
       }
 
       // save textures
@@ -167,7 +233,7 @@ namespace exsdk {
         var textureJson = DumpTexture(tex);
         string path;
         string json = JsonConvert.SerializeObject(textureJson, Formatting.Indented);
-        string id = Utils.AssetID(tex);
+        string id = Utils.AssetIDNoName(tex);
 
         // json
         path = Path.Combine(destTextures,  id + ".json");
@@ -181,6 +247,15 @@ namespace exsdk {
         File.Copy(assetPath, path);
 
         // Debug.Log(Path.GetFileName(path) + " saved.");
+
+        // add asset to table
+        assetsJson.assets.Add(id, new JSON_Asset {
+          type = "texture-2d",
+          urls = new Dictionary<string, string> {
+            { "json", "textures/" + id + ".json" },
+            { "image", "textures/" + id + Utils.AssetExt(tex) },
+          }
+        });
       }
 
       // save materials
@@ -193,7 +268,7 @@ namespace exsdk {
         var materialJson = DumpMaterial(mat);
         string path;
         string json = JsonConvert.SerializeObject(materialJson, Formatting.Indented);
-        string id = Utils.AssetID(mat);
+        string id = Utils.AssetIDNoName(mat);
 
         // json
         path = Path.Combine(destMaterials,  id + ".json");
@@ -202,6 +277,24 @@ namespace exsdk {
         writer.Close();
 
         // Debug.Log(Path.GetFileName(path) + " saved.");
+
+        // add asset to table
+        assetsJson.assets.Add(id, new JSON_Asset {
+          type = "material",
+          urls = new Dictionary<string, string> {
+            { "json", "materials/" + id + ".json" },
+          }
+        });
+      }
+
+      // save assets
+      {
+        string path = Path.Combine(dest, "assets.json");
+        string json = JsonConvert.SerializeObject(assetsJson, Formatting.Indented);
+
+        StreamWriter writer = new StreamWriter(path);
+        writer.Write(json);
+        writer.Close();
       }
 
       // save scene

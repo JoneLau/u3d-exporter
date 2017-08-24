@@ -72,28 +72,9 @@ namespace exsdk {
       GameObject prefab = PrefabUtility.GetPrefabParent(_go) as GameObject;
       if (prefab) {
         prefab = prefab.transform.root.gameObject;
-        bool isAnimPrefab = Utils.IsAnimPrefab(prefab);
-        string id = Utils.AssetID(prefab);
-
-        if (isAnimPrefab) {
-          JSON_Asset jsonAsset = new JSON_Asset
-          {
-            type = "anim-prefab",
-            urls = new Dictionary<string, string> {
-              { "gltf", "skinnings/" + id + ".gltf" }
-            }
-          };
-          result.prefab = jsonAsset;
-        } else {
-          JSON_Asset jsonAsset = new JSON_Asset
-          {
-            type = "prefab",
-            urls = new Dictionary<string, string> {
-              { "json", "prefabs/" + id + ".json" }
-            }
-          };
-          result.prefab = jsonAsset;
-        }
+        // bool isAnimPrefab = Utils.IsAnimPrefab(prefab);
+        string id = Utils.AssetIDNoName(prefab);
+        result.prefab = id;
       } else {
         // NOTE: if we are prefab, do not serailize its components
         // serialize components
@@ -145,29 +126,16 @@ namespace exsdk {
         comp.type = "Model";
 
         // mesh
-        var id = Utils.AssetID(meshFilter.sharedMesh);
-        JSON_Asset jsonAsset = new JSON_Asset
-        {
-          type = "mesh",
-          urls = new Dictionary<string, string> {
-            { "gltf", "meshes/" + id + ".gltf" },
-            { "bin", "meshes/" + id + ".bin" }
-          }
-        };
-        comp.properties.Add("mesh", jsonAsset);
+        var id = Utils.AssetIDNoName(meshFilter.sharedMesh);
+        comp.properties.Add("mesh", id);
 
         // materials
         Renderer renderer = _go.GetComponent<Renderer>();
         if (renderer) {
-          List<JSON_Asset> matAssets = new List<JSON_Asset>();
+          List<string> matAssets = new List<string>();
           foreach (Material mat in renderer.sharedMaterials) {
-            id = Utils.AssetID(mat);
-            matAssets.Add(new JSON_Asset {
-              type = "material",
-              urls = new Dictionary<string, string> {
-                { "json", "materials/" + id + ".json"  }
-              }
-            });
+            id = Utils.AssetIDNoName(mat);
+            matAssets.Add(id);
           }
           comp.properties.Add("materials", matAssets);
         }
