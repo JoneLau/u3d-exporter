@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEditor;
 
 using System.Collections;
 using System.Collections.Generic;
@@ -12,12 +13,20 @@ namespace exsdk {
     // DumpPrefab
     // -----------------------------------------
 
-    JSON_Prefab DumpPrefab(GameObject _prefab) {
+    public JSON_Prefab DumpPrefab(GameObject _prefab) {
       JSON_Prefab result = new JSON_Prefab();
       List<GameObject> nodes = new List<GameObject>();
+      bool isAnimPrefab = Utils.IsAnimPrefab(_prefab);
 
-      // collect meshes, skins and animation-clips
+      // collect nodes
       Walk(new List<GameObject> { _prefab }, _go => {
+        if (isAnimPrefab) {
+          // this is a joint, skip it.
+          if (_go.GetComponents<Component>().Length == 1) {
+            return false;
+          }
+        }
+
         nodes.Add(_go);
         return true;
       });

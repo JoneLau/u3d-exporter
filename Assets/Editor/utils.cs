@@ -233,6 +233,11 @@ namespace exsdk {
       }
     };
 
+    public static Object GetPrefabAsset(GameObject _go) {
+      var root = PrefabUtility.FindPrefabRoot(_go);
+      return PrefabUtility.GetPrefabParent(root);
+    }
+
     public static ShaderInfo GetShaderInfo(Material _mat) {
       ShaderInfo shaderInfo;
       if (shaderInfos.TryGetValue(_mat.shader.name, out shaderInfo) == false) {
@@ -241,7 +246,6 @@ namespace exsdk {
 
       return shaderInfo;
     }
-
 
     public static List<Texture> GetTextures(Material _mat) {
       List<Texture> results = new List<Texture>();
@@ -257,6 +261,13 @@ namespace exsdk {
       if (shaderInfo.properties != null) {
         foreach (ShaderProperty prop in shaderInfo.properties) {
           if (prop.type == "tex2d") {
+            var texture = _mat.GetTexture(prop.name);
+
+            // NOTE: it is possible the material don't have texture
+            if (!texture) {
+              continue;
+            }
+
             results.Add(_mat.GetTexture(prop.name));
           }
         }
@@ -278,8 +289,27 @@ namespace exsdk {
       return Path.GetExtension(assetPath);
     }
 
-    public static string ID(Object _obj) {
-      return _obj.name + "_" + _obj.GetInstanceID();
+    public static string SkinAssetID(Object _obj) {
+      string assetPath = AssetDatabase.GetAssetPath(_obj);
+      if (string.IsNullOrEmpty(assetPath)) {
+        return null;
+      }
+
+      var mesh = _obj as Mesh;
+      if (mesh && mesh.bindposes.Length > 0) {
+        var meshes = new List<Object>();
+        var assets = AssetDatabase.LoadAllAssetsAtPath(assetPath);
+        foreach (var asset in assets) {
+          var m = asset as Mesh;
+          if (m && m.bindposes.Length > 0) {
+            meshes.Add(m);
+          }
+        }
+        var localID = "s" + meshes.IndexOf(_obj);
+        return localID + "_" + AssetDatabase.AssetPathToGUID(assetPath);
+      }
+
+      return null;
     }
 
     public static string AssetID(Object _obj) {
@@ -290,25 +320,19 @@ namespace exsdk {
 
       // if the asset saved in the disk
       if (assetPath.IndexOf("Assets/") == 0) {
-        return _obj.name + "_" + AssetDatabase.AssetPathToGUID(assetPath);
-      }
+        // if this is a sub asset
+        if (_obj is Mesh && AssetDatabase.IsSubAsset(_obj)) {
+          var meshes = new List<Object>();
+          var assets = AssetDatabase.LoadAllAssetsAtPath(assetPath);
+          foreach (var asset in assets) {
+            if (asset is Mesh) {
+              meshes.Add(asset);
+            }
+          }
+          var localID = "m" + meshes.IndexOf(_obj);
+          return localID + "_" + AssetDatabase.AssetPathToGUID(assetPath);
+        }
 
-      // if this is a internal asset
-      if (assetPath == "Library/unity default resources") {
-        return _obj.name + "_internal";
-      }
-
-      return ID(_obj);
-    }
-
-    public static string AssetIDNoName(Object _obj) {
-      string assetPath = AssetDatabase.GetAssetPath(_obj);
-      if (string.IsNullOrEmpty(assetPath)) {
-        return null;
-      }
-
-      // if the asset saved in the disk
-      if (assetPath.IndexOf("Assets/") == 0) {
         return AssetDatabase.AssetPathToGUID(assetPath);
       }
 
@@ -318,10 +342,6 @@ namespace exsdk {
       }
 
       return _obj.GetInstanceID().ToString();
-    }
-
-    public static string ClipID(Object _obj, Object _prefab) {
-      return Utils.AssetID(_obj) + "_" + Utils.AssetIDNoName(_prefab).Substring(0, 7);
     }
 
     public static int FilterModeIndex(FilterMode _mode) {

@@ -53,7 +53,7 @@ namespace exsdk {
       }
 
       if (_mesh.colors.Length > 0) {
-        attributes.Add("COLOR", _accOffset + idx);
+        attributes.Add("COLOR_0", _accOffset + idx);
         ++idx;
       }
 

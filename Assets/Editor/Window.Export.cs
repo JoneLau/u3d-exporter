@@ -105,8 +105,13 @@ namespace exsdk {
 
       GUILayout.Label("Options", EditorStyles.boldLabel);
 
+      // #########################
+      // Start
+      // #########################
+
       GUIStyle style = EditorStyles.inspectorDefaultMargins;
       EditorGUILayout.BeginVertical(style, new GUILayoutOption[0]);
+
       // =========================
       // Output Path
       // =========================
@@ -144,8 +149,6 @@ namespace exsdk {
 
       this.mode = (FileMode)EditorGUILayout.EnumPopup("Mode", this.mode);
 
-      EditorGUILayout.EndVertical();
-
       // =========================
       // Export Button
       // =========================
@@ -160,6 +163,12 @@ namespace exsdk {
       GUILayout.FlexibleSpace();
       EditorGUILayout.Space();
       EditorGUILayout.EndHorizontal();
+
+      // #########################
+      // End
+      // #########################
+
+      EditorGUILayout.EndVertical();
     }
   }
 }

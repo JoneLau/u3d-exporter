@@ -73,7 +73,7 @@ namespace exsdk {
       if (prefab) {
         prefab = prefab.transform.root.gameObject;
         // bool isAnimPrefab = Utils.IsAnimPrefab(prefab);
-        string id = Utils.AssetIDNoName(prefab);
+        string id = Utils.AssetID(prefab);
         result.prefab = id;
       } else {
         // NOTE: if we are prefab, do not serailize its components
@@ -91,7 +91,7 @@ namespace exsdk {
     List<JSON_Component> DumpComponents(GameObject _go) {
       List<JSON_Component> result = new List<JSON_Component>();
 
-      // Light
+      // light-component
       var light = _go.GetComponent<Light>();
       if (light) {
         JSON_Component comp = new JSON_Component();
@@ -105,7 +105,7 @@ namespace exsdk {
         result.Add(comp);
       }
 
-      // Camera
+      // camera-component
       var camera = _go.GetComponent<Camera>();
       if (camera) {
         JSON_Component comp = new JSON_Component();
@@ -119,14 +119,14 @@ namespace exsdk {
         result.Add(comp);
       }
 
-      // Mesh
+      // model-component
       var meshFilter = _go.GetComponent<MeshFilter>();
       if (meshFilter) {
         JSON_Component comp = new JSON_Component();
         comp.type = "Model";
 
         // mesh
-        var id = Utils.AssetIDNoName(meshFilter.sharedMesh);
+        var id = Utils.AssetID(meshFilter.sharedMesh);
         comp.properties.Add("mesh", id);
 
         // materials
@@ -134,7 +134,32 @@ namespace exsdk {
         if (renderer) {
           List<string> matAssets = new List<string>();
           foreach (Material mat in renderer.sharedMaterials) {
-            id = Utils.AssetIDNoName(mat);
+            id = Utils.AssetID(mat);
+            matAssets.Add(id);
+          }
+          comp.properties.Add("materials", matAssets);
+        }
+
+        result.Add(comp);
+      }
+
+      // skinning-model-component
+      var skinnedMeshRenderer = _go.GetComponent<SkinnedMeshRenderer>();
+      if (skinnedMeshRenderer) {
+        JSON_Component comp = new JSON_Component();
+        comp.type = "SkinningModel";
+
+        // mesh
+        var id = Utils.AssetID(skinnedMeshRenderer.sharedMesh);
+        comp.properties.Add("mesh", id);
+        comp.properties.Add("skin", Utils.SkinAssetID(skinnedMeshRenderer.sharedMesh));
+
+        // materials
+        Renderer renderer = _go.GetComponent<Renderer>();
+        if (renderer) {
+          List<string> matAssets = new List<string>();
+          foreach (Material mat in renderer.sharedMaterials) {
+            id = Utils.AssetID(mat);
             matAssets.Add(id);
           }
           comp.properties.Add("materials", matAssets);

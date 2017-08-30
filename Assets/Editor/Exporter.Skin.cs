@@ -8,13 +8,13 @@ using System.IO;
 namespace exsdk {
   public partial class Exporter {
     // -----------------------------------------
-    // DumpSkin
+    // DumpSkinningModel
     // -----------------------------------------
 
-    void DumpSkin(GameObject _animPrefab, GLTF _gltf, BufferInfo _bufInfo) {
+    void DumpSkinningModel(GameObject _prefab, GLTF _gltf, BufferInfo _bufInfo) {
       // get joints
       List<GameObject> joints = new List<GameObject>();
-      RecurseNode(_animPrefab, _go => {
+      RecurseNode(_prefab, _go => {
         // this is not a joint
         if (_go.GetComponent<SkinnedMeshRenderer>() != null) {
           return false;
@@ -26,7 +26,7 @@ namespace exsdk {
 
       // get nodes
       List<GameObject> nodes = new List<GameObject>();
-      RecurseNode(_animPrefab, _go => {
+      RecurseNode(_prefab, _go => {
         // this is a joint, skip it.
         if (_go.GetComponents<Component>().Length == 1) {
           return false;
@@ -39,7 +39,7 @@ namespace exsdk {
       // get skins & meshes
       List<Mesh> meshes = new List<Mesh>();
       List<SkinnedMeshRenderer> smrList = new List<SkinnedMeshRenderer>();
-      RecurseNode(_animPrefab, _go => {
+      RecurseNode(_prefab, _go => {
         SkinnedMeshRenderer smr = _go.GetComponent<SkinnedMeshRenderer>();
         if (smr != null) {
           meshes.Add(smr.sharedMesh);
@@ -77,7 +77,7 @@ namespace exsdk {
 
         // dump skin
         int accBindposesIdx = _bufInfo.GetAccessorCount() - 1;
-        GameObject rootBone = Utils.GetRootBone(smr, _animPrefab).gameObject;
+        GameObject rootBone = Utils.GetRootBone(smr, _prefab).gameObject;
 
         GLTF_Skin gltfSkin = DumpGtlfSkin(smr, joints, rootBone, accBindposesIdx);
         if (gltfSkin != null) {

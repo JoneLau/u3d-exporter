@@ -15,15 +15,6 @@ namespace exsdk {
   }
 
   // =========================
-  // JSON_Assets
-  // =========================
-
-  [System.Serializable]
-  public class JSON_Assets {
-    public Dictionary<string, JSON_Asset> assets = new Dictionary<string, JSON_Asset>();
-  }
-
-  // =========================
   // JSON_Prefab
   // =========================
 

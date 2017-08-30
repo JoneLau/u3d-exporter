@@ -34,7 +34,7 @@ namespace exsdk {
           var texture = _mat.GetTexture(prop.name);
           var offset = _mat.GetTextureOffset(prop.name);
           var scale = _mat.GetTextureScale(prop.name);
-          var textureAsset = Utils.AssetIDNoName(texture);
+          var textureAsset = Utils.AssetID(texture);
 
           result.properties.Add(prop.mapping, textureAsset);
           result.properties.Add(prop.mapping + "Tiling", new float[2] {
