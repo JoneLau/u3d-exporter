@@ -232,9 +232,8 @@ namespace exsdk {
             DumpSkinningModel(prefab, gltf, bufInfo);
             DumpBuffer(bufInfo, gltf);
           } else {
-            // TODO:
-            // DumpModel(prefab, gltf, bufInfo);
-            // DumpBuffer(bufInfo, gltf);
+            DumpModel(prefab, gltf, bufInfo);
+            DumpBuffer(bufInfo, gltf);
           }
 
           Save(
@@ -248,7 +247,8 @@ namespace exsdk {
           assetsJson.Add(id, new JSON_Asset {
             type = "gltf",
             urls = new Dictionary<string, string> {
-              { "gltf", "gltfs/" + id + ".gltf" }
+              { "gltf", "gltfs/" + id + ".gltf" },
+              { "bin", "gltfs/" + id + ".bin" }
             }
           });
         }

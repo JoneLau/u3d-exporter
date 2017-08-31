@@ -7,6 +7,49 @@ using System.IO;
 
 namespace exsdk {
   public partial class Exporter {
+    // -----------------------------------------
+    // DumpModel
+    // -----------------------------------------
+
+    void DumpModel(GameObject _prefab, GLTF _gltf, BufferInfo _bufInfo) {
+      // get nodes
+      List<GameObject> nodes = new List<GameObject>();
+      RecurseNode(_prefab, _go => {
+        nodes.Add(_go);
+        return true;
+      });
+
+      // get meshes
+      List<Mesh> meshes = new List<Mesh>();
+      RecurseNode(_prefab, _go => {
+        MeshFilter meshFilter = _go.GetComponent<MeshFilter>();
+        if (meshFilter && meshes.IndexOf(meshFilter.sharedMesh) == -1 ) {
+          meshes.Add(meshFilter.sharedMesh);
+        }
+
+        return true;
+      });
+
+      // dump nodes
+      foreach (GameObject go in nodes) {
+        GLTF_Node gltfNode = DumpGltfNode(go, nodes);
+
+        MeshFilter meshFilter = go.GetComponent<MeshFilter>();
+        if (meshFilter != null) {
+          gltfNode.mesh = meshes.IndexOf(meshFilter.sharedMesh);
+        }
+
+        _gltf.nodes.Add(gltfNode);
+      }
+
+      // dump meshes
+      int accOffset = 0;
+      foreach (Mesh mesh in meshes) {
+        // dump mesh
+        accOffset = _bufInfo.GetAccessorCount();
+        DumpMesh(mesh, _gltf, _bufInfo, accOffset);
+      }
+    }
 
     // -----------------------------------------
     // DumpMesh

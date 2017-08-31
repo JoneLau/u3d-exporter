@@ -330,7 +330,7 @@ namespace exsdk {
             }
           }
           var localID = "m" + meshes.IndexOf(_obj);
-          return localID + "_" + AssetDatabase.AssetPathToGUID(assetPath);
+          return localID + "@" + AssetDatabase.AssetPathToGUID(assetPath);
         }
 
         return AssetDatabase.AssetPathToGUID(assetPath);
