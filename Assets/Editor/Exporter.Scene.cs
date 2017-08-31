@@ -72,7 +72,6 @@ namespace exsdk {
       GameObject prefab = PrefabUtility.GetPrefabParent(_go) as GameObject;
       if (prefab) {
         prefab = prefab.transform.root.gameObject;
-        // bool isAnimPrefab = Utils.IsAnimPrefab(prefab);
         string id = Utils.AssetID(prefab);
         result.prefab = id;
       } else {

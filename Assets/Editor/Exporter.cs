@@ -508,6 +508,28 @@ namespace exsdk {
 
           // add nodes & skip prefab children
           _nodes.Add(_go);
+
+          // NOTE: we support one level prefab breaking child
+          foreach (Transform child in _go.transform) {
+            if (PrefabUtility.GetPrefabParent(child) != prefab) {
+              var childGO = child.gameObject;
+              _nodes.Add(childGO);
+
+              type = PrefabUtility.GetPrefabType(childGO);
+              if (type != PrefabType.None) {
+                prefab = Utils.GetPrefabAsset(childGO);
+
+                // check if prefab already exists
+                founded = _prefabs.Find(item => {
+                  return item == prefab;
+                });
+                if (founded == null) {
+                  _prefabs.Add(prefab);
+                }
+              }
+            }
+          }
+
           return false;
         }
 

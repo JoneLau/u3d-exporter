@@ -253,7 +253,7 @@ namespace exsdk {
       // get shader info
       ShaderInfo shaderInfo;
       if (shaderInfos.TryGetValue(_mat.shader.name, out shaderInfo) == false) {
-        Debug.LogWarning("Unregisterred Shader: " + _mat.shader.name);
+        Debug.LogWarning("Unregisterred Shader: " + _mat.shader.name + " for material: " + _mat.name);
         return results;
       }
 
