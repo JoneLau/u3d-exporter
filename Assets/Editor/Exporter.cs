@@ -511,20 +511,22 @@ namespace exsdk {
 
           // NOTE: we support one level prefab breaking child
           foreach (Transform child in _go.transform) {
-            if (PrefabUtility.GetPrefabParent(child) != prefab) {
-              var childGO = child.gameObject;
+            var childGO = child.gameObject;
+            var root = PrefabUtility.FindValidUploadPrefabInstanceRoot(childGO);
+
+            if (root != _go) {
               _nodes.Add(childGO);
 
               type = PrefabUtility.GetPrefabType(childGO);
               if (type != PrefabType.None) {
-                prefab = Utils.GetPrefabAsset(childGO);
+                var prefab2 = Utils.GetPrefabAsset(childGO);
 
                 // check if prefab already exists
                 founded = _prefabs.Find(item => {
-                  return item == prefab;
+                  return item == prefab2;
                 });
                 if (founded == null) {
-                  _prefabs.Add(prefab);
+                  _prefabs.Add(prefab2);
                 }
               }
             }
