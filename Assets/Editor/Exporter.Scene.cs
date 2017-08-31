@@ -151,7 +151,6 @@ namespace exsdk {
         // mesh
         var id = Utils.AssetID(skinnedMeshRenderer.sharedMesh);
         comp.properties.Add("mesh", id);
-        comp.properties.Add("skin", Utils.SkinAssetID(skinnedMeshRenderer.sharedMesh));
 
         // materials
         Renderer renderer = _go.GetComponent<Renderer>();
@@ -163,6 +162,22 @@ namespace exsdk {
           }
           comp.properties.Add("materials", matAssets);
         }
+
+        result.Add(comp);
+      }
+
+      // animation-component
+      List<AnimationClip> clips = Utils.GetAnimationClips(_go);
+      if (clips != null && clips.Count > 0) {
+        JSON_Component comp = new JSON_Component();
+        comp.type = "Animation";
+
+        var ids = new List<string>();
+        foreach (var clip in clips) {
+          ids.Add(Utils.AssetID(clip));
+        }
+        comp.properties.Add("animations", ids);
+        comp.properties.Add("joints", Utils.GetJointsID(_go));
 
         result.Add(comp);
       }

@@ -238,6 +238,15 @@ namespace exsdk {
       return PrefabUtility.GetPrefabParent(root);
     }
 
+    public static string GetJointsID(GameObject _go) {
+      var skinnedMeshRenderer = _go.GetComponentInChildren<SkinnedMeshRenderer>();
+      var mesh = skinnedMeshRenderer.sharedMesh;
+      var path = AssetDatabase.GetAssetPath(mesh);
+      var prefab = AssetDatabase.LoadMainAssetAtPath(path);
+
+      return "joints@" + AssetID(prefab);
+    }
+
     public static ShaderInfo GetShaderInfo(Material _mat) {
       ShaderInfo shaderInfo;
       if (shaderInfos.TryGetValue(_mat.shader.name, out shaderInfo) == false) {
@@ -287,29 +296,6 @@ namespace exsdk {
       }
 
       return Path.GetExtension(assetPath);
-    }
-
-    public static string SkinAssetID(Object _obj) {
-      string assetPath = AssetDatabase.GetAssetPath(_obj);
-      if (string.IsNullOrEmpty(assetPath)) {
-        return null;
-      }
-
-      var mesh = _obj as Mesh;
-      if (mesh && mesh.bindposes.Length > 0) {
-        var meshes = new List<Object>();
-        var assets = AssetDatabase.LoadAllAssetsAtPath(assetPath);
-        foreach (var asset in assets) {
-          var m = asset as Mesh;
-          if (m && m.bindposes.Length > 0) {
-            meshes.Add(m);
-          }
-        }
-        var localID = "s" + meshes.IndexOf(_obj);
-        return localID + "_" + AssetDatabase.AssetPathToGUID(assetPath);
-      }
-
-      return null;
     }
 
     public static string AssetID(Object _obj) {
