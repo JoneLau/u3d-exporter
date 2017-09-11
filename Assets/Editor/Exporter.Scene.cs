@@ -93,6 +93,24 @@ namespace exsdk {
         prefab = prefab.transform.root.gameObject;
         string id = Utils.AssetID(prefab);
         result.prefab = id;
+
+        // TODO:
+        // // Dump Modifications
+        // PropertyModification[] mods = PrefabUtility.GetPropertyModifications(_go);
+        // if (mods.Length > 0) {
+        //   foreach(var mod in mods) {
+        //     if (mod.target is MeshRenderer) {
+        //       var renderer = mod.target as MeshRenderer;
+        //       if (mod.propertyPath.Contains("Materials")) {
+        //         List<string> matAssets = new List<string>();
+        //         foreach (Material mat in renderer.sharedMaterials) {
+        //           id = Utils.AssetID(mat);
+        //           matAssets.Add(id);
+        //         }
+        //       }
+        //     }
+        //   }
+        // }
       } else {
         // NOTE: if we are prefab, do not serailize its components
         // serialize components

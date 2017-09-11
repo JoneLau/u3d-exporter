@@ -37,6 +37,7 @@ namespace exsdk {
     public float[] scale = new float[3] { 1, 1, 1 };
     public List<JSON_Component> components;
     public List<int> children;
+    public List<JSON_Modification> modifications = new List<JSON_Modification>();
 
     public bool ShouldSerializename() {
       return string.IsNullOrEmpty(name) == false;
@@ -64,6 +65,10 @@ namespace exsdk {
 
     public bool ShouldSerializechildren() {
       return children != null && children.Count != 0;
+    }
+
+    public bool ShouldSerializemodifications() {
+      return modifications != null && modifications.Count != 0;
     }
   }
 
@@ -157,5 +162,16 @@ namespace exsdk {
     public bool ShouldSerializeproperties() {
       return properties.Count != 0;
     }
+  }
+
+  // =========================
+  // JSON_Modification
+  // =========================
+
+  [System.Serializable]
+  public class JSON_Modification {
+    public string path;
+    public string name;
+    public object value;
   }
 }
