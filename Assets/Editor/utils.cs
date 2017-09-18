@@ -222,7 +222,7 @@ namespace exsdk {
   public class Utils {
     public static Dictionary<string, ShaderInfo> shaderInfos = new Dictionary<string, ShaderInfo> {
       {
-         "gltf/diffuse",
+         "u3d-exporter/diffuse",
          new ShaderInfo() {
            type = "phong",
            properties = new List<ShaderProperty>() {
@@ -324,7 +324,7 @@ namespace exsdk {
 
       // if this is a internal asset
       if (assetPath == "Library/unity default resources") {
-        return "internal";
+        return "builtin-" + _obj.name.ToLower();
       }
 
       return _obj.GetInstanceID().ToString();

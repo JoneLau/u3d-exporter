@@ -1,4 +1,4 @@
-Shader "gltf/diffuse" {
+Shader "u3d-exporter/diffuse" {
   Properties {
     _Color ("Main Color", Color) = (1,1,1,1)
     _MainTex ("Base (RGB)", 2D) = "white" {}
@@ -26,5 +26,5 @@ Shader "gltf/diffuse" {
     ENDCG
   }
 
-  Fallback "gltf/vertex-lit"
+  Fallback "u3d-exporter/vertex-lit"
 }

@@ -1,4 +1,4 @@
-Shader "gltf/alpha-diffuse" {
+Shader "u3d-exporter/alpha-diffuse" {
   Properties {
     _Color ("Main Color", Color) = (1,1,1,1)
     _MainTex ("Base (RGB) Trans (A)", 2D) = "white" {}
@@ -26,5 +26,5 @@ Shader "gltf/alpha-diffuse" {
     ENDCG
   }
 
-  Fallback "gltf/alpha-vertex-lit"
+  Fallback "u3d-exporter/alpha-vertex-lit"
 }

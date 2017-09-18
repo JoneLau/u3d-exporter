@@ -1,4 +1,4 @@
-Shader "gltf/alpha-bumped" {
+Shader "u3d-exporter/alpha-bumped" {
   Properties {
     _Color ("Main Color", Color) = (1,1,1,1)
     _MainTex ("Base (RGB) Trans (A)", 2D) = "white" {}
@@ -30,5 +30,5 @@ Shader "gltf/alpha-bumped" {
     ENDCG
   }
 
-  FallBack "gltf/alpha-diffuse"
+  FallBack "u3d-exporter/alpha-diffuse"
 }

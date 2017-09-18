@@ -473,13 +473,14 @@ namespace exsdk {
         if (mesh != null) {
           var path = AssetDatabase.GetAssetPath(mesh);
           var prefab = AssetDatabase.LoadMainAssetAtPath(path);
-
-          // check if prefab already exists
-          var founded = _prefabs.Find(item => {
-            return item == prefab;
-          });
-          if (founded == null) {
-            _prefabs.Add(prefab);
+          if (prefab) {
+            // check if prefab already exists
+            var founded = _prefabs.Find(item => {
+              return item == prefab;
+            });
+            if (founded == null) {
+              _prefabs.Add(prefab);
+            }
           }
         }
 

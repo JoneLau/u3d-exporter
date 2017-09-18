@@ -1,4 +1,4 @@
-Shader "gltf/alpha-vertex-lit" {
+Shader "u3d-exporter/alpha-vertex-lit" {
   Properties {
     _Color ("Main Color", Color) = (1,1,1,1)
     _SpecColor ("Spec Color", Color) = (1,1,1,0)

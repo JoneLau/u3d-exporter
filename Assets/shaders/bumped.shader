@@ -1,4 +1,4 @@
-Shader "gltf/bumped" {
+Shader "u3d-exporter/bumped" {
   Properties {
     _Color ("Main Color", Color) = (1,1,1,1)
     _MainTex ("Base (RGB)", 2D) = "white" {}
@@ -30,5 +30,5 @@ Shader "gltf/bumped" {
     ENDCG
   }
 
-  FallBack "gltf/diffuse"
+  FallBack "u3d-exporter/diffuse"
 }

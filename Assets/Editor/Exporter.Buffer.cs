@@ -9,7 +9,7 @@ namespace exsdk {
   public partial class Exporter {
 
     // -----------------------------------------
-    // DumpMesh
+    // DumpBuffer
     // -----------------------------------------
 
     void DumpBuffer(BufferInfo _bufInfo, GLTF _gltf) {

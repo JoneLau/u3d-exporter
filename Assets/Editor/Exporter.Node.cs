@@ -8,7 +8,7 @@ using System.IO;
 namespace exsdk {
   public partial class Exporter {
     // -----------------------------------------
-    // DumpAnim
+    // DumpGltfNode
     // -----------------------------------------
 
     GLTF_Node DumpGltfNode(GameObject _go, List<GameObject> _nodes) {

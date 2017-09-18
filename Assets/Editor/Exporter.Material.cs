@@ -9,7 +9,7 @@ namespace exsdk {
   public partial class Exporter {
 
     // -----------------------------------------
-    // DumpTexture
+    // DumpMaterial
     // -----------------------------------------
 
     JSON_Material DumpMaterial(Material _mat) {
