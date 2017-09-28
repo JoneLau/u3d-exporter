@@ -233,12 +233,12 @@ namespace exsdk {
       },
       {
         "u3d-exporter/material-capture",
-                 new ShaderInfo() {
+         new ShaderInfo() {
            type = "matcap",
            properties = new List<ShaderProperty>() {
              new ShaderProperty() { name = "_MainTex", type = "tex2d", mapping = "mainTex" },
              new ShaderProperty() { name = "_MatCap", type = "tex2d", mapping = "matcapTex" },
-             new ShaderProperty() { name = "_MixRate", type = "float", mapping = "mixRate" },
+             new ShaderProperty() { name = "_ColorFactor", type = "float", mapping = "colorFactor" },
            }
          }
       }
