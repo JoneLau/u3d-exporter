@@ -20,7 +20,13 @@ namespace exsdk {
 
       foreach (var prop in shdInfo.properties) {
         // parse property by type
-        if (prop.type == "color") {
+        // TODO: using 'switch' maybe better
+        if (prop.type == "float"){
+          var float1 = _mat.GetFloat(prop.name);
+          result.properties.Add(prop.mapping, new float[1] {
+            float1
+          });
+        } else if (prop.type == "color") {
           var color = _mat.GetColor(prop.name);
           result.properties.Add(prop.mapping, new float[4] {
             color.r, color.g, color.b, color.a
