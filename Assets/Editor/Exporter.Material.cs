@@ -21,7 +21,7 @@ namespace exsdk {
       foreach (var prop in shdInfo.properties) {
         // parse property by type
         // TODO: using 'switch' maybe better
-        if (prop.type == "float"){
+        if (prop.type == "float") {
           var float1 = _mat.GetFloat(prop.name);
           result.properties.Add(prop.mapping, new float[1] {
             float1
