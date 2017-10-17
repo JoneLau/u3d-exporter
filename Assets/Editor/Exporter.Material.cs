@@ -14,6 +14,11 @@ namespace exsdk {
 
     JSON_Material DumpMaterial(Material _mat) {
       ShaderInfo shdInfo = Utils.GetShaderInfo(_mat);
+      if (shdInfo == null) {
+        Debug.LogWarning("Failed to dump material " + _mat.name + ": shader unregisterred.");
+        return null;
+      }
+
       JSON_Material result = new JSON_Material();
 
       result.type = shdInfo.type;

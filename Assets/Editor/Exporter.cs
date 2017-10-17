@@ -224,7 +224,13 @@ namespace exsdk {
         // save model prefab (as gltf)
 
       }
-      foreach (GameObject modelPrefab in modelPrefabs) {
+      foreach (Object obj in modelPrefabs) {
+        GameObject modelPrefab = obj as GameObject;
+        if (modelPrefab == null) {
+          Debug.LogWarning("Can not convert " + obj.name + " to a GameObject.");
+          continue;
+        }
+
         string id = Utils.AssetID(modelPrefab);
         // save model prefabs
         GLTF gltf = new GLTF();
@@ -312,6 +318,10 @@ namespace exsdk {
       }
       foreach (Material mat in materials) {
         var materialJson = DumpMaterial(mat);
+        if ( materialJson == null) {
+          continue;
+        }
+
         string path;
         string json = JsonConvert.SerializeObject(materialJson, Formatting.Indented);
         string id = Utils.AssetID(mat);
