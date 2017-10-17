@@ -224,13 +224,7 @@ namespace exsdk {
         // save model prefab (as gltf)
 
       }
-      foreach (Object obj in modelPrefabs) {
-        GameObject modelPrefab = obj as GameObject;
-        if (modelPrefab == null) {
-          Debug.LogWarning("Can not convert " + obj.name + " to a GameObject.");
-          continue;
-        }
-
+      foreach (GameObject modelPrefab in modelPrefabs) {
         string id = Utils.AssetID(modelPrefab);
         // save model prefabs
         GLTF gltf = new GLTF();
@@ -498,6 +492,11 @@ namespace exsdk {
           var path = AssetDatabase.GetAssetPath(mesh);
           var prefab = AssetDatabase.LoadMainAssetAtPath(path);
           if (prefab) {
+            var type = PrefabUtility.GetPrefabType(prefab);
+            if (type != PrefabType.ModelPrefab) {
+              Debug.LogWarning("Can not export mesh " + mesh.name + ": it is not a model prefab.");
+            }
+
             // check if prefab already exists
             var founded = _modelPrefabs.Find(item => {
               return item == prefab;
