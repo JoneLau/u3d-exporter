@@ -430,7 +430,7 @@ namespace exsdk {
       Scene _scene,
       List<GameObject> _nodes,
       List<Object> _prefabs,
-      List<Object> _modelPrefab,
+      List<Object> _modelPrefabs,
       List<Material> _materials,
       List<Texture> _textures
     ) {
@@ -489,11 +489,11 @@ namespace exsdk {
           var prefab = AssetDatabase.LoadMainAssetAtPath(path);
           if (prefab) {
             // check if prefab already exists
-            var founded = _prefabs.Find(item => {
+            var founded = _modelPrefabs.Find(item => {
               return item == prefab;
             });
             if (founded == null) {
-              _modelPrefab.Add(prefab);
+              _modelPrefabs.Add(prefab);
             }
           }
         }
