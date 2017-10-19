@@ -180,6 +180,10 @@ namespace exsdk {
       int offsetBuffer = _bufInfo.data.Length;
       Vector3 minPos = Vector3.zero;
       Vector3 maxPos = Vector3.zero;
+      Vector3 minNormal = Vector3.zero;
+      Vector3 maxNormal = Vector3.zero;
+      Vector4 minTangent = Vector4.zero;
+      Vector4 maxTangent = Vector4.zero;
 
       if (vertices.Length > 0) {
         minPos = maxPos = vertices[0];
@@ -263,18 +267,68 @@ namespace exsdk {
             }
 
             if (normals.Length > 0) {
+              Vector3 normal = normals[i];
               // NOTE: convert LH to RH
-              writer.Write(normals[i].x);
-              writer.Write(normals[i].y);
-              writer.Write(-normals[i].z);
+               normal.z = -normal.z;
+
+              writer.Write(normal.x);
+              writer.Write(normal.y);
+              writer.Write(normal.z);
+
+              if (normal.x < minNormal.x) {
+                minNormal.x = normal.x;
+              }
+              if (normal.y < minNormal.y) {
+                minNormal.y = normal.y;
+              }
+              if (normal.z < minNormal.z) {
+                minNormal.z = normal.z;
+              }
+              if (normal.x > maxNormal.x) {
+                maxNormal.x = normal.x;
+              }
+              if (normal.y > maxNormal.y) {
+                maxNormal.y = normal.y;
+              }
+              if (normal.z > maxNormal.z) {
+                maxNormal.z = normal.z;
+              }
             }
 
             if (tangents.Length > 0) {
+              Vector4 tangent = tangents[i];             
               // NOTE: convert LH to RH
-              writer.Write(tangents[i].x);
-              writer.Write(tangents[i].y);
-              writer.Write(-tangents[i].z);
-              writer.Write(tangents[i].w);
+              tangent.z = -tangent.z;
+
+              writer.Write(tangent.x);
+              writer.Write(tangent.y);
+              writer.Write(tangent.z);
+              writer.Write(tangent.w);
+
+              if (tangent.x < minTangent.x) {
+                minTangent.x = tangent.x;
+              }
+              if (tangent.y < minTangent.y) {
+                minTangent.y = tangent.y;
+              }
+              if (tangent.z < minTangent.z) {
+                minTangent.z = tangent.z;
+              }
+              if (tangent.w < minTangent.w) {
+                minTangent.w = tangent.w;
+              }
+              if (tangent.x > maxTangent.x) {
+                maxTangent.x = tangent.x;
+              }
+              if (tangent.y > maxTangent.y) {
+                maxTangent.y = tangent.y;
+              }
+              if (tangent.z > maxTangent.z) {
+                maxTangent.z = tangent.z;
+              }
+              if (tangent.w > maxTangent.w) {
+                maxTangent.w = tangent.w;
+              }
             }
 
             if (colors.Length > 0) {
@@ -410,7 +464,8 @@ namespace exsdk {
           count = _mesh.vertexCount,
           compType = ComponentType.FLOAT32,
           attrType = AttrType.VEC3,
-          // TODO: min, max
+          min = new object[3] { minNormal.x, minNormal.y, minNormal.z },
+          max = new object[3] { maxNormal.x, maxNormal.y, maxNormal.z },
         };
 
         vbView.accessors.Add(acc);
@@ -424,7 +479,8 @@ namespace exsdk {
           count = _mesh.vertexCount,
           compType = ComponentType.FLOAT32,
           attrType = AttrType.VEC4,
-          // TODO: min, max
+          min = new object[4] { minTangent.x, minTangent.y, minTangent.z, minTangent.w },
+          max = new object[4] { maxTangent.x, maxTangent.y, maxTangent.z, maxTangent.w },
         };
 
         vbView.accessors.Add(acc);
