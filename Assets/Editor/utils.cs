@@ -518,5 +518,20 @@ namespace exsdk {
 
       return rootBone;
     }
+    public static Dictionary<string, string> modificationTypeInfo = new Dictionary<string, string>() {
+      {
+        "UnityEngine.MeshRenderer",
+        "Model"
+      },
+      {
+        "UnityEngine.SkinnedMeshRenderer",
+        "SkinningModel"
+      },
+      {
+        "UnityEngine.Animation",
+        "Animation"
+      }
+
+    };
   }
 }

@@ -77,7 +77,6 @@ namespace exsdk {
         result.scale[1] = _go.transform.localScale.y;
         result.scale[2] = _go.transform.localScale.z;
       }
-
       // children
       result.children = new List<int>();
       foreach (Transform child in _go.transform) {
@@ -94,26 +93,42 @@ namespace exsdk {
         string id = Utils.AssetID(prefab);
         result.prefab = id;
 
-        // TODO:
-        // // Dump Modifications
-        // PropertyModification[] mods = PrefabUtility.GetPropertyModifications(_go);
-        // if (mods.Length > 0) {
-        //   foreach(var mod in mods) {
-        //     if (mod.target is MeshRenderer) {
-        //       var renderer = mod.target as MeshRenderer;
-        //       if (mod.propertyPath.Contains("Materials")) {
-        //         List<string> matAssets = new List<string>();
-        //         foreach (Material mat in renderer.sharedMaterials) {
-        //           id = Utils.AssetID(mat);
-        //           matAssets.Add(id);
-        //         }
-        //       }
-        //     }
-        //   }
-        // }
+        PropertyModification[] mods = PrefabUtility.GetPropertyModifications(_go);
+        if (mods.Length > 0) {             
+          List<GameObject> nodes = new List<GameObject>();
+          Walk(new List<GameObject> { prefab }, node => {
+            nodes.Add(node);
+            return true;
+          });
+          foreach (var mod in mods) {
+            JSON_Modification modification = null;
+            if (mod.target is MeshRenderer) {
+              var renderer = mod.target as MeshRenderer; 
+              if (mod.propertyPath.Contains("Materials")) {
+                modification = new JSON_Modification();
+                string type = Utils.modificationTypeInfo.TryGetValue(renderer.GetType().ToString(), out type) ? type + "." : "";
+                modification.property = type + mod.propertyPath;
+                GameObject go = renderer.gameObject;
+                modification.entity = nodes.IndexOf(go);
+                string modificationValue = "";
+                if (mod.objectReference is Material) {
+                  var mat = mod.objectReference as Material;
+                  modificationValue = Utils.AssetID(mat);
+                } else {
+                  modificationValue = mod.value;
+                }
+                modification.value = modificationValue;
+              }
+            }
+            if (modification != null) {
+              result.modifications.Add(modification);
+            }
+          }
+        }
       } else {
         // NOTE: if we are prefab, do not serailize its components
         // serialize components
+        
         result.components = DumpComponents(_go);
       }
 

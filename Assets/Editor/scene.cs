@@ -170,8 +170,20 @@ namespace exsdk {
 
   [System.Serializable]
   public class JSON_Modification {
-    public string path;
-    public string name;
+    public string property;
+    public int entity = -1;
     public object value;
+
+    public bool ShouldSerializeentity() {
+      return entity != -1;
+    }
+
+    public bool ShouldSerializeproperty() {
+      return string.IsNullOrEmpty(property) == false;
+    }
+
+    public bool ShouldSerializevalue() {
+      return value != null;
+    }
   }
 }
