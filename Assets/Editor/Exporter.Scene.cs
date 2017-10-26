@@ -89,46 +89,15 @@ namespace exsdk {
       // check if it is a prefab
       GameObject prefab = PrefabUtility.GetPrefabParent(_go) as GameObject;
       if (prefab) {
-        prefab = prefab.transform.root.gameObject;
+        // DELME: DO WE NEED THIS?? PLEASE CONFIRM!
+        // prefab = prefab.transform.root.gameObject;
         string id = Utils.AssetID(prefab);
         result.prefab = id;
 
-        PropertyModification[] mods = PrefabUtility.GetPropertyModifications(_go);
-        if (mods.Length > 0) {             
-          List<GameObject> nodes = new List<GameObject>();
-          Walk(new List<GameObject> { prefab }, node => {
-            nodes.Add(node);
-            return true;
-          });
-          foreach (var mod in mods) {
-            JSON_Modification modification = null;
-            if (mod.target is MeshRenderer) {
-              var renderer = mod.target as MeshRenderer; 
-              if (mod.propertyPath.Contains("Materials")) {
-                modification = new JSON_Modification();
-                string type = Utils.modificationTypeInfo.TryGetValue(renderer.GetType().ToString(), out type) ? type + "." : "";
-                modification.property = type + mod.propertyPath;
-                GameObject go = renderer.gameObject;
-                modification.entity = nodes.IndexOf(go);
-                string modificationValue = "";
-                if (mod.objectReference is Material) {
-                  var mat = mod.objectReference as Material;
-                  modificationValue = Utils.AssetID(mat);
-                } else {
-                  modificationValue = mod.value;
-                }
-                modification.value = modificationValue;
-              }
-            }
-            if (modification != null) {
-              result.modifications.Add(modification);
-            }
-          }
-        }
+        result.modifications = DumpModifications(_go, prefab);
       } else {
         // NOTE: if we are prefab, do not serailize its components
         // serialize components
-        
         result.components = DumpComponents(_go);
       }
 
@@ -232,6 +201,60 @@ namespace exsdk {
         comp.properties.Add("joints", Utils.GetJointsID(_go));
 
         result.Add(comp);
+      }
+
+      return result;
+    }
+
+    // -----------------------------------------
+    // DumpModifications
+    // -----------------------------------------
+
+    List<JSON_Modification> DumpModifications(GameObject _go, GameObject _prefab) {
+      List<JSON_Modification> result = new List<JSON_Modification>();
+
+      PropertyModification[] mods = PrefabUtility.GetPropertyModifications(_go);
+      if (mods.Length == 0) {
+        return result;
+      }
+
+      // get node list from prefab
+      List<GameObject> nodes = new List<GameObject>();
+      Walk(new List<GameObject> { _prefab }, node => {
+        nodes.Add(node);
+        return true;
+      });
+
+      foreach (var mod in mods) {
+        string typename = mod.target.GetType().ToString();
+        ComponentModInfo compModInfo = Utils.GetComponentModInfo(typename);
+
+        // NOTE: we only care about the modifications we want
+        if (compModInfo == null) {
+          continue;
+        }
+
+        string mappedProp = compModInfo.MapProperty(mod.propertyPath);
+
+        if ( mappedProp != null ) {
+          JSON_Modification jsonMod = new JSON_Modification();
+
+          // entity
+          GameObject go = (mod.target as Component).gameObject;
+          jsonMod.entity = nodes.IndexOf(go);
+
+          // property
+          jsonMod.property = compModInfo.type + "." + mappedProp;
+
+          // value
+          if (mod.objectReference) {
+            jsonMod.value = Utils.AssetID(mod.objectReference);
+          } else {
+            jsonMod.value = mod.value;
+          }
+
+          result.Add(jsonMod);
+        }
       }
 
       return result;

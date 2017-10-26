@@ -219,6 +219,31 @@ namespace exsdk {
     public List<ShaderProperty> properties;
   }
 
+  public class ModProperty {
+    public string name;
+    public string mapping;
+  }
+
+  public class ComponentModInfo {
+    public string type = "unknown";
+    public List<ModProperty> properties;
+
+    public string MapProperty(string propertyPath) {
+      foreach (ModProperty prop in properties) {
+        if (propertyPath.IndexOf(prop.name) == 0 ) {
+          string suffix = "";
+          if (propertyPath.Length > prop.name.Length) {
+            suffix = propertyPath.Substring(prop.name.Length);
+          }
+
+          return prop.mapping + suffix;
+        }
+      }
+
+      return null;
+    }
+  }
+
   public class Utils {
     public static Dictionary<string, ShaderInfo> shaderInfos = new Dictionary<string, ShaderInfo> {
       {
@@ -244,6 +269,30 @@ namespace exsdk {
       }
     };
 
+    public static Dictionary<string, ComponentModInfo> componentModInfos = new Dictionary<string, ComponentModInfo>() {
+      {
+        "UnityEngine.MeshRenderer",
+        new ComponentModInfo() {
+          type = "Model",
+          properties = new List<ModProperty>() {
+            new ModProperty() { name = "m_Materials.Array.data", mapping = "materials" },
+          }
+        }
+      },
+      {
+        "UnityEngine.SkinnedMeshRenderer",
+        new ComponentModInfo() {
+          type = "SkinningModel",
+        }
+      },
+      {
+        "UnityEngine.Animation",
+        new ComponentModInfo() {
+          type = "Animation",
+        }
+      }
+    };
+
     public static Object GetPrefabAsset(GameObject _go) {
       var root = PrefabUtility.FindPrefabRoot(_go);
       return PrefabUtility.GetPrefabParent(root);
@@ -265,6 +314,15 @@ namespace exsdk {
       }
 
       return shaderInfo;
+    }
+
+    public static ComponentModInfo GetComponentModInfo(string typename) {
+      ComponentModInfo compModInfo;
+      if (componentModInfos.TryGetValue(typename, out compModInfo) == false) {
+        return null;
+      }
+
+      return compModInfo;
     }
 
     public static List<Texture> GetTextures(Material _mat) {
@@ -518,20 +576,5 @@ namespace exsdk {
 
       return rootBone;
     }
-    public static Dictionary<string, string> modificationTypeInfo = new Dictionary<string, string>() {
-      {
-        "UnityEngine.MeshRenderer",
-        "Model"
-      },
-      {
-        "UnityEngine.SkinnedMeshRenderer",
-        "SkinningModel"
-      },
-      {
-        "UnityEngine.Animation",
-        "Animation"
-      }
-
-    };
   }
 }
