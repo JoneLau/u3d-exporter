@@ -266,6 +266,21 @@ namespace exsdk {
              new ShaderProperty() { name = "_ColorFactor", type = "float", mapping = "colorFactor" },
            }
          }
+      },
+      {
+        "u3d-exporter/pbr",
+         new ShaderInfo() {
+           type = "pbr",
+           properties = new List<ShaderProperty>() {
+             new ShaderProperty() { name = "_MainTex", type = "tex2d", mapping = "albedoTexture" },
+             new ShaderProperty() { name = "_MetallicTex", type = "tex2d", mapping = "metallicTexture" },
+             new ShaderProperty() { name = "_RoughnessTex", type = "tex2d", mapping = "roughnessTexture" },
+             new ShaderProperty() { name = "_NormalTex", type = "tex2d", mapping = "normalTexture" },
+             new ShaderProperty() { name = "_AOTex", type = "tex2d", mapping = "aoTexture" },
+             new ShaderProperty() { name = "_OpacityTex", type = "tex2d", mapping = "opacityTexture" },
+             new ShaderProperty() { name = "_EmissionTex", type = "tex2d", mapping = "emissionTexture" },
+           }
+         }
       }
     };
 
