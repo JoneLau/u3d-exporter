@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using System.IO;
+using System.Linq;
 
 namespace exsdk {
   public partial class Exporter {
@@ -54,6 +55,9 @@ namespace exsdk {
           result.properties.Add(prop.mapping + "Offset", new float[2] {
             offset.x, offset.y
           });
+        } else if (prop.type == "key") {
+          var val = _mat.shaderKeywords.Contains(prop.name);
+          result.properties.Add(prop.mapping, val);
         }
       }
 

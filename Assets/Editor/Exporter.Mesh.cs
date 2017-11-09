@@ -296,7 +296,7 @@ namespace exsdk {
             }
 
             if (tangents.Length > 0) {
-              Vector4 tangent = tangents[i];             
+              Vector4 tangent = tangents[i];
               // NOTE: convert LH to RH
               tangent.z = -tangent.z;
 

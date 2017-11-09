@@ -281,6 +281,24 @@ namespace exsdk {
              new ShaderProperty() { name = "_EmissionTex", type = "tex2d", mapping = "emissionTexture" },
            }
          }
+      },
+      {
+        "u3d-exporter/grid",
+         new ShaderInfo() {
+           type = "grid",
+           properties = new List<ShaderProperty>() {
+            new ShaderProperty() { name = "_TilingX", type = "float", mapping = "tilingX" },
+            new ShaderProperty() { name = "_TilingY", type = "float", mapping = "tilingY" },
+            new ShaderProperty() { name = "_BasePattern", type = "tex2d", mapping = "basePattern" },
+            new ShaderProperty() { name = "_SubPattern", type = "tex2d", mapping = "subPattern" },
+            new ShaderProperty() { name = "_SubPattern2", type = "tex2d", mapping = "subPattern2" },
+            new ShaderProperty() { name = "_BaseColorWhite", type = "color", mapping = "baseColorWhite" },
+            new ShaderProperty() { name = "_BaseColorBlack", type = "color", mapping = "baseColorBlack" },
+            new ShaderProperty() { name = "_SubPatternColor", type = "color", mapping = "subPatternColor" },
+            new ShaderProperty() { name = "_SubPatternColor2", type = "color", mapping = "subPatternColor2" },
+            new ShaderProperty() { name = "WPOS_ON", type = "key", mapping = "useWorldPos" },
+           }
+         }
       }
     };
 

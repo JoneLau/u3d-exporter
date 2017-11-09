@@ -1,14 +1,18 @@
 Shader "u3d-exporter/grid" {
 	Properties {
+    [Toggle(WPOS_ON)] _WPOS("Enable World Position UV", Int) = 0
 		_TilingX ("Global Tiling X", Float) = 1
 		_TilingY ("Global Tiling Y", Float) = 1
 
-		_PatternColorA1 ("Pattern Color A1", Color) = (0.8,0.8,0.8,1)
-		_PatternColorA2 ("Pattern Color A2", Color) = (0.8,0.8,0.8,1)
-		_PatternTexA ("Patter Texture A", 2D) = "black" {}
+		_BaseColorWhite ("Base Color White", Color) = (0.1, 0.1, 0.1, 1)
+		_BaseColorBlack ("Base Color Black", Color) = (0.3, 0.3, 0.3, 1)
+		_BasePattern ("Base Patter", 2D) = "black" {}
 
-		_PatternColorB ("Pattern Color B", Color) = (0.7,0.7,0.7,1)
-		_PatternTexB ("Pattern Texture B", 2D) = "black" {}
+		_SubPatternColor ("Sub Pattern Color 01", Color) = (1, 1, 1, 1)
+		_SubPattern ("Sub Pattern 01", 2D) = "black" {}
+
+		_SubPatternColor2 ("Sub Pattern Color 02", Color) = (1, 1, 1, 1)
+		_SubPattern2 ("Sub Pattern 02", 2D) = "black" {}
 
 	}
 	SubShader {
@@ -18,21 +22,29 @@ Shader "u3d-exporter/grid" {
 		CGPROGRAM
 		// Physically based Standard lighting model, and enable shadows on all light types
 		#pragma surface surf Standard fullforwardshadows
+    #pragma shader_feature WPOS_ON
+		// #pragma target 4.0
 
-		#pragma target 4.0
+		fixed4 _BaseColorWhite;
+		fixed4 _BaseColorBlack;
+		sampler2D _BasePattern;
 
-		fixed4 _BaseColor;
+		fixed4 _SubPatternColor;
+		sampler2D _SubPattern;
 
-		fixed4 _PatternColorA1;
-		fixed4 _PatternColorA2;
-		sampler2D _PatternTexA;
+		fixed4 _SubPatternColor2;
+		sampler2D _SubPattern2;
 
-		fixed4 _PatternColorB;
-		sampler2D _PatternTexB;
+#if WPOS_ON
+		float4 _BasePattern_ST;
+		float4 _SubPattern_ST;
+		float4 _SubPattern2_ST;
+#endif
 
 		struct Input {
-			float2 uv_PatternTexA;
-			float2 uv_PatternTexB;
+			float2 uv_BasePattern;
+			float2 uv_SubPattern;
+			float2 uv_SubPattern2;
 
 			float3 worldNormal;
 			float3 worldPos;
@@ -45,24 +57,39 @@ Shader "u3d-exporter/grid" {
 
 			float2 overT = float2(_TilingX,_TilingY);
 
-			float2 UV_A = IN.uv_PatternTexA * overT;
-			float2 UV_B = IN.uv_PatternTexB * overT;
+			float2 UV_Base = IN.uv_BasePattern * overT;
+			float2 UV_Sub = IN.uv_SubPattern * overT;
+			float2 UV_Sub2 = IN.uv_SubPattern2 * overT;
 
-			fixed4 texColA = tex2D (_PatternTexA, UV_A);
-			fixed4 texColB = tex2D (_PatternTexB, UV_B);
+#if WPOS_ON
+			if (abs(IN.worldNormal.x)>0.5) { // side
+				UV_Base = (IN.worldPos.zy * overT * _BasePattern_ST.xy) + _BasePattern_ST.zw;
+				UV_Sub = (IN.worldPos.zy * overT * _SubPattern_ST.xy) + _SubPattern_ST.zw;
+				UV_Sub2 = (IN.worldPos.zy * overT * _SubPattern2_ST.xy) + _SubPattern2_ST.zw;
+			} else if (abs(IN.worldNormal.z)>0.5) { // front
+				UV_Base = (IN.worldPos.xy * overT * _BasePattern_ST.xy) + _BasePattern_ST.zw;
+				UV_Sub = (IN.worldPos.xy * overT * _SubPattern_ST.xy) + _SubPattern_ST.zw;
+				UV_Sub2 = (IN.worldPos.xy * overT * _SubPattern2_ST.xy) + _SubPattern2_ST.zw;
+			} else { // top
+				UV_Base = (IN.worldPos.xz * overT * _BasePattern_ST.xy) + _BasePattern_ST.zw;
+				UV_Sub = (IN.worldPos.xz * overT * _SubPattern_ST.xy) + _SubPattern_ST.zw;
+				UV_Sub2 = (IN.worldPos.xz * overT * _SubPattern2_ST.xy) + _SubPattern2_ST.zw;
+			}
+#endif
 
-			fixed4 colBase = (_PatternColorA1 * texColA + _PatternColorA2 * (1 - texColA));
+			fixed4 texColBase = tex2D (_BasePattern, UV_Base);
+			fixed4 texColSub = tex2D (_SubPattern, UV_Sub);
+			fixed4 texColSub2 = tex2D (_SubPattern2, UV_Sub2);
+
+			fixed4 colBase = (_BaseColorWhite * texColBase + _BaseColorBlack * (1 - texColBase));
       fixed4 colFinal =
-        colBase * (1 - texColB) +
-        (_PatternColorB * _PatternColorB.a + colBase * (1-_PatternColorB.a)) * texColB
+        colBase * (1 - texColSub) +
+        (_SubPatternColor * _SubPatternColor.a + colBase * (1-_SubPatternColor.a)) * texColSub
         ;
-
-      // METHOD2:
-			// fixed4 colBase = (_PatternColorA1 * texColA + _PatternColorA2 * (1 - texColA));
-			// fixed4 colPattern = texColA * (1 - texColB) + (1 - texColA) * texColB;
-      // fixed4 colFinal = colBase * (1 - colPattern) +
-      //   (_PatternColorB * _PatternColorB.a + colBase * (1-_PatternColorB.a)) * colPattern
-      //   ;
+      colFinal =
+        colFinal * (1 - texColSub2) +
+        (_SubPatternColor2 * _SubPatternColor2.a + colFinal * (1-_SubPatternColor2.a)) * texColSub2
+        ;
 
 			o.Albedo = colFinal.rgb;
 			o.Alpha = 1;
