@@ -42,7 +42,8 @@ namespace exsdk {
       result.name = _go.name;
 
       // NOTE: skinned mesh node will use identity matrix
-      if (_go.GetComponent<SkinnedMeshRenderer>() != null) {
+      if (_go.GetComponent<SkinnedMeshRenderer>() != null ||
+        _go.GetComponent<Canvas>() != null) {
         // translation
         result.translation[0] = 0.0f;
         result.translation[1] = 0.0f;
@@ -199,6 +200,104 @@ namespace exsdk {
         }
         comp.properties.Add("animations", ids);
         comp.properties.Add("joints", Utils.GetJointsID(_go));
+
+        result.Add(comp);
+      }
+
+      // screen-component
+      Canvas canvas = _go.GetComponent<Canvas>();
+      if (canvas != null) {
+        JSON_Component comp = new JSON_Component();
+        comp.type = "Screen";
+
+        result.Add(comp);
+      }
+
+      // screen-component
+      RectTransform rectTrans = _go.GetComponent<RectTransform>();
+      if (rectTrans != null) {
+        JSON_Component comp = new JSON_Component();
+        comp.type = "Widget";
+
+        comp.properties.Add("alignLeft", true);
+        comp.properties.Add("alignRight", true);
+        comp.properties.Add("alignBottom", true);
+        comp.properties.Add("alignTop", true);
+
+        // 0 or 1 only calculate offset
+        if (rectTrans.anchorMax.x == 0.5 && rectTrans.anchorMin.x == 0.5) {
+          comp.properties["alignLeft"] = false;
+          comp.properties["alignRight"] = false;
+        } else {
+          if (rectTrans.anchorMin.x == 0) {
+            comp.properties.Add("left", rectTrans.offsetMin.x);
+            comp.properties.Add("leftUnit", "px");
+          } else if (rectTrans.anchorMin.x == 1) {
+            comp.properties["alignLeft"] = false;
+          } else {
+            if (rectTrans.offsetMin.x != 0) {
+              Debug.LogWarning("Please set your left value to 0 for percentage anchor value");
+            }
+
+            comp.properties.Add("left", rectTrans.anchorMin.x * 100);
+            comp.properties.Add("leftUnit", "%");
+          }
+
+          if (rectTrans.anchorMax.x == 1) {
+            comp.properties.Add("right", -rectTrans.offsetMax.x);
+            comp.properties.Add("rightUnit", "px");
+          } else if (rectTrans.anchorMax.x == 0) {
+            comp.properties["alignRight"] = false;
+          } else {
+            if (rectTrans.offsetMax.x != 0) {
+              Debug.LogWarning("Please set your right value to 0 for percentage anchor value");
+            }
+
+            comp.properties.Add("right", (1 - rectTrans.anchorMax.x) * 100);
+            comp.properties.Add("rightUnit", "%");
+          }
+        }
+
+        // 0 or 1 only calculate offset
+        if (rectTrans.anchorMax.y == 0.5 && rectTrans.anchorMin.y == 0.5) {
+          comp.properties["alignBottom"] = false;
+          comp.properties["alignTop"] = false;
+        } else {
+          if (rectTrans.anchorMin.y == 0) {
+            comp.properties.Add("bottom", rectTrans.offsetMin.y);
+            comp.properties.Add("bottomUnit", "px");
+          } else if (rectTrans.anchorMin.y == 1) {
+            comp.properties["alignBottom"] = false;
+          } else {
+            if (rectTrans.offsetMin.y != 0) {
+              Debug.LogWarning("Please set your bottom value to 0 for percentage anchor value");
+            }
+
+            comp.properties.Add("bottom", rectTrans.anchorMin.y * 100);
+            comp.properties.Add("bottomUnit", "%");
+          }
+
+          if (rectTrans.anchorMax.y == 1) {
+            comp.properties.Add("top", -rectTrans.offsetMax.y);
+            comp.properties.Add("topUnit", "px");
+          } else if (rectTrans.anchorMax.y == 0) {
+            comp.properties["alignTop"] = false;
+          } else {
+            if (rectTrans.offsetMax.y != 0) {
+              Debug.LogWarning("Please set your top value to 0 for percentage anchor value");
+            }
+
+            comp.properties.Add("top", (1 - rectTrans.anchorMax.y) * 100);
+            comp.properties.Add("topUnit", "%");
+          }
+        }
+
+        comp.properties.Add("pivotX", rectTrans.pivot.x);
+        comp.properties.Add("pivotY", rectTrans.pivot.y);
+        comp.properties.Add("width", rectTrans.rect.width);
+        comp.properties.Add("height", rectTrans.rect.height);
+        comp.properties.Add("offsetX", rectTrans.localPosition.x);
+        comp.properties.Add("offsetY", rectTrans.localPosition.y);
 
         result.Add(comp);
       }
