@@ -219,85 +219,35 @@ namespace exsdk {
         JSON_Component comp = new JSON_Component();
         comp.type = "Widget";
 
-        comp.properties.Add("alignLeft", true);
-        comp.properties.Add("alignRight", true);
-        comp.properties.Add("alignBottom", true);
-        comp.properties.Add("alignTop", true);
+        comp.properties.Add("anchorLeft", rectTrans.anchorMin.x);
+        comp.properties.Add("anchorRight", rectTrans.anchorMax.x);
+        comp.properties.Add("anchorBottom", rectTrans.anchorMin.y);
+        comp.properties.Add("anchorTop", rectTrans.anchorMax.y);
 
-        // 0 or 1 only calculate offset
-        if (rectTrans.anchorMax.x == 0.5 && rectTrans.anchorMin.x == 0.5) {
-          comp.properties["alignLeft"] = false;
-          comp.properties["alignRight"] = false;
+        if (rectTrans.anchorMin.x != rectTrans.anchorMax.x) {
+          comp.properties.Add("marginLeft", rectTrans.offsetMin.x);
+          comp.properties.Add("marginRight", -rectTrans.offsetMax.x);
+          comp.properties.Add("offsetX", 0);
         } else {
-          if (rectTrans.anchorMin.x == 0) {
-            comp.properties.Add("left", rectTrans.offsetMin.x);
-            comp.properties.Add("leftUnit", "px");
-          } else if (rectTrans.anchorMin.x == 1) {
-            comp.properties["alignLeft"] = false;
-          } else {
-            if (rectTrans.offsetMin.x != 0) {
-              Debug.LogWarning("Please set your left value to 0 for percentage anchor value");
-            }
-
-            comp.properties.Add("left", rectTrans.anchorMin.x * 100);
-            comp.properties.Add("leftUnit", "%");
-          }
-
-          if (rectTrans.anchorMax.x == 1) {
-            comp.properties.Add("right", -rectTrans.offsetMax.x);
-            comp.properties.Add("rightUnit", "px");
-          } else if (rectTrans.anchorMax.x == 0) {
-            comp.properties["alignRight"] = false;
-          } else {
-            if (rectTrans.offsetMax.x != 0) {
-              Debug.LogWarning("Please set your right value to 0 for percentage anchor value");
-            }
-
-            comp.properties.Add("right", (1 - rectTrans.anchorMax.x) * 100);
-            comp.properties.Add("rightUnit", "%");
-          }
+          comp.properties.Add("marginLeft", 0);
+          comp.properties.Add("marginRight", 0);
+          comp.properties.Add("offsetX", rectTrans.anchoredPosition.x);
         }
 
-        // 0 or 1 only calculate offset
-        if (rectTrans.anchorMax.y == 0.5 && rectTrans.anchorMin.y == 0.5) {
-          comp.properties["alignBottom"] = false;
-          comp.properties["alignTop"] = false;
+        if (rectTrans.anchorMin.y != rectTrans.anchorMax.y) {
+          comp.properties.Add("marginBottom", rectTrans.offsetMin.y);
+          comp.properties.Add("marginTop", -rectTrans.offsetMax.y);
+          comp.properties.Add("offsetY", 0);
         } else {
-          if (rectTrans.anchorMin.y == 0) {
-            comp.properties.Add("bottom", rectTrans.offsetMin.y);
-            comp.properties.Add("bottomUnit", "px");
-          } else if (rectTrans.anchorMin.y == 1) {
-            comp.properties["alignBottom"] = false;
-          } else {
-            if (rectTrans.offsetMin.y != 0) {
-              Debug.LogWarning("Please set your bottom value to 0 for percentage anchor value");
-            }
-
-            comp.properties.Add("bottom", rectTrans.anchorMin.y * 100);
-            comp.properties.Add("bottomUnit", "%");
-          }
-
-          if (rectTrans.anchorMax.y == 1) {
-            comp.properties.Add("top", -rectTrans.offsetMax.y);
-            comp.properties.Add("topUnit", "px");
-          } else if (rectTrans.anchorMax.y == 0) {
-            comp.properties["alignTop"] = false;
-          } else {
-            if (rectTrans.offsetMax.y != 0) {
-              Debug.LogWarning("Please set your top value to 0 for percentage anchor value");
-            }
-
-            comp.properties.Add("top", (1 - rectTrans.anchorMax.y) * 100);
-            comp.properties.Add("topUnit", "%");
-          }
+          comp.properties.Add("marginBottom", 0);
+          comp.properties.Add("marginTop", 0);
+          comp.properties.Add("offsetY", rectTrans.anchoredPosition.y);
         }
 
         comp.properties.Add("pivotX", rectTrans.pivot.x);
         comp.properties.Add("pivotY", rectTrans.pivot.y);
         comp.properties.Add("width", rectTrans.rect.width);
         comp.properties.Add("height", rectTrans.rect.height);
-        comp.properties.Add("offsetX", rectTrans.localPosition.x);
-        comp.properties.Add("offsetY", rectTrans.localPosition.y);
 
         result.Add(comp);
       }
