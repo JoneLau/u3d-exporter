@@ -10,26 +10,40 @@
     Tags { "RenderType"="Opaque" }
     LOD 200
 
-    CGPROGRAM
-      #pragma surface surf Lambert
+    Pass {
 
-      sampler2D _MainTex;
-      sampler2D _MatcapTex;
-      fixed4 _Color;
-      float _ColorFactor;
+      CGPROGRAM
+        #pragma vertex vert
+        #pragma fragment frag
+        #include "UnityCG.cginc"
 
-      struct Input {
-        float2 uv_MainTex;
-        float2 uv_MatcapTex;
-      };
+        struct v2f {
+          float4 pos : POSITION;
+          float2 main_uv : TEXCOORD0;
+          float2 matcap_uv : TEXCOORD1;
+        };
 
-      void surf (Input IN, inout SurfaceOutput o) {
-        fixed4 mainColor = tex2D(_MainTex, IN.uv_MainTex) * _Color;
-        fixed4 matcapColor = tex2D(_MatcapTex, IN.uv_MatcapTex);
-        o.Albedo = mainColor.rgb * _ColorFactor + matcapColor.rgb * (1 - _ColorFactor);
-        o.Alpha = mainColor.a * _ColorFactor + matcapColor.a * (1 - _ColorFactor);
-      }
-    ENDCG
+        v2f vert(appdata_base v) {
+          v2f o;
+          o.pos = UnityObjectToClipPos(v.vertex);
+          o.main_uv = v.texcoord;
+          float3 normal_w = UnityObjectToWorldNormal(v.normal);
+          o.matcap_uv = normal_w.xy * 0.5 + 0.5;
+          return o;
+        }
+
+        uniform float4 _Color;
+        uniform float _ColorFactor;
+        uniform sampler2D _MainTex;
+        uniform sampler2D _MatcapTex;
+
+        float4 frag(v2f i) : COLOR {
+          float4 mainColor = tex2D(_MainTex, i.main_uv) * _Color;
+          float4 matcapColor = tex2D(_MatcapTex, i.matcap_uv);
+          return mainColor * _ColorFactor + matcapColor * (1 - _ColorFactor);
+        }
+      ENDCG
+    }
   }
 
   Fallback "u3d-exporter/vertex-lit"
