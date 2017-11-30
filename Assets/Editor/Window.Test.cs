@@ -54,6 +54,16 @@ namespace exsdk {
       GUILayout.FlexibleSpace();
       if (GUILayout.Button("Test", "LargeButton", GUILayout.MaxWidth(200))) {
         if (this.target) {
+          var rectTrans = (this.target as GameObject).GetComponent<RectTransform>();
+          Debug.Log("anchoredPosition: " + rectTrans.anchoredPosition);
+          Debug.Log("anchorMax: " + rectTrans.anchorMax);
+          Debug.Log("anchorMin: " + rectTrans.anchorMin);
+          Debug.Log("offsetMax: " + rectTrans.offsetMax);
+          Debug.Log("offsetMin: " + rectTrans.offsetMin);
+          Debug.Log("pivot: " + rectTrans.pivot);
+          Debug.Log("rect: " + rectTrans.rect);
+          Debug.Log("sizeDelta: " + rectTrans.sizeDelta);
+
           // var path = AssetDatabase.GetAssetPath(this.target);
           // var mainAsset = AssetDatabase.LoadMainAssetAtPath(path);
           // var prefabType = PrefabUtility.GetPrefabType(mainAsset);

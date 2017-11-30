@@ -1,4 +1,5 @@
-Shader "u3d-exporter/diffuse" {
+
+Shader "u3d-exporter/unlit" {
   Properties {
     _Color ("Main Color", Color) = (1,1,1,1)
     _MainTex ("Base (RGB)", 2D) = "white" {}
@@ -9,7 +10,15 @@ Shader "u3d-exporter/diffuse" {
     LOD 200
 
     CGPROGRAM
-      #pragma surface surf Lambert
+      #pragma surface surf NoLighting noambient
+
+      fixed4 LightingNoLighting(SurfaceOutput s, fixed3 lightDir, fixed atten) {
+        fixed4 c;
+        // c.rgb = LinearToGammaSpace(s.Albedo);
+        c.rgb = s.Albedo;
+        c.a = s.Alpha;
+        return c;
+      }
 
       sampler2D _MainTex;
       fixed4 _Color;
@@ -25,6 +34,4 @@ Shader "u3d-exporter/diffuse" {
       }
     ENDCG
   }
-
-  Fallback "u3d-exporter/vertex-lit"
 }

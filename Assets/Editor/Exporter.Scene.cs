@@ -275,8 +275,11 @@ namespace exsdk {
       });
 
       foreach (var mod in mods) {
-        string typename = mod.target.GetType().ToString();
-        ComponentModInfo compModInfo = Utils.GetComponentModInfo(typename);
+        ComponentModInfo compModInfo = null;
+        if (mod.target != null) {
+          string typename = mod.target.GetType().ToString();
+          compModInfo = Utils.GetComponentModInfo(typename);
+        }
 
         // NOTE: we only care about the modifications we want
         if (compModInfo == null) {
