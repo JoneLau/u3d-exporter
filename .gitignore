@@ -30,10 +30,8 @@ node_modules/
 bower_components/
 
 # private
-Assets/Tests/
-Assets/Tests.meta
-Assets/private-tools/
-Assets/private-tools.meta
+Assets/private/
+Assets/private.meta
 
 # Unity3D
 bin/

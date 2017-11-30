@@ -19,7 +19,7 @@ RMDIR = rm -rf
 
 # Target
 dest = ./bin
-target = $(dest)/Editor/gltf-exporter.dll
+target = $(dest)/Editor/u3d-exporter.dll
 
 # /////////////////////////////////////////////////////////////////////////////
 # builds
@@ -52,7 +52,7 @@ args = $(editor_define) $(resources) -r:$(unity_engine_dll),$(unity_editor_dll),
 # do the build
 $(target):
 	@echo "========================================================"
-	@echo compiling gltf-exporter.dll...
+	@echo compiling u3d-exporter.dll...
 	@echo "========================================================"
 	@echo
 	$(RMDIR) $(dest)
