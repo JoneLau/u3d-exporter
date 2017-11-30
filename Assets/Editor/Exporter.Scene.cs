@@ -263,7 +263,7 @@ namespace exsdk {
       List<JSON_Modification> result = new List<JSON_Modification>();
 
       PropertyModification[] mods = PrefabUtility.GetPropertyModifications(_go);
-      if (mods.Length == 0) {
+      if (mods == null || mods.Length == 0) {
         return result;
       }
 
