@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -49,6 +50,7 @@ namespace exsdk {
       var modelPrefabs = new List<Object>();
       var materials = new List<Material>();
       var textures = new List<Texture>();
+      var spriteTextures = new List<Texture>();
 
       WalkScene(
         scene,
@@ -56,7 +58,8 @@ namespace exsdk {
         prefabs,
         modelPrefabs,
         materials,
-        textures
+        textures,
+        spriteTextures
       );
 
       // DELME {
@@ -302,6 +305,42 @@ namespace exsdk {
       }
 
       // ========================================
+      // save sprite textures
+      // ========================================
+
+      var destSprites = Path.Combine(dest, "sprites");
+      // create dest directory
+      if (!Directory.Exists(destSprites)) {
+        Directory.CreateDirectory(destSprites);
+      }
+      foreach (Texture spriteTex in spriteTextures) {
+        var spriteTextureJson = DumpSpriteTexture(spriteTex);
+        string path;
+        string json = JsonConvert.SerializeObject(spriteTextureJson, Formatting.Indented);
+        string id = Utils.AssetID(spriteTex);
+
+        // json
+        path = Path.Combine(destSprites,  id + ".json");
+        StreamWriter writer = new StreamWriter(path);
+        writer.Write(json);
+        writer.Close();
+
+        // image
+        string assetPath = AssetDatabase.GetAssetPath(spriteTex);
+        path = Path.Combine(destSprites,  id + Utils.AssetExt(spriteTex));
+        File.Copy(assetPath, path);
+
+        // add asset to table
+        assetsJson.Add(id, new JSON_Asset {
+          type = "sprite",
+          urls = new Dictionary<string, string> {
+            { "json", "sprites/" + id + ".json" },
+            { "image", "sprites/" + id + Utils.AssetExt(spriteTex) },
+          }
+        });
+      }
+
+      // ========================================
       // save materials
       // ========================================
 
@@ -436,7 +475,8 @@ namespace exsdk {
       List<Object> _prefabs,
       List<Object> _modelPrefabs,
       List<Material> _materials,
-      List<Texture> _textures
+      List<Texture> _textures,
+      List<Texture> _spriteTextures
     ) {
       List<GameObject> rootObjects = new List<GameObject>();
       _scene.GetRootGameObjects(rootObjects);
@@ -471,6 +511,29 @@ namespace exsdk {
                 }
               }
             }
+          }
+        }
+
+        // =========================
+        // get sprite texture
+        // =========================
+
+        Sprite sprite = null;
+        SpriteRenderer spriteRenderer = _go.GetComponent<SpriteRenderer>();
+        if (spriteRenderer) {
+          sprite = spriteRenderer.sprite;
+        }
+        Image image = _go.GetComponent<Image>();
+        if (image) {
+          sprite = image.sprite;
+        }
+
+        if (sprite != null) {
+          Texture foundedTexture = _spriteTextures.Find(t => {
+            return t == sprite.texture;
+          });
+          if (foundedTexture == null) {
+            _spriteTextures.Add(sprite.texture);
           }
         }
 

@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEditor.Sprites;
 
 using System.Collections;
 using System.Collections.Generic;
@@ -54,28 +55,17 @@ namespace exsdk {
       GUILayout.FlexibleSpace();
       if (GUILayout.Button("Test", "LargeButton", GUILayout.MaxWidth(200))) {
         if (this.target) {
-          var rectTrans = (this.target as GameObject).GetComponent<RectTransform>();
-          Debug.Log("anchoredPosition: " + rectTrans.anchoredPosition);
-          Debug.Log("anchorMax: " + rectTrans.anchorMax);
-          Debug.Log("anchorMin: " + rectTrans.anchorMin);
-          Debug.Log("offsetMax: " + rectTrans.offsetMax);
-          Debug.Log("offsetMin: " + rectTrans.offsetMin);
-          Debug.Log("pivot: " + rectTrans.pivot);
-          Debug.Log("rect: " + rectTrans.rect);
-          Debug.Log("sizeDelta: " + rectTrans.sizeDelta);
-
+          var sprite = this.target as Sprite;
           // var path = AssetDatabase.GetAssetPath(this.target);
           // var mainAsset = AssetDatabase.LoadMainAssetAtPath(path);
-          // var prefabType = PrefabUtility.GetPrefabType(mainAsset);
 
-          // // var obj = PrefabUtility.GetPrefabObject(this.target);
-          // var obj = PrefabUtility.FindPrefabRoot(this.target as GameObject);
-          // var asset = PrefabUtility.GetPrefabParent(obj);
-          // var path = AssetDatabase.GetAssetPath(asset);
-          // Debug.Log(path);
+          Debug.Log("is sub asset: " + AssetDatabase.IsSubAsset(this.target));
+          Debug.Log(sprite.rect);
 
-          // Debug.Log("prefab type: " + prefabType);
-          // var go = PrefabUtility.InstantiatePrefab(mainAsset);
+          // var packedTexture = SpriteUtility.GetSpriteTexture(sprite, true);
+          // Debug.Log(packedTexture);
+          // Debug.Log(AssetDatabase.GetAssetPath(packedTexture));
+          // Debug.Log(sprite.packed);
         }
       }
       GUILayout.FlexibleSpace();

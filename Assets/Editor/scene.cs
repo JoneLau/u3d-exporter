@@ -146,6 +146,33 @@ namespace exsdk {
   }
 
   // =========================
+  // JSON_Sprite
+  // =========================
+
+  [System.Serializable]
+  public class JSON_Sprite {
+    public string texture;
+    public bool rotated;
+    public float x;
+    public float y;
+    public float width;
+    public float height;
+    public float left;
+    public float right;
+    public float bottom;
+    public float top;
+  }
+
+  // =========================
+  // JSON_SpriteTexture
+  // =========================
+
+  [System.Serializable]
+  public class JSON_SpriteTexture : JSON_Texture {
+    public Dictionary<string, JSON_Sprite> sprites = new Dictionary<string, JSON_Sprite>();
+  }
+
+  // =========================
   // JSON_Material
   // =========================
 

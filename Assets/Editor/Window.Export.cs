@@ -116,7 +116,11 @@ namespace exsdk {
       // Output Path
       // =========================
 
-      this.outputPath = EditorGUILayout.TextField("Output Path", this.outputPath);
+      string outputPath = EditorGUILayout.TextField("Output Path", this.outputPath);
+      if (outputPath != this.outputPath) {
+        this.outputPath = outputPath;
+        EditorPrefs.SetString("outputPath", outputPath);
+      }
 
       // =========================
       // Browse

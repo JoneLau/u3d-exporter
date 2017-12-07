@@ -3,6 +3,7 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace exsdk {
   public enum ShaderType {
@@ -329,16 +330,14 @@ namespace exsdk {
       // if the asset saved in the disk
       if (assetPath.IndexOf("Assets/") == 0) {
         // if this is a sub asset
-        if (_obj is Mesh && AssetDatabase.IsSubAsset(_obj)) {
-          var meshes = new List<Object>();
-          var assets = AssetDatabase.LoadAllAssetsAtPath(assetPath);
-          foreach (var asset in assets) {
-            if (asset is Mesh) {
-              meshes.Add(asset);
-            }
+        if (AssetDatabase.IsSubAsset(_obj)) {
+          if (_obj is Mesh) {
+            var meshes = AssetDatabase.LoadAllAssetsAtPath(assetPath).OfType<Mesh>().ToList();
+            var localID = "m" + meshes.IndexOf(_obj as Mesh);
+            return localID + "@" + AssetDatabase.AssetPathToGUID(assetPath);
+          } else if (_obj is Sprite) {
+            return _obj.name + "@" + AssetDatabase.AssetPathToGUID(assetPath);
           }
-          var localID = "m" + meshes.IndexOf(_obj);
-          return localID + "@" + AssetDatabase.AssetPathToGUID(assetPath);
         }
 
         return AssetDatabase.AssetPathToGUID(assetPath);
