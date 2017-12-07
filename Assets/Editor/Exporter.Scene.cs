@@ -281,6 +281,27 @@ namespace exsdk {
         result.Add(comp);
       }
 
+      // screen-component
+      Text txt = _go.GetComponent<Text>();
+      if (txt) {
+        JSON_Component comp = new JSON_Component();
+        Vector2 alignValue = Utils.textAlignment((sbyte)txt.alignment);
+        comp.type = "Label";
+
+        string id = Utils.AssetID(txt.font.material.mainTexture);
+        if (!id.Contains("builtin-")) {
+          comp.properties.Add("font", Utils.AssetID(txt.font));
+          comp.properties.Add("texture", id);
+          comp.properties.Add("text", txt.text);
+          comp.properties.Add("fontSize", txt.fontSize);
+          comp.properties.Add("horizontalAlign", alignValue.x);
+          comp.properties.Add("verticalAlign", alignValue.y);
+          comp.properties.Add("color", new float[4] { txt.color.r, txt.color.g, txt.color.b, txt.color.a });
+
+          result.Add(comp);
+        }
+      }
+
       // mask-component
       Mask mask = _go.GetComponent<Mask>();
       if (image) {

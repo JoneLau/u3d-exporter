@@ -528,5 +528,26 @@ namespace exsdk {
 
       return rootBone;
     }
+
+    public static Vector2 textAlignment(sbyte align) {
+      Vector2 vec = Vector2.one;
+      switch (align) {
+        case 0:
+        case 1:
+        case 2:
+          vec = new Vector2(align, 4);
+          break;
+        case 3:
+        case 5:
+          vec = new Vector2(align - 3, 1);
+          break;
+        case 6:
+        case 7:
+        case 8:
+          vec = new Vector2(align - 6, 3);
+          break;
+      }
+      return vec;
+    }
   }
 }
