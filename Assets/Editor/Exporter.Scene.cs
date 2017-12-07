@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEditor;
 
+using UnityEngine.UI;
+
 using System.Collections;
 using System.Collections.Generic;
 
@@ -213,7 +215,7 @@ namespace exsdk {
         result.Add(comp);
       }
 
-      // screen-component
+      // widget-component
       RectTransform rectTrans = _go.GetComponent<RectTransform>();
       if (rectTrans != null) {
         JSON_Component comp = new JSON_Component();
@@ -248,6 +250,33 @@ namespace exsdk {
         comp.properties.Add("pivotY", rectTrans.pivot.y);
         comp.properties.Add("width", rectTrans.rect.width);
         comp.properties.Add("height", rectTrans.rect.height);
+
+        result.Add(comp);
+      }
+
+      // image-component
+      Image image = _go.GetComponent<Image>();
+      if (image) {
+        JSON_Component comp = new JSON_Component();
+        comp.type = "Sprite";
+
+        var type = "simple";
+        if (image.type == Image.Type.Simple) {
+          type = "simple";
+        } else if (image.type == Image.Type.Sliced) {
+          type = "sliced";
+        } else {
+          Debug.LogWarning("The image type " + image.type.ToString() + " is not supported.");
+        }
+
+        comp.properties.Add("type", type);
+        comp.properties.Add("color", new float[4] {
+          image.color.r,
+          image.color.g,
+          image.color.b,
+          image.color.a
+        });
+        comp.properties.Add("sprite", Utils.AssetID(image.sprite));
 
         result.Add(comp);
       }

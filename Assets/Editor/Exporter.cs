@@ -296,7 +296,7 @@ namespace exsdk {
 
         // add asset to table
         assetsJson.Add(id, new JSON_Asset {
-          type = "texture-2d",
+          type = "texture",
           urls = new Dictionary<string, string> {
             { "json", "textures/" + id + ".json" },
             { "image", "textures/" + id + Utils.AssetExt(tex) },
@@ -332,7 +332,7 @@ namespace exsdk {
 
         // add asset to table
         assetsJson.Add(id, new JSON_Asset {
-          type = "sprite",
+          type = "texture",
           urls = new Dictionary<string, string> {
             { "json", "sprites/" + id + ".json" },
             { "image", "sprites/" + id + Utils.AssetExt(spriteTex) },

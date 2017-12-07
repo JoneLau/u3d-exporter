@@ -102,7 +102,7 @@ namespace exsdk {
 
   [System.Serializable]
   public class JSON_Texture {
-    public string type = "2d";
+    public string type = "";
     public int anisotropy = -1;
     public string minFilter;
     public string magFilter;
