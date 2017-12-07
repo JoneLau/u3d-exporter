@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: grid-gray
   m_Shader: {fileID: 4800000, guid: 46e296f6fc19e4e0980615ef1cd241ad, type: 3}
-  m_ShaderKeywords: WPOS_ON
+  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA WPOS_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
