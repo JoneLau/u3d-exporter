@@ -51,12 +51,14 @@ namespace exsdk {
       var materials = new List<Material>();
       var textures = new List<Texture>();
       var spriteTextures = new List<Texture>();
+      var meshes = new List<Mesh>();
 
       WalkScene(
         scene,
         nodes,
         prefabs,
         modelPrefabs,
+        meshes,
         materials,
         textures,
         spriteTextures
@@ -159,7 +161,7 @@ namespace exsdk {
 
             Save(
               destAnims,
-              id,
+              id + ".anim",
               gltf,
               new List<BufferInfo> { bufInfo }
             );
@@ -169,7 +171,7 @@ namespace exsdk {
               assetsJson.Add(id, new JSON_Asset {
                 type = "animation",
                 urls = new Dictionary<string, string> {
-                  { "gltf", "anims/" + id + ".gltf" },
+                  { "anim", "anims/" + id + ".anim" },
                   { "bin", "anims/" + id + ".bin" }
                 }
               });
@@ -186,12 +188,12 @@ namespace exsdk {
       // save prefabs
       // ========================================
 
-      var destGLTFs = Path.Combine(dest, "gltfs");
+      var destMeshes = Path.Combine(dest, "meshes");
       var destPrefabs = Path.Combine(dest, "prefabs");
 
       // create dest directory
-      if (!Directory.Exists(destGLTFs)) {
-        Directory.CreateDirectory(destGLTFs);
+      if (!Directory.Exists(destMeshes)) {
+        Directory.CreateDirectory(destMeshes);
       }
       if (!Directory.Exists(destPrefabs)) {
         Directory.CreateDirectory(destPrefabs);
@@ -223,10 +225,9 @@ namespace exsdk {
             { "json", "prefabs/" + id + ".json" },
           }
         });
-
-        // save model prefab (as gltf)
-
       }
+
+      // save model prefab (as gltf)
       foreach (GameObject modelPrefab in modelPrefabs) {
         string id = Utils.AssetID(modelPrefab);
         // save model prefabs
@@ -250,8 +251,8 @@ namespace exsdk {
         }
 
         Save(
-          destGLTFs,
-          id,
+          destMeshes,
+          id + ".gltf",
           gltf,
           new List<BufferInfo> { bufInfo }
         );
@@ -260,8 +261,42 @@ namespace exsdk {
         assetsJson.Add(id, new JSON_Asset {
           type = "gltf",
           urls = new Dictionary<string, string> {
-            { "gltf", "gltfs/" + id + ".gltf" },
-            { "bin", "gltfs/" + id + ".bin" }
+            { "gltf", "meshes/" + id + ".gltf" },
+            { "bin", "meshes/" + id + ".bin" }
+          }
+        });
+      }
+
+      // save meshes (as gltf)
+      foreach (Mesh mesh in meshes) {
+        string id = Utils.AssetID(mesh);
+        // save model prefabs
+        GLTF gltf = new GLTF();
+        gltf.asset = new GLTF_Asset {
+          version = "1.0.0",
+          generator = "u3d-exporter"
+        };
+        BufferInfo bufInfo = new BufferInfo {
+          id = id,
+          name = mesh.name
+        };
+
+        DumpMesh(mesh, gltf, bufInfo, 0);
+        DumpBuffer(bufInfo, gltf);
+
+        Save(
+          destMeshes,
+          id + ".mesh",
+          gltf,
+          new List<BufferInfo> { bufInfo }
+        );
+
+        // add asset to table
+        assetsJson.Add(id, new JSON_Asset {
+          type = "mesh",
+          urls = new Dictionary<string, string> {
+            { "mesh", "meshes/" + id + ".mesh" },
+            { "bin", "meshes/" + id + ".bin" }
           }
         });
       }
@@ -428,7 +463,7 @@ namespace exsdk {
       }
     }
 
-    void Save(string _dest, string _name, GLTF _gltf, List<BufferInfo> _bufferInfos) {
+    void Save(string _dest, string _file, GLTF _gltf, List<BufferInfo> _bufferInfos) {
       // create dest directory
       if (!Directory.Exists(_dest)) {
         Directory.CreateDirectory(_dest);
@@ -441,7 +476,7 @@ namespace exsdk {
       // =========================
 
       string json = JsonConvert.SerializeObject(_gltf, Formatting.Indented);
-      path = Path.Combine(_dest, _name + ".gltf");
+      path = Path.Combine(_dest, _file);
       StreamWriter writer = new StreamWriter(path);
       writer.Write(json);
       writer.Close();
@@ -474,6 +509,7 @@ namespace exsdk {
       List<GameObject> _nodes,
       List<Object> _prefabs,
       List<Object> _modelPrefabs,
+      List<Mesh> _meshes,
       List<Material> _materials,
       List<Texture> _textures,
       List<Texture> _spriteTextures
@@ -554,18 +590,24 @@ namespace exsdk {
         if (mesh != null) {
           var path = AssetDatabase.GetAssetPath(mesh);
           var prefab = AssetDatabase.LoadMainAssetAtPath(path);
-          if (prefab) {
-            var type = PrefabUtility.GetPrefabType(prefab);
-            if (type != PrefabType.ModelPrefab) {
-              Debug.LogWarning("Can not export mesh " + mesh.name + ": it is not a model prefab.");
-            }
+          var type = PrefabUtility.GetPrefabType(prefab);
 
+          // if this is a model-prefab
+          if (type == PrefabType.ModelPrefab) {
             // check if prefab already exists
             var founded = _modelPrefabs.Find(item => {
               return item == prefab;
             });
             if (founded == null) {
               _modelPrefabs.Add(prefab);
+            }
+          } else {
+            // check if mesh already exists
+            var founded = _meshes.Find(item => {
+              return item == mesh;
+            });
+            if (founded == null) {
+              _meshes.Add(mesh);
             }
           }
         }
