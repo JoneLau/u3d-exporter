@@ -304,6 +304,21 @@ namespace exsdk {
       });
 
       foreach (var mod in mods) {
+        ModProperty propertyModInfo = Registery.propertyModInfos.Find(x => x.name == mod.propertyPath);
+        if (propertyModInfo != null) {
+          JSON_Modification jsonMod = new JSON_Modification();
+
+          // entity
+          GameObject go = mod.target as GameObject;
+          jsonMod.entity = nodes.IndexOf(go);
+
+          // property
+          jsonMod.property = propertyModInfo.mapping;
+          jsonMod.value = mod.value;
+          result.Add(jsonMod);
+          continue;
+        }
+
         ComponentModInfo compModInfo = null;
         if (mod.target != null) {
           string typename = mod.target.GetType().ToString();

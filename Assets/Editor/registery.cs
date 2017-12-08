@@ -86,6 +86,11 @@ namespace exsdk {
       },
     };
 
+    // propertyModInfos
+    public static List<ModProperty> propertyModInfos = new List<ModProperty>() {
+      new ModProperty(){ name="m_Name",mapping="name"}
+    };
+
     // componentModInfos
     public static Dictionary<string, ComponentModInfo> componentModInfos = new Dictionary<string, ComponentModInfo>() {
       {
