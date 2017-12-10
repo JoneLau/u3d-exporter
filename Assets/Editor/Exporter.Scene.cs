@@ -281,6 +281,15 @@ namespace exsdk {
         result.Add(comp);
       }
 
+      // mask-component
+      Mask mask = _go.GetComponent<Mask>();
+      if (image) {
+        JSON_Component comp = new JSON_Component();
+        comp.type = "Mask";
+
+        result.Add(comp);
+      }
+
       return result;
     }
 
