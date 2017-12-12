@@ -321,6 +321,15 @@ namespace exsdk {
       return Path.GetExtension(assetPath);
     }
 
+    public static bool IsBuiltinAsset(Object _obj) {
+      string assetPath = AssetDatabase.GetAssetPath(_obj);
+      if (assetPath == "Library/unity default resources") {
+        return true;
+      }
+
+      return false;
+    }
+
     public static string AssetID(Object _obj) {
       string assetPath = AssetDatabase.GetAssetPath(_obj);
       if (string.IsNullOrEmpty(assetPath)) {

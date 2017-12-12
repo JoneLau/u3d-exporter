@@ -618,8 +618,7 @@ namespace exsdk {
             Debug.LogWarning("No texture for font " + fontTexture.name);
           }
 
-          string id = Utils.AssetID(text.font);
-          if (id.Contains("builtin-")) {
+          if (Utils.IsBuiltinAsset(text.font)) {
             Debug.LogWarning("Can't export the texture because of it's default font's texture");
           } else {
             Texture foundedTexture = _textures.Find(t => t == fontTexture);
@@ -648,7 +647,7 @@ namespace exsdk {
           mesh = skinnedMeshRenderer.sharedMesh;
         }
 
-        if (mesh != null) {
+        if (mesh != null && Utils.IsBuiltinAsset(mesh) == false) {
           var path = AssetDatabase.GetAssetPath(mesh);
           var prefab = AssetDatabase.LoadMainAssetAtPath(path);
           var type = PrefabUtility.GetPrefabType(prefab);
