@@ -611,21 +611,20 @@ namespace exsdk {
 
         Text text = _go.GetComponent<Text>();
         if (text) {
+          var fontTexture = text.font.material.mainTexture;
           if (text.font == null) {
-            Debug.LogWarning("The font is null in " + _go.name);
-          } else {
-            if (text.font.material.mainTexture == null) {
-              Debug.LogWarning("Texture lose in " + text.font.material.name);
-            }
+            Debug.LogWarning("Font not found in " + _go.name);
+          } else if (fontTexture == null) {
+            Debug.LogWarning("No texture for font " + fontTexture.name);
           }
 
           string id = Utils.AssetID(text.font);
           if (id.Contains("builtin-")) {
             Debug.LogWarning("Can't export the texture because of it's default font's texture");
           } else {
-            Texture foundedTexture = _textures.Find(t => t == text.font.material.mainTexture);
+            Texture foundedTexture = _textures.Find(t => t == fontTexture);
             if (foundedTexture == null) {
-              _textures.Add(text.font.material.mainTexture);
+              _textures.Add(fontTexture);
             }
 
             Font font = _fonts.Find(t => t == text.font);

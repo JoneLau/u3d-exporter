@@ -529,25 +529,37 @@ namespace exsdk {
       return rootBone;
     }
 
-    public static Vector2 textAlignment(sbyte align) {
-      Vector2 vec = Vector2.one;
-      switch (align) {
-        case 0:
-        case 1:
-        case 2:
-          vec = new Vector2(align, 4);
-          break;
-        case 3:
-        case 5:
-          vec = new Vector2(align - 3, 1);
-          break;
-        case 6:
-        case 7:
-        case 8:
-          vec = new Vector2(align - 6, 3);
-          break;
+    public static string[] textAlignment(TextAnchor _align) {
+      switch (_align) {
+        case TextAnchor.UpperLeft:
+          return new string[] { "left", "top" };
+
+        case TextAnchor.UpperCenter:
+          return new string[] { "center", "top" };
+
+        case TextAnchor.UpperRight:
+          return new string[] { "right", "top" };
+
+        case TextAnchor.MiddleLeft:
+          return new string[] { "left", "center" };
+
+        case TextAnchor.MiddleCenter:
+          return new string[] { "center", "center" };
+
+        case TextAnchor.MiddleRight:
+          return new string[] { "right", "center" };
+
+        case TextAnchor.LowerLeft:
+          return new string[] { "left", "bottom" };
+
+        case TextAnchor.LowerCenter:
+          return new string[] { "center", "bottom" };
+
+        case TextAnchor.LowerRight:
+          return new string[] { "right", "bottom" };
       }
-      return vec;
+
+      return new string[] { "center", "center" };
     }
   }
 }
