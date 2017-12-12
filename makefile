@@ -9,6 +9,7 @@ unity_path = /Applications/Unity/Unity.app/Contents/
 compiler = $(unity_path)/Mono/bin/gmcs
 
 unity_engine_dll = $(unity_path)/Managed/UnityEngine.dll
+unity_engine_ui_dll = $(unity_path)/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll
 unity_editor_dll = $(unity_path)/Managed/UnityEditor.dll
 json_dll = ./Assets/vendors/JsonNet-Lite/Newtonsoft.Json.dll
 
@@ -47,7 +48,7 @@ src = $(wildcard $(addsuffix *.cs,$(src_dirs)))
 # resources += -resource:Assets/Resource/pixel.png
 
 # argument
-args = $(editor_define) $(resources) -r:$(unity_engine_dll),$(unity_editor_dll),$(json_dll)
+args = $(editor_define) $(resources) -r:$(unity_engine_dll),$(unity_engine_ui_dll),$(unity_editor_dll),$(json_dll)
 
 # do the build
 $(target):
