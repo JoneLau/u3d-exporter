@@ -528,5 +528,38 @@ namespace exsdk {
 
       return rootBone;
     }
+
+    public static string[] textAlignment(TextAnchor _align) {
+      switch (_align) {
+        case TextAnchor.UpperLeft:
+          return new string[] { "left", "top" };
+
+        case TextAnchor.UpperCenter:
+          return new string[] { "center", "top" };
+
+        case TextAnchor.UpperRight:
+          return new string[] { "right", "top" };
+
+        case TextAnchor.MiddleLeft:
+          return new string[] { "left", "center" };
+
+        case TextAnchor.MiddleCenter:
+          return new string[] { "center", "center" };
+
+        case TextAnchor.MiddleRight:
+          return new string[] { "right", "center" };
+
+        case TextAnchor.LowerLeft:
+          return new string[] { "left", "bottom" };
+
+        case TextAnchor.LowerCenter:
+          return new string[] { "center", "bottom" };
+
+        case TextAnchor.LowerRight:
+          return new string[] { "right", "bottom" };
+      }
+
+      return new string[] { "center", "center" };
+    }
   }
 }

@@ -173,6 +173,49 @@ namespace exsdk {
   }
 
   // =========================
+  // JSON_Font
+  // =========================
+
+  [System.Serializable]
+  public class JSON_Font {
+    // referenced texture;
+    public string texture;
+
+    // common
+    public string face;
+    public int size;
+    public int lineHeight;
+    public float lineBaseHeight;
+    public float scaleW;
+    public float scaleH;
+
+    // public List<string> pages=new List<string>();
+    public Dictionary<string, JSON_Font_Chars> chars = new Dictionary<string, JSON_Font_Chars>();
+    public List<JSON_Font_Kerning> kernings = new List<JSON_Font_Kerning>();
+  }
+
+  [System.Serializable]
+  public class JSON_Font_Chars {
+    public int id;
+    public float x;
+    public float y;
+    public float width;
+    public float height;
+    public float xoffset;
+    public float yoffset;
+    public float xadvance;
+    public int page;
+    public int chnl;
+  }
+
+  [System.Serializable]
+  public class JSON_Font_Kerning {
+    public int first;
+    public int second;
+    public int amount;
+  }
+
+  // =========================
   // JSON_Material
   // =========================
 

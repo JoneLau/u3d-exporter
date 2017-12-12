@@ -51,6 +51,7 @@ namespace exsdk {
       var materials = new List<Material>();
       var textures = new List<Texture>();
       var spriteTextures = new List<Texture>();
+      var fonts = new List<Font>();
       var meshes = new List<Mesh>();
 
       WalkScene(
@@ -61,7 +62,8 @@ namespace exsdk {
         meshes,
         materials,
         textures,
-        spriteTextures
+        spriteTextures,
+        fonts
       );
 
       // DELME {
@@ -376,6 +378,35 @@ namespace exsdk {
       }
 
       // ========================================
+      // save fonts
+      // ========================================
+
+      var destFonts = Path.Combine(dest, "fonts");
+      if (!Directory.Exists(destFonts)) {
+        Directory.CreateDirectory(destFonts);
+      }
+
+      foreach (Font font in fonts) {
+        JSON_Font fontJson = DumpFont(font);
+
+        string path;
+        string json = JsonConvert.SerializeObject(fontJson, Formatting.Indented);
+        string id = Utils.AssetID(font);
+
+        path = Path.Combine(destFonts, id + ".json");
+        StreamWriter writer = new StreamWriter(path);
+        writer.Write(json);
+        writer.Close();
+
+        assetsJson.Add(id, new JSON_Asset {
+          type = "bmfont",
+          urls = new Dictionary<string, string> {
+            { "json", "fonts/" + id + ".json" },
+          }
+        });
+      }
+
+      // ========================================
       // save materials
       // ========================================
 
@@ -512,7 +543,8 @@ namespace exsdk {
       List<Mesh> _meshes,
       List<Material> _materials,
       List<Texture> _textures,
-      List<Texture> _spriteTextures
+      List<Texture> _spriteTextures,
+      List<Font> _fonts
     ) {
       List<GameObject> rootObjects = new List<GameObject>();
       _scene.GetRootGameObjects(rootObjects);
@@ -570,6 +602,35 @@ namespace exsdk {
           });
           if (foundedTexture == null) {
             _spriteTextures.Add(sprite.texture);
+          }
+        }
+
+        // =========================
+        // get font
+        // =========================
+
+        Text text = _go.GetComponent<Text>();
+        if (text) {
+          var fontTexture = text.font.material.mainTexture;
+          if (text.font == null) {
+            Debug.LogWarning("Font not found in " + _go.name);
+          } else if (fontTexture == null) {
+            Debug.LogWarning("No texture for font " + fontTexture.name);
+          }
+
+          string id = Utils.AssetID(text.font);
+          if (id.Contains("builtin-")) {
+            Debug.LogWarning("Can't export the texture because of it's default font's texture");
+          } else {
+            Texture foundedTexture = _textures.Find(t => t == fontTexture);
+            if (foundedTexture == null) {
+              _textures.Add(fontTexture);
+            }
+
+            Font font = _fonts.Find(t => t == text.font);
+            if (font == null) {
+              _fonts.Add(text.font);
+            }
           }
         }
 
