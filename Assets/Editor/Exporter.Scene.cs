@@ -133,10 +133,32 @@ namespace exsdk {
       if (camera) {
         JSON_Component comp = new JSON_Component();
         comp.type = "Camera";
-        comp.properties.Add("backgroundColor", new float[3] {
+        comp.properties.Add("type", camera.orthographic ? "ortho" : "perspective");
+        comp.properties.Add("fov", camera.fieldOfView);
+        comp.properties.Add("orthoHeight", camera.orthographicSize);
+        comp.properties.Add("near", camera.nearClipPlane);
+        comp.properties.Add("far", camera.farClipPlane);
+        // comp.properties.Add("order", camera.depth);
+
+        comp.properties.Add("color", new float[4] {
           camera.backgroundColor.r,
           camera.backgroundColor.g,
-          camera.backgroundColor.b
+          camera.backgroundColor.b,
+          camera.backgroundColor.a
+        });
+
+        var clearFlags = 1 | 2;
+        if (camera.clearFlags == CameraClearFlags.SolidColor) {
+          clearFlags = 1 | 2; // color & depth
+        } else if (camera.clearFlags == CameraClearFlags.Depth) {
+          clearFlags = 2;
+        }
+        comp.properties.Add("clearFlags", clearFlags);
+        comp.properties.Add("rect", new float[4] {
+          camera.rect.x,
+          camera.rect.y,
+          camera.rect.width,
+          camera.rect.height
         });
 
         result.Add(comp);
