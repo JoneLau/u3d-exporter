@@ -42,6 +42,7 @@ namespace exsdk {
 
       // name
       result.name = _go.name;
+      result.enabled = _go.activeSelf;
 
       // NOTE: skinned mesh node will use identity matrix
       if (_go.GetComponent<SkinnedMeshRenderer>() != null ||
@@ -119,6 +120,7 @@ namespace exsdk {
       if (light) {
         JSON_Component comp = new JSON_Component();
         comp.type = "Light";
+        comp.enabled = light.enabled;
         comp.properties.Add("color", new float[3] {
           light.color.r,
           light.color.g,
@@ -133,6 +135,7 @@ namespace exsdk {
       if (camera) {
         JSON_Component comp = new JSON_Component();
         comp.type = "Camera";
+        comp.enabled = camera.enabled;
         comp.properties.Add("type", camera.orthographic ? "ortho" : "perspective");
         comp.properties.Add("fov", camera.fieldOfView);
         comp.properties.Add("orthoHeight", camera.orthographicSize);
@@ -183,6 +186,7 @@ namespace exsdk {
             matAssets.Add(id);
           }
           comp.properties.Add("materials", matAssets);
+          comp.enabled = renderer.enabled;
         }
 
         result.Add(comp);
@@ -207,6 +211,7 @@ namespace exsdk {
             matAssets.Add(id);
           }
           comp.properties.Add("materials", matAssets);
+          comp.enabled = renderer.enabled;
         }
 
         result.Add(comp);
@@ -233,6 +238,8 @@ namespace exsdk {
       if (canvas != null) {
         JSON_Component comp = new JSON_Component();
         comp.type = "Screen";
+
+        comp.enabled = canvas.enabled;
 
         result.Add(comp);
       }
@@ -291,6 +298,7 @@ namespace exsdk {
           Debug.LogWarning("The image type " + image.type.ToString() + " is not supported.");
         }
 
+        comp.enabled = image.enabled;
         comp.properties.Add("type", type);
         comp.properties.Add("color", new float[4] {
           image.color.r,
@@ -310,6 +318,7 @@ namespace exsdk {
         string[] aligns = Utils.textAlignment(txt.alignment);
         comp.type = "Label";
 
+        comp.enabled = txt.enabled;
         comp.properties.Add("font", Utils.AssetID(txt.font));
         comp.properties.Add("text", txt.text);
         comp.properties.Add("fontSize", txt.fontSize);
@@ -325,6 +334,8 @@ namespace exsdk {
       if (mask) {
         JSON_Component comp = new JSON_Component();
         comp.type = "Mask";
+
+        comp.enabled = mask.enabled;
 
         result.Add(comp);
       }
@@ -362,7 +373,12 @@ namespace exsdk {
 
           // property
           jsonMod.property = propertyModInfo.mapping;
-          jsonMod.value = mod.value;
+          if (propertyModInfo.fn != null) {
+            jsonMod.value = propertyModInfo.fn(mod.value);
+          } else {
+            jsonMod.value = mod.value;
+          }
+
           result.Add(jsonMod);
           continue;
         }
@@ -379,6 +395,7 @@ namespace exsdk {
         }
 
         string mappedProp = compModInfo.MapProperty(mod.propertyPath);
+        propertyModInfo = compModInfo.properties.Find(x => mod.propertyPath.IndexOf(x.name) == 0);
 
         if ( mappedProp != null ) {
           JSON_Modification jsonMod = new JSON_Modification();
@@ -394,7 +411,11 @@ namespace exsdk {
           if (mod.objectReference) {
             jsonMod.value = Utils.AssetID(mod.objectReference);
           } else {
-            jsonMod.value = mod.value;
+            if (propertyModInfo.fn != null) {
+              jsonMod.value = propertyModInfo.fn(mod.value);
+            } else {
+              jsonMod.value = mod.value;
+            }
           }
 
           result.Add(jsonMod);

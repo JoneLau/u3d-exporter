@@ -32,6 +32,7 @@ namespace exsdk {
     // basic
     public string name;
     public string prefab;
+    public bool enabled = true;
     public float[] translation = new float[3] { 0, 0, 0 };
     public float[] rotation = new float[4] { 0, 0, 0, 1 };
     public float[] scale = new float[3] { 1, 1, 1 };
@@ -45,6 +46,10 @@ namespace exsdk {
 
     public bool ShouldSerializeprefab() {
       return prefab != null;
+    }
+
+    public bool ShouldSerializeenabled() {
+      return enabled == false;
     }
 
     public bool ShouldSerializetranslation() {
@@ -79,7 +84,12 @@ namespace exsdk {
   [System.Serializable]
   public class JSON_Component {
     public string type;
+    public bool enabled = true;
     public Dictionary<string, object> properties = new Dictionary<string, object>();
+
+    public bool ShouldSerializeenabled() {
+      return enabled == false;
+    }
 
     public bool ShouldSerializeproperties() {
       return properties != null && properties.Count != 0;

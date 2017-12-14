@@ -223,6 +223,9 @@ namespace exsdk {
   public class ModProperty {
     public string name;
     public string mapping;
+    public ConvertFn fn = null;
+
+    public delegate object ConvertFn (object val);
   }
 
   public class ComponentModInfo {
