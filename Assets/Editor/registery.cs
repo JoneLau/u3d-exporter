@@ -88,7 +88,8 @@ namespace exsdk {
 
     // propertyModInfos
     public static List<ModProperty> propertyModInfos = new List<ModProperty>() {
-      new ModProperty(){ name="m_Name",mapping="name"}
+      new ModProperty() { name = "m_Name", mapping = "name" },
+      new ModProperty() { name = "m_IsActive", mapping = "_enabled", fn = val => val.ToString() == "0" ? false : true }
     };
 
     // componentModInfos
@@ -98,6 +99,7 @@ namespace exsdk {
         new ComponentModInfo() {
           type = "Model",
           properties = new List<ModProperty>() {
+            new ModProperty() { name = "m_Enabled", mapping = "_enabled", fn = val => val.ToString() == "0" ? false : true },
             new ModProperty() { name = "m_Materials.Array.data", mapping = "materials" },
           }
         }
@@ -106,12 +108,18 @@ namespace exsdk {
         "UnityEngine.SkinnedMeshRenderer",
         new ComponentModInfo() {
           type = "SkinningModel",
+          properties = new List<ModProperty>() {
+            new ModProperty() { name = "m_Enabled", mapping = "_enabled", fn = val => val.ToString() == "0" ? false : true },
+          }
         }
       },
       {
         "UnityEngine.Animation",
         new ComponentModInfo() {
           type = "Animation",
+          properties = new List<ModProperty>() {
+            new ModProperty() { name = "m_Enabled", mapping = "_enabled", fn = val => val.ToString() == "0" ? false : true },
+          }
         }
       }
     };

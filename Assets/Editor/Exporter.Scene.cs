@@ -373,7 +373,12 @@ namespace exsdk {
 
           // property
           jsonMod.property = propertyModInfo.mapping;
-          jsonMod.value = mod.value;
+          if (propertyModInfo.fn != null) {
+            jsonMod.value = propertyModInfo.fn(mod.value);
+          } else {
+            jsonMod.value = mod.value;
+          }
+
           result.Add(jsonMod);
           continue;
         }
@@ -390,6 +395,7 @@ namespace exsdk {
         }
 
         string mappedProp = compModInfo.MapProperty(mod.propertyPath);
+        propertyModInfo = compModInfo.properties.Find(x => mod.propertyPath.IndexOf(x.name) == 0);
 
         if ( mappedProp != null ) {
           JSON_Modification jsonMod = new JSON_Modification();
@@ -405,7 +411,11 @@ namespace exsdk {
           if (mod.objectReference) {
             jsonMod.value = Utils.AssetID(mod.objectReference);
           } else {
-            jsonMod.value = mod.value;
+            if (propertyModInfo.fn != null) {
+              jsonMod.value = propertyModInfo.fn(mod.value);
+            } else {
+              jsonMod.value = mod.value;
+            }
           }
 
           result.Add(jsonMod);
