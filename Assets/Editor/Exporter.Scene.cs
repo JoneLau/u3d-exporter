@@ -42,6 +42,7 @@ namespace exsdk {
 
       // name
       result.name = _go.name;
+      result.enabled = _go.activeSelf;
 
       // NOTE: skinned mesh node will use identity matrix
       if (_go.GetComponent<SkinnedMeshRenderer>() != null ||
@@ -119,7 +120,7 @@ namespace exsdk {
       if (light) {
         JSON_Component comp = new JSON_Component();
         comp.type = "Light";
-        comp.properties.Add("enabled", light.enabled);
+        comp.enabled = light.enabled;
         comp.properties.Add("color", new float[3] {
           light.color.r,
           light.color.g,
@@ -134,7 +135,7 @@ namespace exsdk {
       if (camera) {
         JSON_Component comp = new JSON_Component();
         comp.type = "Camera";
-        comp.properties.Add("enabled", camera.enabled);
+        comp.enabled = camera.enabled;
         comp.properties.Add("type", camera.orthographic ? "ortho" : "perspective");
         comp.properties.Add("fov", camera.fieldOfView);
         comp.properties.Add("orthoHeight", camera.orthographicSize);
@@ -185,7 +186,7 @@ namespace exsdk {
             matAssets.Add(id);
           }
           comp.properties.Add("materials", matAssets);
-          comp.properties.Add("enabled", renderer.enabled);
+          comp.enabled = renderer.enabled;
         }
 
         result.Add(comp);
@@ -210,7 +211,7 @@ namespace exsdk {
             matAssets.Add(id);
           }
           comp.properties.Add("materials", matAssets);
-          comp.properties.Add("enabled", renderer.enabled);
+          comp.enabled = renderer.enabled;
         }
 
         result.Add(comp);
@@ -238,7 +239,7 @@ namespace exsdk {
         JSON_Component comp = new JSON_Component();
         comp.type = "Screen";
 
-        comp.properties.Add("enabled", canvas.enabled);
+        comp.enabled = canvas.enabled;
 
         result.Add(comp);
       }
@@ -297,7 +298,7 @@ namespace exsdk {
           Debug.LogWarning("The image type " + image.type.ToString() + " is not supported.");
         }
 
-        comp.properties.Add("enabled", image.enabled);
+        comp.enabled = image.enabled;
         comp.properties.Add("type", type);
         comp.properties.Add("color", new float[4] {
           image.color.r,
@@ -317,7 +318,7 @@ namespace exsdk {
         string[] aligns = Utils.textAlignment(txt.alignment);
         comp.type = "Label";
 
-        comp.properties.Add("enabled", txt.enabled);
+        comp.enabled = txt.enabled;
         comp.properties.Add("font", Utils.AssetID(txt.font));
         comp.properties.Add("text", txt.text);
         comp.properties.Add("fontSize", txt.fontSize);
@@ -334,7 +335,7 @@ namespace exsdk {
         JSON_Component comp = new JSON_Component();
         comp.type = "Mask";
 
-        comp.properties.Add("enabled", mask.enabled);
+        comp.enabled = mask.enabled;
 
         result.Add(comp);
       }
