@@ -21,6 +21,11 @@ namespace exsdk {
       EditorGUILayout.EndHorizontal();
       if (EditorGUI.EndChangeCheck()) {
         scriptComp.resetProperties();
+        serializedObject.Update();
+      }
+
+      if (scriptComp.desc == null) {
+        return;
       }
 
 	    EditorGUI.BeginChangeCheck();
@@ -64,7 +69,7 @@ namespace exsdk {
       }
 
       if (EditorGUI.EndChangeCheck()) {
-        base.serializedObject.ApplyModifiedProperties();
+        serializedObject.ApplyModifiedProperties();
       }
     }
   }
