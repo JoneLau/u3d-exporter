@@ -340,6 +340,22 @@ namespace exsdk {
         result.Add(comp);
       }
 
+      // script-component
+      ScriptComponent scriptComp = _go.GetComponent<ScriptComponent>();
+      if (scriptComp) {
+        JSON_Component comp = new JSON_Component();
+        comp.type = scriptComp.desc.name;
+        foreach (ScriptCompDescProperty item in scriptComp.desc.properties) {
+          if (scriptComp.properties.ContainsKey(item.name)) {
+            comp.properties.Add(item.name, scriptComp.properties[item.name]);
+          } else {
+            comp.properties.Add(item.name, ScriptComponent.newProperty(item.type));
+          }
+        }
+
+        result.Add(comp);
+      }
+
       return result;
     }
 
