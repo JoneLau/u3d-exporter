@@ -6,52 +6,65 @@ using UnityEditor;
 namespace exsdk {
   [CustomEditor(typeof(ScriptComponent))]
   public class ScriptComponentEditor : Editor {
-    ScriptComponent show;
-    ScriptCompDesc desc;
-    private List<string> properties = new List<string>();
-
     private void OnEnable() {
-      show = (ScriptComponent)target;
-      show.resetProperties();
-      desc = show.desc;
+      var scriptComp = target as ScriptComponent;
+      scriptComp.resetProperties();
     }
 
-    public override void OnInspectorGUI() {   
-      EditorGUILayout.BeginHorizontal(new GUILayoutOption[0]);
-      show.desc = (ScriptCompDesc)EditorGUILayout.ObjectField("Script",show.desc, typeof(ScriptCompDesc));
-      EditorGUILayout.EndHorizontal();
+    public override void OnInspectorGUI() {
+      var scriptComp = target as ScriptComponent;
+      serializedObject.Update();
 
-      if (GUI.changed) {
-        if (show.desc !=desc) {
-          desc = show.desc;
-          show.properties = null;
-          show.resetProperties();
+	    EditorGUI.BeginChangeCheck();
+      EditorGUILayout.BeginHorizontal(new GUILayoutOption[0]);
+      scriptComp.desc = (ScriptCompDesc)EditorGUILayout.ObjectField("desc", scriptComp.desc, typeof(ScriptCompDesc), false);
+      EditorGUILayout.EndHorizontal();
+      if (EditorGUI.EndChangeCheck()) {
+        scriptComp.resetProperties();
+      }
+
+	    EditorGUI.BeginChangeCheck();
+      var serializedProps = serializedObject.FindProperty("properties");
+
+      foreach (var propDesc in scriptComp.desc.properties) {
+        // find properties by name
+        var index = -1;
+        PropType type = PropType.String;
+        for (int i = 0; i < scriptComp.properties.Count; ++i) {
+          var prop = scriptComp.properties[i];
+
+          if (prop.name == propDesc.name) {
+            type = propDesc.type;
+            index = i;
+            break;
+          }
+        }
+
+        // use founded index
+        if (index != -1) {
+          var prop = scriptComp.properties[index];
+          var sprop = serializedProps.GetArrayElementAtIndex(index);
+          var svalue = sprop.FindPropertyRelative("value");
+          SerializedProperty sfield;
+
+          if (type == PropType.Int) {
+            sfield = svalue.FindPropertyRelative("intField");
+          } else if (type == PropType.Float) {
+            sfield = svalue.FindPropertyRelative("floatField");
+          } else if (type == PropType.String) {
+            sfield = svalue.FindPropertyRelative("stringField");
+          } else if (type == PropType.Bool) {
+            sfield = svalue.FindPropertyRelative("boolField");
+          } else {
+            sfield = svalue.FindPropertyRelative("objectField");
+          }
+
+          EditorGUILayout.PropertyField(sfield, new GUIContent(prop.name));
         }
       }
 
-      if (desc != null) {
-        properties.Clear();
-        if (show.properties != null) {
-          foreach (KeyValuePair<string, object> item in show.properties) {
-            properties.Add(item.Key);
-          }
-        }
-
-        foreach (string name in properties) {
-          EditorGUILayout.BeginHorizontal(new GUILayoutOption[0]);
-          EditorGUILayout.LabelField(name, GUILayout.MaxWidth(50));
-
-          if (show.properties[name].GetType() == typeof(string)) {
-            show.properties[name] = EditorGUILayout.TextField(show.properties[name].ToString());
-          } else if (show.properties[name].GetType() == typeof(int)) {
-            show.properties[name] = EditorGUILayout.IntField(int.Parse(show.properties[name].ToString()));
-          } else if (show.properties[name].GetType() == typeof(float)) {
-            show.properties[name] = EditorGUILayout.FloatField(float.Parse(show.properties[name].ToString()));
-          } else if (show.properties[name].GetType() == typeof(bool)) {
-            show.properties[name] = EditorGUILayout.Toggle(bool.Parse(show.properties[name].ToString()));
-          }
-          EditorGUILayout.EndHorizontal();
-        }
+      if (EditorGUI.EndChangeCheck()) {
+        base.serializedObject.ApplyModifiedProperties();
       }
     }
   }

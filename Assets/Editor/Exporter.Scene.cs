@@ -346,10 +346,25 @@ namespace exsdk {
         JSON_Component comp = new JSON_Component();
         comp.type = scriptComp.desc.name;
         foreach (ScriptCompDescProperty item in scriptComp.desc.properties) {
-          if (scriptComp.properties.ContainsKey(item.name)) {
-            comp.properties.Add(item.name, scriptComp.properties[item.name]);
-          } else {
-            comp.properties.Add(item.name, ScriptComponent.newProperty(item.type));
+          foreach (var prop in scriptComp.properties) {
+            if (prop.name == item.name) {
+              object val = null;
+
+              if (item.type == PropType.Bool) {
+                val = prop.value.boolField;
+              } else if (item.type == PropType.Int) {
+                val = prop.value.intField;
+              } else if (item.type == PropType.Float) {
+                val = prop.value.floatField;
+              } else if (item.type == PropType.String) {
+                val = prop.value.stringField;
+              } else if (item.type == PropType.Reference) {
+                val = prop.value.objectField;
+              }
+
+              comp.properties.Add(item.name, val);
+              break;
+            }
           }
         }
 

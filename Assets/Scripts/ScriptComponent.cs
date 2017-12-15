@@ -3,55 +3,75 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+[System.Serializable]
+public struct ValueField {
+  public bool boolField;
+  public int intField;
+  public float floatField;
+  public string stringField;
+  public Object objectField;
+}
+
+[System.Serializable]
+public struct ScriptProperty {
+  public string name;
+  public ValueField value;
+}
+
 public class ScriptComponent : MonoBehaviour {
 
   public ScriptCompDesc desc;
-  public Dictionary<string, object> properties;
+  public List<ScriptProperty> properties;
 
   public void resetProperties() {
-    if (desc == null) {
-      return;
-    }
-
-    if (desc.properties.Count <= 0) {
+    if (desc == null || desc.properties.Count == 0) {
       return;
     }
 
     if (properties == null) {
-      properties = new Dictionary<string, object>();
+      properties = new List<ScriptProperty>();
 
       foreach (var item in desc.properties) {
-        properties[item.name] = newProperty(item.type);
-      }
-    } else {
-      Dictionary<string, object> oldproperties = new Dictionary<string, object>();
-
-      foreach (KeyValuePair<string, object> item in properties) {
-        oldproperties[item.Key] = item.Value;
+        properties.Add(new ScriptProperty {
+          name = item.name,
+          value = newValue()
+        });
       }
 
-      properties.Clear();
+      return;
+    }
 
-      for (int i = 0; i < desc.properties.Count; i++) {
-        string name = desc.properties[i].name;
-        if (oldproperties.ContainsKey(name)) {
-          properties[name] = oldproperties[name];
-        } else {
-          properties[name] = newProperty(desc.properties[i].type);
-        }
+    Dictionary<string, ValueField> oldproperties = new Dictionary<string, ValueField>();
+    foreach (var item in properties) {
+      oldproperties[item.name] = item.value;
+    }
+
+    properties.Clear();
+
+    for (int i = 0; i < desc.properties.Count; i++) {
+      var propDesc = desc.properties[i];
+      ValueField value;
+
+      if (oldproperties.ContainsKey(propDesc.name)) {
+        value = oldproperties[propDesc.name];
+      } else {
+        value = newValue();
       }
+
+      properties.Add(new ScriptProperty {
+        name = propDesc.name,
+        value = value,
+      });
     }
   }
 
-  public static object newProperty(ScriptCompDescProperty.PropMode type) {
-    if (type == ScriptCompDescProperty.PropMode.Int) {
-      return 0;
-    } else if (type == ScriptCompDescProperty.PropMode.Float) {
-      return 0f;
-    } else if (type == ScriptCompDescProperty.PropMode.Bool) {
-      return false;
-    } else {
-      return "";
-    }
+  public static ValueField newValue() {
+    return new ValueField {
+      objectField = null,
+      intField = 0,
+      floatField = 0.0f,
+      boolField = false,
+      stringField = "",
+    };
   }
 }
