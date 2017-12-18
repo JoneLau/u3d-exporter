@@ -41,6 +41,7 @@ editor_define = -d:UNITY_EDITOR
 # /////////////////////////////////////////////////////////////////////////////
 
 # get sources
+src_dirs += ./Assets/Scripts/
 src_dirs += ./Assets/Editor/
 src = $(wildcard $(addsuffix *.cs,$(src_dirs)))
 
