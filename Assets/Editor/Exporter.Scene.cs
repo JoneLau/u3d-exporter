@@ -359,8 +359,18 @@ namespace exsdk {
               } else if (item.type == PropType.String) {
                 val = prop.value.stringField;
               } else if (item.type == PropType.Reference) {
-                val = prop.value.objectField;
-              }
+                // val = prop.value.objectField;
+                // if prefab reference another prefab,it will be null in asset
+                string assetID = Utils.AssetID(prop.value.objectField);
+                if (!string.IsNullOrEmpty(assetID)) {
+                  if (PrefabUtility.GetPrefabType(prop.value.objectField) != PrefabType.None) {
+                    if (PrefabUtility.FindPrefabRoot(prop.value.objectField as GameObject) != prop.value.objectField) {
+                      Debug.LogWarning("Cannot refer to prefab child");
+                    }
+                  }
+                  val = assetID;
+                }
+              } 
 
               comp.properties.Add(item.name, val);
               break;
@@ -428,7 +438,7 @@ namespace exsdk {
         string mappedProp = compModInfo.MapProperty(mod.propertyPath);
         propertyModInfo = compModInfo.properties.Find(x => mod.propertyPath.IndexOf(x.name) == 0);
 
-        if ( mappedProp != null ) {
+        if (mappedProp != null) {
           JSON_Modification jsonMod = new JSON_Modification();
 
           // entity
@@ -441,6 +451,15 @@ namespace exsdk {
           // value
           if (mod.objectReference) {
             jsonMod.value = Utils.AssetID(mod.objectReference);
+            if (mod.target.GetType().ToString() == "ScriptComponent") {
+              if (jsonMod.value != null) {
+                if (PrefabUtility.GetPrefabType(mod.objectReference) != PrefabType.None) {
+                  if (PrefabUtility.FindPrefabRoot(mod.objectReference as GameObject) != mod.objectReference) {
+                    Debug.LogWarning("Cannot refer to prefab child");
+                  }
+                }
+              }
+            }
           } else {
             if (propertyModInfo.fn != null) {
               jsonMod.value = propertyModInfo.fn(mod.value);

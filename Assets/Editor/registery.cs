@@ -121,6 +121,16 @@ namespace exsdk {
             new ModProperty() { name = "m_Enabled", mapping = "_enabled", fn = val => val.ToString() == "0" ? false : true },
           }
         }
+      },
+      {
+        "ScriptComponent",
+        new ComponentModInfo() {
+          type = "Script",
+          properties = new List<ModProperty>() {
+            new ModProperty() { name = "m_Enabled", mapping = "_enabled", fn = val => val.ToString() == "0" ? false : true },
+            new ModProperty() { name="properties.Array.data", mapping="properties"},
+          }
+        }
       }
     };
   }
