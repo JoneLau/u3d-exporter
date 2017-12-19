@@ -36,7 +36,7 @@
       o.Albedo = c.rgb;
       o.Normal = UnpackNormal(tex2D (_NormalTex, IN.uv_MainTex));
       o.Metallic = tex2D (_MetallicTex, IN.uv_MainTex).r;
-      o.Smoothness = 0.5;//tex2D (_RoughnessTex, IN.uv_RoughnessTex).r;
+      o.Smoothness = 1.0 - tex2D (_RoughnessTex, IN.uv_MainTex).r;
       o.Occlusion = tex2D (_AOTex, IN.uv_MainTex).r;
       o.Alpha = c.a;
     }
