@@ -46,15 +46,30 @@ namespace exsdk {
         return;
       }
 
+      // create dest directory
+      if (!Directory.Exists(dest)) {
+        Directory.CreateDirectory(dest);
+      }
+
       Dictionary<string, JSON_Asset> assetsJson = new Dictionary<string, JSON_Asset>();
       string currentScenePath = SceneManager.GetActiveScene().path;
-      // get root objects in scene
+
+      // get data from scene
+      var prefabs = new List<Object>();
+      var modelPrefabs = new List<Object>();
+      var materials = new List<Material>();
+      var textures = new List<Texture>();
+      var spriteTextures = new List<Texture>();
+      var fonts = new List<Font>();
+      var meshes = new List<Mesh>();
       for (int i = 0; i < scenes.Count; i++) {
         var sceneAsset = scenes[i];
 
         if (sceneAsset == null) {
           continue;
         }
+
+        List<GameObject> nodes = new List<GameObject>();
 
         string assetPath = AssetDatabase.GetAssetPath(sceneAsset);
         Scene scene = EditorSceneManager.GetSceneByPath(assetPath);
@@ -63,36 +78,35 @@ namespace exsdk {
           EditorSceneManager.OpenScene(assetPath, OpenSceneMode.Single);
           scene = EditorSceneManager.GetActiveScene();
         }
+        
+        WalkScene(
+          scene,
+          nodes,
+          prefabs,
+          modelPrefabs,
+          meshes,
+          materials,
+          textures,
+          spriteTextures,
+          fonts
+        );
 
-        exportScene(dest, scene, assetsJson);
+        // ========================================
+        // save scene
+        // ========================================
+
+        var sceneJson = DumpScene(nodes);
+        string path;
+        string sceneName = string.IsNullOrEmpty(scene.name) ? "scene" : scene.name;
+        string json = JsonConvert.SerializeObject(sceneJson, Formatting.Indented);
+
+        path = Path.Combine(dest, sceneName + ".json");
+        StreamWriter writer = new StreamWriter(path);
+        writer.Write(json);
+        writer.Close();
+
+        Debug.Log(Path.GetFileName(path) + " saved.");
       }
-
-      saveAssets(dest, assetsJson);
-
-      EditorSceneManager.OpenScene(currentScenePath, OpenSceneMode.Single);
-    }
-
-    void exportScene(string dest, Scene scene, Dictionary<string, JSON_Asset> assetsJson) {
-      // get data from scene
-      var nodes = new List<GameObject>();
-      var prefabs = new List<Object>();
-      var modelPrefabs = new List<Object>();
-      var materials = new List<Material>();
-      var textures = new List<Texture>();
-      var spriteTextures = new List<Texture>();
-      var fonts = new List<Font>();
-      var meshes = new List<Mesh>();
-      WalkScene(
-        scene,
-        nodes,
-        prefabs,
-        modelPrefabs,
-        meshes,
-        materials,
-        textures,
-        spriteTextures,
-        fonts
-      );
 
       // DELME {
       // // save meshes
@@ -487,26 +501,6 @@ namespace exsdk {
       }
 
       // ========================================
-      // save scene
-      // ========================================
-
-      {
-        var sceneJson = DumpScene(nodes);
-        string path;
-        string sceneName = string.IsNullOrEmpty(scene.name) ? "scene" : scene.name;
-        string json = JsonConvert.SerializeObject(sceneJson, Formatting.Indented);
-
-        path = Path.Combine(dest, sceneName + ".json");
-        StreamWriter writer = new StreamWriter(path);
-        writer.Write(json);
-        writer.Close();
-
-        Debug.Log(Path.GetFileName(path) + " saved.");
-      }
-    }
-
-    void saveAssets(string dest, Dictionary<string, JSON_Asset> assetsJson) {
-      // ========================================
       // save assets
       // ========================================
 
@@ -518,6 +512,8 @@ namespace exsdk {
         writer.Write(json);
         writer.Close();
       }
+
+      EditorSceneManager.OpenScene(currentScenePath, OpenSceneMode.Single);
     }
 
     void Walk(List<GameObject> _roots, WalkCallback _fn) {
@@ -541,10 +537,6 @@ namespace exsdk {
     }
 
     void Save(string _dest, string _file, GLTF _gltf, List<BufferInfo> _bufferInfos) {
-      // create dest directory
-      if (!Directory.Exists(_dest)) {
-        Directory.CreateDirectory(_dest);
-      }
 
       string path;
 
@@ -593,6 +585,7 @@ namespace exsdk {
       List<Font> _fonts
     ) {
       List<GameObject> rootObjects = new List<GameObject>();
+      // get root objects in scene
       _scene.GetRootGameObjects(rootObjects);
 
       // collect meshes, skins, materials, textures and animation-clips

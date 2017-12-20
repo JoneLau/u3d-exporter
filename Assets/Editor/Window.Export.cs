@@ -19,7 +19,7 @@ namespace exsdk {
     public string outputPath = "";
     public string projectName = "";
     public FileMode mode = FileMode.Mixed;
-    public List<SceneAsset> scenes = new List<SceneAsset>();
+    public List<SceneAsset> scenes;
 
     ReorderableList reorderableList = null;
     bool jsonDirty = false;
@@ -60,6 +60,7 @@ namespace exsdk {
       }
 
       // scenes
+      scenes = new List<SceneAsset>();
       for (int i = 0; i < settings.scenes.Count; ++i) {
         string scenePath = AssetDatabase.GUIDToAssetPath(settings.scenes[i]);
         SceneAsset asset = AssetDatabase.LoadAssetAtPath(scenePath, typeof(SceneAsset)) as SceneAsset;
@@ -107,7 +108,7 @@ namespace exsdk {
       exporter.outputPath = this.outputPath;
       exporter.name = this.projectName;
       exporter.mode = this.mode;
-      exporter.scenes = scenes;
+      exporter.scenes = this.scenes;
 
       exporter.Exec();
     }
