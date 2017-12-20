@@ -14,8 +14,6 @@ namespace exsdk {
     public string projectName = "";
     public FileMode mode = FileMode.Mixed;
     public List<string> scenes = new List<string>();
-
-    [System.NonSerialized] public List<SceneAsset> sceneAssets = new List<SceneAsset>();
   }
 
   // =========================
