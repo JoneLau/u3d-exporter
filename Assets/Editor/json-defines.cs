@@ -5,6 +5,20 @@ using System.Collections.Generic;
 
 namespace exsdk {
   // =========================
+  // JSON_Project
+  // =========================
+
+  [System.Serializable]
+  public class JSON_ExportSettings {
+    public string outputPath = "";
+    public string projectName = "";
+    public FileMode mode = FileMode.Mixed;
+    public List<string> scenes = new List<string>();
+
+    [System.NonSerialized] public List<SceneAsset> sceneAssets = new List<SceneAsset>();
+  }
+
+  // =========================
   // JSON_Scene
   // =========================
 

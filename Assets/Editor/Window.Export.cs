@@ -2,16 +2,27 @@
 using UnityEngine.SceneManagement;
 
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEditor.SceneManagement;
 
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+
+using Newtonsoft.Json;
+
+public class ExportSettings {
+}
 
 namespace exsdk {
   public class GLTFExportWindow : EditorWindow {
     public string outputPath = "";
     public string projectName = "";
     public FileMode mode = FileMode.Mixed;
+    public List<SceneAsset> scenes = new List<SceneAsset>();
+
+    ReorderableList reorderableList = null;
+    bool jsonDirty = false;
 
     [MenuItem("Window/u3d-exporter")]
     static void Open() {
@@ -22,9 +33,57 @@ namespace exsdk {
     }
 
     void OnEnable() {
-      string defaultPath = System.IO.Path.GetDirectoryName(Application.dataPath);
-      this.outputPath = EditorPrefs.GetString("outputPath", defaultPath);
-      this.projectName = EditorPrefs.GetString("projectName", Application.productName);
+      string projectPath = Path.GetDirectoryName(Application.dataPath);
+      string settingsPath = Path.Combine(projectPath, "u3d-exporter.json");
+
+      // read u3d-exporter.json
+      JSON_ExportSettings settings = null;
+      try {
+        using (StreamReader r = new StreamReader(settingsPath)) {
+          string json = r.ReadToEnd();
+          settings = JsonConvert.DeserializeObject<JSON_ExportSettings>(json);
+        }
+      } catch (System.Exception) {
+        settings = new JSON_ExportSettings();
+      }
+
+      // outputPath
+      this.outputPath = settings.outputPath;
+      if (string.IsNullOrEmpty(this.outputPath)) {
+        this.outputPath = projectPath;
+      }
+
+      // projectName
+      this.projectName = settings.projectName;
+      if (string.IsNullOrEmpty(this.projectName)) {
+        this.projectName = "out";
+      }
+
+      // scenes
+      for (int i = 0; i < settings.scenes.Count; ++i) {
+        string scenePath = AssetDatabase.GUIDToAssetPath(settings.scenes[i]);
+        SceneAsset asset = AssetDatabase.LoadAssetAtPath(scenePath, typeof(SceneAsset)) as SceneAsset;
+        if (asset) {
+          this.scenes.Add(asset);
+        }
+      }
+
+      this.reorderableList = new ReorderableList(this.scenes, typeof(SceneAsset), true, true, true, true);
+      this.reorderableList.drawHeaderCallback = (Rect rect) => {
+        EditorGUI.LabelField(rect, "Scenes:", EditorStyles.boldLabel);
+      };
+      this.reorderableList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) => {
+        object asset = this.reorderableList.list[index];
+        rect.y += 2;
+        rect.height = EditorGUIUtility.singleLineHeight;
+
+        EditorGUI.BeginChangeCheck();
+        asset = EditorGUI.ObjectField(rect, asset as Object, typeof(SceneAsset), false);
+        if (EditorGUI.EndChangeCheck()) {
+          this.reorderableList.list[index] = asset;
+          this.jsonDirty = true;
+        }
+      };
 
       this.Repaint();
     }
@@ -119,7 +178,7 @@ namespace exsdk {
       string outputPath = EditorGUILayout.TextField("Output Path", this.outputPath);
       if (outputPath != this.outputPath) {
         this.outputPath = outputPath;
-        EditorPrefs.SetString("outputPath", outputPath);
+        this.jsonDirty = true;
       }
 
       // =========================
@@ -144,7 +203,7 @@ namespace exsdk {
       string projName = EditorGUILayout.TextField("Project Name", this.projectName);
       if (projName != this.projectName) {
         this.projectName = projName;
-        EditorPrefs.SetString("projectName", projName);
+        this.jsonDirty = true;
       }
 
       // =========================
@@ -152,6 +211,14 @@ namespace exsdk {
       // =========================
 
       this.mode = (FileMode)EditorGUILayout.EnumPopup("Mode", this.mode);
+
+      // =========================
+      // Scenes
+      // =========================
+
+      if (this.reorderableList != null) {
+        this.reorderableList.DoLayoutList();
+      }
 
       // =========================
       // Export Button
@@ -173,6 +240,28 @@ namespace exsdk {
       // #########################
 
       EditorGUILayout.EndVertical();
+
+      if (this.jsonDirty) {
+        JSON_ExportSettings settings = new JSON_ExportSettings();
+        settings.projectName = this.projectName;
+        settings.outputPath = this.outputPath;
+        settings.mode = this.mode;
+
+        for (int i = 0; i < this.scenes.Count; ++i) {
+          string path = AssetDatabase.GetAssetPath(this.scenes[i]);
+          settings.scenes.Add(AssetDatabase.AssetPathToGUID(path));
+        }
+
+        // save json
+        string json = JsonConvert.SerializeObject(settings, Formatting.Indented);
+        string projectPath = Path.GetDirectoryName(Application.dataPath);
+        string settingsPath = Path.Combine(projectPath, "u3d-exporter.json");
+        StreamWriter writer = new StreamWriter(settingsPath);
+        writer.Write(json);
+        writer.Close();
+
+        this.jsonDirty = false;
+      }
     }
   }
 }
