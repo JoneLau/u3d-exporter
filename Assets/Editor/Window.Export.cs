@@ -107,6 +107,7 @@ namespace exsdk {
       exporter.outputPath = this.outputPath;
       exporter.name = this.projectName;
       exporter.mode = this.mode;
+      exporter.scenes = scenes;
 
       exporter.Exec();
     }

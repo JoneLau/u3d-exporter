@@ -24,6 +24,7 @@ namespace exsdk {
     public string outputPath;
     public string name;
     public FileMode mode;
+    public List<SceneAsset> scenes;
 
     public void Exec() {
       if (!Directory.Exists(this.outputPath)) {
@@ -40,10 +41,38 @@ namespace exsdk {
         di.Delete(true);
       }
 
-      // get root objects in scene
-      Scene scene = EditorSceneManager.GetActiveScene();
-      Dictionary<string, JSON_Asset> assetsJson = new Dictionary<string, JSON_Asset>();
+      if (scenes == null || scenes.Count <= 0) {
+        Debug.LogWarning("There is no scene can export");
+        return;
+      }
 
+      Dictionary<string, JSON_Asset> assetsJson = new Dictionary<string, JSON_Asset>();
+      string currentScenePath = SceneManager.GetActiveScene().path;
+      // get root objects in scene
+      for (int i = 0; i < scenes.Count; i++) {
+        var sceneAsset = scenes[i];
+
+        if (sceneAsset == null) {
+          continue;
+        }
+
+        string assetPath = AssetDatabase.GetAssetPath(sceneAsset);
+        Scene scene = EditorSceneManager.GetSceneByPath(assetPath);
+
+        if (SceneManager.GetActiveScene().name != sceneAsset.name) {
+          EditorSceneManager.OpenScene(assetPath, OpenSceneMode.Single);
+          scene = EditorSceneManager.GetActiveScene();
+        }
+
+        exportScene(dest, scene, assetsJson);
+      }
+
+      saveAssets(dest, assetsJson);
+
+      EditorSceneManager.OpenScene(currentScenePath, OpenSceneMode.Single);
+    }
+
+    void exportScene(string dest, Scene scene, Dictionary<string, JSON_Asset> assetsJson) {
       // get data from scene
       var nodes = new List<GameObject>();
       var prefabs = new List<Object>();
@@ -53,7 +82,6 @@ namespace exsdk {
       var spriteTextures = new List<Texture>();
       var fonts = new List<Font>();
       var meshes = new List<Mesh>();
-
       WalkScene(
         scene,
         nodes,
@@ -112,8 +140,8 @@ namespace exsdk {
       foreach (GameObject prefab in prefabs) {
         // skip ModelPrefab
         if (PrefabUtility.GetPrefabType(prefab) == PrefabType.ModelPrefab) {
-            Debug.LogWarning("Can not export model prefab " + prefab.name + " in the scene");
-            continue;
+          Debug.LogWarning("Can not export model prefab " + prefab.name + " in the scene");
+          continue;
         }
 
         // skip non-animation prefab
@@ -170,13 +198,15 @@ namespace exsdk {
 
             // add asset to table
             try {
-              assetsJson.Add(id, new JSON_Asset {
-                type = "animation",
-                urls = new Dictionary<string, string> {
+              if (!assetsJson.ContainsKey(id)) {
+                assetsJson.Add(id, new JSON_Asset {
+                  type = "animation",
+                  urls = new Dictionary<string, string> {
                   { "anim", "anims/" + id + ".anim" },
                   { "bin", "anims/" + id + ".bin" }
                 }
-              });
+                });
+              }
             } catch (System.SystemException e) {
               Debug.LogError("Failed to add " + id + " to assets: " + e);
             }
@@ -221,12 +251,14 @@ namespace exsdk {
         // Debug.Log(Path.GetFileName(path) + " saved.");
 
         // add asset to table
-        assetsJson.Add(id, new JSON_Asset {
-          type = "prefab",
-          urls = new Dictionary<string, string> {
+        if (!assetsJson.ContainsKey(id)) {
+          assetsJson.Add(id, new JSON_Asset {
+            type = "prefab",
+            urls = new Dictionary<string, string> {
             { "json", "prefabs/" + id + ".json" },
           }
-        });
+          });
+        }
       }
 
       // save model prefab (as gltf)
@@ -260,13 +292,15 @@ namespace exsdk {
         );
 
         // add asset to table
-        assetsJson.Add(id, new JSON_Asset {
-          type = "gltf",
-          urls = new Dictionary<string, string> {
+        if (!assetsJson.ContainsKey(id)) {
+          assetsJson.Add(id, new JSON_Asset {
+            type = "gltf",
+            urls = new Dictionary<string, string> {
             { "gltf", "meshes/" + id + ".gltf" },
             { "bin", "meshes/" + id + ".bin" }
           }
-        });
+          });
+        }
       }
 
       // save meshes (as gltf)
@@ -294,13 +328,15 @@ namespace exsdk {
         );
 
         // add asset to table
-        assetsJson.Add(id, new JSON_Asset {
-          type = "mesh",
-          urls = new Dictionary<string, string> {
+        if (!assetsJson.ContainsKey(id)) {
+          assetsJson.Add(id, new JSON_Asset {
+            type = "mesh",
+            urls = new Dictionary<string, string> {
             { "mesh", "meshes/" + id + ".mesh" },
             { "bin", "meshes/" + id + ".bin" }
           }
-        });
+          });
+        }
       }
 
       // ========================================
@@ -319,26 +355,28 @@ namespace exsdk {
         string id = Utils.AssetID(tex);
 
         // json
-        path = Path.Combine(destTextures,  id + ".json");
+        path = Path.Combine(destTextures, id + ".json");
         StreamWriter writer = new StreamWriter(path);
         writer.Write(json);
         writer.Close();
 
         // image
         string assetPath = AssetDatabase.GetAssetPath(tex);
-        path = Path.Combine(destTextures,  id + Utils.AssetExt(tex));
-        File.Copy(assetPath, path);
+        path = Path.Combine(destTextures, id + Utils.AssetExt(tex));
+        File.Copy(assetPath, path, true);
 
         // Debug.Log(Path.GetFileName(path) + " saved.");
 
         // add asset to table
-        assetsJson.Add(id, new JSON_Asset {
-          type = "texture",
-          urls = new Dictionary<string, string> {
+        if (!assetsJson.ContainsKey(id)) {
+          assetsJson.Add(id, new JSON_Asset {
+            type = "texture",
+            urls = new Dictionary<string, string> {
             { "json", "textures/" + id + ".json" },
             { "image", "textures/" + id + Utils.AssetExt(tex) },
           }
-        });
+          });
+        }
       }
 
       // ========================================
@@ -357,24 +395,26 @@ namespace exsdk {
         string id = Utils.AssetID(spriteTex);
 
         // json
-        path = Path.Combine(destSprites,  id + ".json");
+        path = Path.Combine(destSprites, id + ".json");
         StreamWriter writer = new StreamWriter(path);
         writer.Write(json);
         writer.Close();
 
         // image
         string assetPath = AssetDatabase.GetAssetPath(spriteTex);
-        path = Path.Combine(destSprites,  id + Utils.AssetExt(spriteTex));
+        path = Path.Combine(destSprites, id + Utils.AssetExt(spriteTex));
         File.Copy(assetPath, path);
 
         // add asset to table
-        assetsJson.Add(id, new JSON_Asset {
-          type = "texture",
-          urls = new Dictionary<string, string> {
+        if (!assetsJson.ContainsKey(id)) {
+          assetsJson.Add(id, new JSON_Asset {
+            type = "texture",
+            urls = new Dictionary<string, string> {
             { "json", "sprites/" + id + ".json" },
             { "image", "sprites/" + id + Utils.AssetExt(spriteTex) },
           }
-        });
+          });
+        }
       }
 
       // ========================================
@@ -398,12 +438,14 @@ namespace exsdk {
         writer.Write(json);
         writer.Close();
 
-        assetsJson.Add(id, new JSON_Asset {
-          type = "bmfont",
-          urls = new Dictionary<string, string> {
+        if (!assetsJson.ContainsKey(id)) {
+          assetsJson.Add(id, new JSON_Asset {
+            type = "bmfont",
+            urls = new Dictionary<string, string> {
             { "json", "fonts/" + id + ".json" },
           }
-        });
+          });
+        }
       }
 
       // ========================================
@@ -417,7 +459,7 @@ namespace exsdk {
       }
       foreach (Material mat in materials) {
         var materialJson = DumpMaterial(mat);
-        if ( materialJson == null) {
+        if (materialJson == null) {
           continue;
         }
 
@@ -426,7 +468,7 @@ namespace exsdk {
         string id = Utils.AssetID(mat);
 
         // json
-        path = Path.Combine(destMaterials,  id + ".json");
+        path = Path.Combine(destMaterials, id + ".json");
         StreamWriter writer = new StreamWriter(path);
         writer.Write(json);
         writer.Close();
@@ -434,25 +476,14 @@ namespace exsdk {
         // Debug.Log(Path.GetFileName(path) + " saved.");
 
         // add asset to table
-        assetsJson.Add(id, new JSON_Asset {
-          type = "material",
-          urls = new Dictionary<string, string> {
+        if (!assetsJson.ContainsKey(id)) {
+          assetsJson.Add(id, new JSON_Asset {
+            type = "material",
+            urls = new Dictionary<string, string> {
             { "json", "materials/" + id + ".json" },
           }
-        });
-      }
-
-      // ========================================
-      // save assets
-      // ========================================
-
-      {
-        string path = Path.Combine(dest, "assets.json");
-        string json = JsonConvert.SerializeObject(assetsJson, Formatting.Indented);
-
-        StreamWriter writer = new StreamWriter(path);
-        writer.Write(json);
-        writer.Close();
+          });
+        }
       }
 
       // ========================================
@@ -471,6 +502,21 @@ namespace exsdk {
         writer.Close();
 
         Debug.Log(Path.GetFileName(path) + " saved.");
+      }
+    }
+
+    void saveAssets(string dest, Dictionary<string, JSON_Asset> assetsJson) {
+      // ========================================
+      // save assets
+      // ========================================
+
+      {
+        string path = Path.Combine(dest, "assets.json");
+        string json = JsonConvert.SerializeObject(assetsJson, Formatting.Indented);
+
+        StreamWriter writer = new StreamWriter(path);
+        writer.Write(json);
+        writer.Close();
       }
     }
 
