@@ -62,6 +62,8 @@ namespace exsdk {
       var spriteTextures = new List<Texture>();
       var fonts = new List<Font>();
       var meshes = new List<Mesh>();
+
+      // walk to each scene to get assets referenced in it.
       for (int i = 0; i < scenes.Count; i++) {
         var sceneAsset = scenes[i];
 
@@ -78,7 +80,7 @@ namespace exsdk {
           EditorSceneManager.OpenScene(assetPath, OpenSceneMode.Single);
           scene = EditorSceneManager.GetActiveScene();
         }
-        
+
         WalkScene(
           scene,
           nodes,
@@ -537,6 +539,10 @@ namespace exsdk {
     }
 
     void Save(string _dest, string _file, GLTF _gltf, List<BufferInfo> _bufferInfos) {
+      // create dest directory
+      if (!Directory.Exists(_dest)) {
+        Directory.CreateDirectory(_dest);
+      }
 
       string path;
 
