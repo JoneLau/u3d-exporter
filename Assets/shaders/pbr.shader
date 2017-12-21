@@ -15,11 +15,11 @@
     [Toggle(USE_NORMAL_TEXTURE)] _USE_NORMAL_TEXTURE("Use Normal Texture", Int) = 0
     [Normal]_NormalTexture ("Normal Texture", 2D) = "bump" {}
   }
-    SubShader{
-      Tags { "RenderType" = "Opaque" }
+  SubShader{
+    Tags { "RenderType" = "Opaque" }
 
-      LOD 200
-      CGPROGRAM
+    LOD 200
+    CGPROGRAM
     // Physically based Standard lighting model, and enable shadows on all light types
     #pragma surface surf Standard fullforwardshadows nometa
 
@@ -65,8 +65,6 @@
       float2 uv_NormalTexture;
     };
 
-    //fixed4 _Color;
-
     void surf (Input IN, inout SurfaceOutputStandard o) {
 #if USE_ALBEDO_TEXTURE
       fixed4 c = tex2D(_AlbedoTexture, IN.uv_AlbedoTexture);
@@ -75,20 +73,20 @@
 #endif
       o.Albedo = c.rgb;
 #if USE_NORMAL_TEXTURE
-      o.Normal = UnpackNormal(tex2D (_NormalTexture, IN.uv_NormalTexture));
+      o.Normal = UnpackNormal(tex2D(_NormalTexture, IN.uv_NormalTexture));
 #endif
 #if USE_METALLIC_TEXTURE
-      o.Metallic = tex2D (_MetallicTexture, IN.uv_MetallicTexture).r;
+      o.Metallic = tex2D(_MetallicTexture, IN.uv_MetallicTexture).r;
 #else
       o.Metallic = _Metallic;
 #endif
 #if USE_ROUGHNESS_TEXTURE
-      o.Smoothness = 1.0 - tex2D (_RoughnessTexture, IN.uv_RoughnessTexture).r;
+      o.Smoothness = 1.0 - tex2D(_RoughnessTexture, IN.uv_RoughnessTexture).r;
 #else
       o.Smoothness = 1.0 - _Roughness;
 #endif
 #if USE_AO_TEXTURE
-      o.Occlusion = tex2D (_AOTexture, IN.uv_AOTexture).r;
+      o.Occlusion = tex2D(_AOTexture, IN.uv_AOTexture).r;
 #else
       o.Occlusion = _AO;
 #endif
