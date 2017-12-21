@@ -20,7 +20,9 @@ RMDIR = rm -rf
 
 # Target
 dest = ./bin
-target = $(dest)/Editor/u3d-exporter.dll
+prepare = $(dest)
+runtime_target = $(dest)/u3d-exporter.runtime.dll
+editor_target = $(dest)/Editor/u3d-exporter.dll
 
 # /////////////////////////////////////////////////////////////////////////////
 # builds
@@ -28,39 +30,59 @@ target = $(dest)/Editor/u3d-exporter.dll
 
 .PHONY: clean rebuild
 
-all: $(target)
+all: $(prepare) $(runtime_target) $(editor_target)
 clean:
 	$(RMDIR) $(dest)
 rebuild: |clean all
 
 # defines
-editor_define = -d:UNITY_EDITOR
+editor_define = UNITY_EDITOR
 
 # /////////////////////////////////////////////////////////////////////////////
 # targets
 # /////////////////////////////////////////////////////////////////////////////
 
 # get sources
-src_dirs += ./Assets/Scripts/
-src_dirs += ./Assets/Editor/
-src = $(wildcard $(addsuffix *.cs,$(src_dirs)))
+runtime_src_dirs += ./Assets/Scripts/
+runtime_src = $(wildcard $(addsuffix *.cs,$(runtime_src_dirs)))
+
+editor_src_dirs += ./Assets/Editor/
+editor_src = $(wildcard $(addsuffix *.cs,$(editor_src_dirs)))
 
 # resources
 # resources += -resource:Assets/Resource/pixel.png
 
 # argument
-args = $(editor_define) $(resources) -r:$(unity_engine_dll),$(unity_engine_ui_dll),$(unity_editor_dll),$(json_dll)
+runtime_args = $(resources) -r:$(unity_engine_dll),$(unity_engine_ui_dll)
+editor_args = $(resources) -d:$(editor_define) -r:$(unity_engine_dll),$(unity_engine_ui_dll),$(unity_editor_dll),$(json_dll),$(runtime_target)
 
 # do the build
-$(target):
+$(prepare):
 	@echo "========================================================"
-	@echo compiling u3d-exporter.dll...
+	@echo "copy shaders & vendors"
 	@echo "========================================================"
 	@echo
-	$(RMDIR) $(dest)
+	$(MKDIR) $(dest)
 	$(MKDIR) $(dest)/Editor
 	cp -r ./Assets/shaders/ $(dest)/shaders/
 	cp -r ./Assets/vendors/ $(dest)/vendors/
-	$(compiler) -target:library -out:$(target) $(args) $(src)
+	@echo done!
+	@echo
+
+$(runtime_target):
+	@echo "========================================================"
+	@echo "compiling u3d-exporter.runtime.dll..."
+	@echo "========================================================"
+	@echo
+	$(compiler) -target:library -out:$(runtime_target) $(runtime_args) $(runtime_src)
+	@echo done!
+	@echo
+
+$(editor_target):
+	@echo "========================================================"
+	@echo "compiling Editor/u3d-exporter.dll..."
+	@echo "========================================================"
+	@echo
+	$(compiler) -target:library -out:$(editor_target) $(editor_args) $(editor_src)
 	@echo done!
 	@echo
