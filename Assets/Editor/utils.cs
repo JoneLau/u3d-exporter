@@ -213,6 +213,8 @@ namespace exsdk {
     public string name;
     public string type;
     public string mapping;
+    public string mappingTiling;
+    public string mappingOffset;
   }
 
   public class ShaderInfo {
