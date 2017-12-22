@@ -65,8 +65,7 @@ namespace exsdk {
         // T
         if (frames.tlist.Count > 0) {
           // NOTE: index 0 = "time0", index 1 = "time1"
-          GLTF_AnimChannelEx channel = new GLTF_AnimChannelEx
-          {
+          GLTF_AnimChannelEx channel = new GLTF_AnimChannelEx {
             input = (frames.tlist.Count == 1 ? 0 : 1) + _accOffset,
             output = offset + _accOffset,
             node = _joints.IndexOf(frames.node),
@@ -79,8 +78,7 @@ namespace exsdk {
         // S
         if (frames.slist.Count > 0) {
           // NOTE: index 0 = "time0", index 1 = "time1"
-          GLTF_AnimChannelEx channel = new GLTF_AnimChannelEx
-          {
+          GLTF_AnimChannelEx channel = new GLTF_AnimChannelEx {
             input = (frames.slist.Count == 1 ? 0 : 1) + _accOffset,
             output = offset + _accOffset,
             node = _joints.IndexOf(frames.node),
@@ -93,8 +91,7 @@ namespace exsdk {
         // R
         if (frames.rlist.Count > 0) {
           // NOTE: index 0 = "time0", index 1 = "time1"
-          GLTF_AnimChannelEx channel = new GLTF_AnimChannelEx
-          {
+          GLTF_AnimChannelEx channel = new GLTF_AnimChannelEx {
             input = (frames.rlist.Count == 1 ? 0 : 1) + _accOffset,
             output = offset + _accOffset,
             node = _joints.IndexOf(frames.node),
@@ -129,11 +126,9 @@ namespace exsdk {
 
         // T
         if (frames.tlist.Count > 0) {
-          GLTF_AnimChannel channel = new GLTF_AnimChannel
-          {
+          GLTF_AnimChannel channel = new GLTF_AnimChannel {
             sampler = samplers.Count,
-            target = new GLTF_AnimTarget
-            {
+            target = new GLTF_AnimTarget {
               node = _joints.IndexOf(frames.node),
               path = "translation",
             }
@@ -141,8 +136,7 @@ namespace exsdk {
           channels.Add(channel);
 
           // NOTE: index 0 = "time0", index 1 = "time1"
-          GLTF_AnimSampler sampler = new GLTF_AnimSampler
-          {
+          GLTF_AnimSampler sampler = new GLTF_AnimSampler {
             input = (frames.tlist.Count == 1 ? 0 : 1) + _accOffset,
             output = offset + _accOffset,
           };
@@ -153,11 +147,9 @@ namespace exsdk {
 
         // S
         if (frames.slist.Count > 0) {
-          GLTF_AnimChannel channel = new GLTF_AnimChannel
-          {
+          GLTF_AnimChannel channel = new GLTF_AnimChannel {
             sampler = samplers.Count,
-            target = new GLTF_AnimTarget
-            {
+            target = new GLTF_AnimTarget {
               node = _joints.IndexOf(frames.node),
               path = "scale",
             }
@@ -165,8 +157,7 @@ namespace exsdk {
           channels.Add(channel);
 
           // NOTE: index 0 = "time0", index 1 = "time1"
-          GLTF_AnimSampler sampler = new GLTF_AnimSampler
-          {
+          GLTF_AnimSampler sampler = new GLTF_AnimSampler {
             input = (frames.tlist.Count == 1 ? 0 : 1) + _accOffset,
             output = offset + _accOffset,
           };
@@ -177,11 +168,9 @@ namespace exsdk {
 
         // R
         if (frames.rlist.Count > 0) {
-          GLTF_AnimChannel channel = new GLTF_AnimChannel
-          {
+          GLTF_AnimChannel channel = new GLTF_AnimChannel {
             sampler = samplers.Count,
-            target = new GLTF_AnimTarget
-            {
+            target = new GLTF_AnimTarget {
               node = _joints.IndexOf(frames.node),
               path = "rotation",
             }
@@ -189,8 +178,7 @@ namespace exsdk {
           channels.Add(channel);
 
           // NOTE: index 0 = "time0", index 1 = "time1"
-          GLTF_AnimSampler sampler = new GLTF_AnimSampler
-          {
+          GLTF_AnimSampler sampler = new GLTF_AnimSampler {
             input = (frames.tlist.Count == 1 ? 0 : 1) + _accOffset,
             output = offset + _accOffset,
           };

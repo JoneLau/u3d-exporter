@@ -14,6 +14,7 @@ namespace exsdk {
     public string projectName = "";
     public FileMode mode = FileMode.Mixed;
     public List<string> scenes = new List<string>();
+    public List<string> dirs = new List<string>();
   }
 
   // =========================
