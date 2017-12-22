@@ -11,17 +11,16 @@ using System.IO;
 
 using Newtonsoft.Json;
 
-public class ExportSettings {
-}
-
 namespace exsdk {
   public class GLTFExportWindow : EditorWindow {
     public string outputPath = "";
     public string projectName = "";
     public FileMode mode = FileMode.Mixed;
     public List<SceneAsset> scenes;
+    public List<Object> dirs;
 
-    ReorderableList reorderableList = null;
+    ReorderableList uiScenes = null;
+    ReorderableList uiDirs = null;
     bool jsonDirty = false;
 
     [MenuItem("Window/u3d-exporter")]
@@ -69,19 +68,47 @@ namespace exsdk {
         }
       }
 
-      this.reorderableList = new ReorderableList(this.scenes, typeof(SceneAsset), true, true, true, true);
-      this.reorderableList.drawHeaderCallback = (Rect rect) => {
+      this.uiScenes = new ReorderableList(this.scenes, typeof(SceneAsset), true, true, true, true);
+      this.uiScenes.drawHeaderCallback = (Rect rect) => {
         EditorGUI.LabelField(rect, "Scenes:", EditorStyles.boldLabel);
       };
-      this.reorderableList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) => {
-        object asset = this.reorderableList.list[index];
+
+      this.uiScenes.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) => {
+        object asset = this.uiScenes.list[index];
         rect.y += 2;
         rect.height = EditorGUIUtility.singleLineHeight;
 
         EditorGUI.BeginChangeCheck();
         asset = EditorGUI.ObjectField(rect, asset as Object, typeof(SceneAsset), false);
         if (EditorGUI.EndChangeCheck()) {
-          this.reorderableList.list[index] = asset;
+          this.uiScenes.list[index] = asset;
+          this.jsonDirty = true;
+        }
+      };
+
+      // directories
+      dirs = new List<Object>();
+      for (int i = 0; i < settings.dirs.Count; ++i) {
+        string dirPath = AssetDatabase.GUIDToAssetPath(settings.dirs[i]);
+        Object asset = AssetDatabase.LoadAssetAtPath(dirPath, typeof(Object));
+        if (asset) {
+          this.dirs.Add(asset);
+        }
+      }
+
+      this.uiDirs = new ReorderableList(dirs, typeof(Object), true, true, true, true);
+      this.uiDirs.drawHeaderCallback = (Rect rect) => {
+        EditorGUI.LabelField(rect, "Directories:", EditorStyles.boldLabel);
+      };
+
+      this.uiDirs.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) => {
+        object asset = this.uiDirs.list[index];
+        rect.y += 2;
+        rect.height = EditorGUIUtility.singleLineHeight;
+        EditorGUI.BeginChangeCheck();
+        asset = EditorGUI.ObjectField(rect, dirs[index], typeof(Object), false);
+        if (EditorGUI.EndChangeCheck()) {
+          this.uiDirs.list[index] = asset;
           this.jsonDirty = true;
         }
       };
@@ -109,18 +136,21 @@ namespace exsdk {
       exporter.name = this.projectName;
       exporter.mode = this.mode;
       exporter.scenes = this.scenes;
+      exporter.dirs = dirs;
 
       exporter.Exec();
     }
 
     void Browse() {
-      string result = EditorUtility.OpenFolderPanel("Choose your export Directory", this.outputPath, "");
+      string result = EditorUtility.OpenFolderPanel("Choose your export Directory", outputPath, "");
       if (string.IsNullOrEmpty(result) == false) {
         this.outputPath = result;
-        EditorPrefs.SetString("outputPath", result);
+
+        this.jsonDirty = true;
 
         this.Repaint();
       }
+
       GUIUtility.ExitGUI();
     }
 
@@ -177,6 +207,8 @@ namespace exsdk {
       // Output Path
       // =========================
 
+      EditorGUILayout.LabelField("Project:", EditorStyles.boldLabel);
+
       string outputPath = EditorGUILayout.TextField("Output Path", this.outputPath);
       if (outputPath != this.outputPath) {
         this.outputPath = outputPath;
@@ -218,8 +250,17 @@ namespace exsdk {
       // Scenes
       // =========================
 
-      if (this.reorderableList != null) {
-        this.reorderableList.DoLayoutList();
+      if (this.uiScenes != null) {
+        this.uiScenes.DoLayoutList();
+      }
+      EditorGUILayout.Space();
+
+      // =========================
+      // Directories
+      // =========================
+
+      if (uiDirs != null) {
+        uiDirs.DoLayoutList();
       }
 
       // =========================
@@ -252,6 +293,11 @@ namespace exsdk {
         for (int i = 0; i < this.scenes.Count; ++i) {
           string path = AssetDatabase.GetAssetPath(this.scenes[i]);
           settings.scenes.Add(AssetDatabase.AssetPathToGUID(path));
+        }
+
+        for (int i = 0; i < this.dirs.Count; ++i) {
+          string path = AssetDatabase.GetAssetPath(this.dirs[i]);
+          settings.dirs.Add(AssetDatabase.AssetPathToGUID(path));
         }
 
         // save json

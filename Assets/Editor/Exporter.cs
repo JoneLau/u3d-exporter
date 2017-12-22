@@ -25,6 +25,7 @@ namespace exsdk {
     public string name;
     public FileMode mode;
     public List<SceneAsset> scenes;
+    public List<Object> dirs;
 
     public void Exec() {
       if (!Directory.Exists(this.outputPath)) {
@@ -51,7 +52,6 @@ namespace exsdk {
         Directory.CreateDirectory(dest);
       }
 
-      Dictionary<string, JSON_Asset> assetsJson = new Dictionary<string, JSON_Asset>();
       string currentScenePath = SceneManager.GetActiveScene().path;
 
       // get data from scene
@@ -109,6 +109,35 @@ namespace exsdk {
 
         Debug.Log(Path.GetFileName(path) + " saved.");
       }
+
+      saveAssets(
+        dest,
+        prefabs,
+        modelPrefabs,
+        meshes,
+        textures,
+        spriteTextures,
+        materials,
+        fonts
+      );
+
+      EditorSceneManager.OpenScene(currentScenePath, OpenSceneMode.Single);
+
+      dest = Path.Combine(dest, "resources");
+      SaveDirs(dest);
+    }
+
+    Dictionary<string, JSON_Asset> saveAssets(
+      string dest,
+      List<Object> prefabs,
+      List<Object> modelPrefabs,
+      List<Mesh> meshes,
+      List<Texture> textures,
+      List<Texture> spriteTextures,
+      List<Material> materials,
+      List<Font> fonts
+      ) {
+      Dictionary<string, JSON_Asset> assetsJson = new Dictionary<string, JSON_Asset>();
 
       // DELME {
       // // save meshes
@@ -515,7 +544,7 @@ namespace exsdk {
         writer.Close();
       }
 
-      EditorSceneManager.OpenScene(currentScenePath, OpenSceneMode.Single);
+      return assetsJson;
     }
 
     void Walk(List<GameObject> _roots, WalkCallback _fn) {
@@ -636,6 +665,7 @@ namespace exsdk {
         if (spriteRenderer) {
           sprite = spriteRenderer.sprite;
         }
+
         Image image = _go.GetComponent<Image>();
         if (image) {
           sprite = image.sprite;
