@@ -49,10 +49,10 @@ namespace exsdk {
           var textureAsset = Utils.AssetID(texture);
 
           result.properties.Add(prop.mapping, textureAsset);
-          result.properties.Add(prop.mapping + "Tiling", new float[2] {
+          result.properties.Add(prop.mappingTiling, new float[2] {
             scale.x, scale.y
           });
-          result.properties.Add(prop.mapping + "Offset", new float[2] {
+          result.properties.Add(prop.mappingOffset, new float[2] {
             offset.x, offset.y
           });
         } else if (prop.type == "key") {
