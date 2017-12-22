@@ -34,8 +34,18 @@ namespace exsdk {
           new ShaderInfo() {
             type = "phong",
             properties = new List<ShaderProperty>() {
-              new ShaderProperty() { name = "_Color", type = "color", mapping = "diffuseColor" },
-              new ShaderProperty() { name = "_MainTex", type = "tex2d", mapping = "diffuse" },
+              new ShaderProperty() { name = "_DiffuseColor", type = "color", mapping = "diffuseColor" },
+              new ShaderProperty() { name = "USE_DIFFUSE_TEXTURE", type = "key", mapping = "USE_DIFFUSE_TEXTURE" },
+              new ShaderProperty() { name = "_DiffuseTexture", type = "tex2d", mapping = "diffuseTexture" },
+              new ShaderProperty() { name = "_SpecularColor", type = "color", mapping = "specularColor" },
+              new ShaderProperty() { name = "USE_SPECULAR_TEXTURE", type = "key", mapping = "USE_SPECULAR_TEXTURE" },
+              new ShaderProperty() { name = "_SpecularTexture", type = "tex2d", mapping = "specularTexture" },
+              new ShaderProperty() { name = "_EmissiveColor", type = "color", mapping = "emissiveColor" },
+              new ShaderProperty() { name = "USE_EMISSIVE_TEXTURE", type = "key", mapping = "USE_EMISSIVE_TEXTURE" },
+              new ShaderProperty() { name = "_EmissiveTexture", type = "tex2d", mapping = "emissiveTexture" },
+              new ShaderProperty() { name = "_Glossiness", type = "float", mapping = "glossiness" },
+              new ShaderProperty() { name = "USE_NORMAL_TEXTURE", type = "key", mapping = "USE_NORMAL_TEXTURE" },
+              new ShaderProperty() { name = "_normalTexture", type = "tex2d", mapping = "normalTexture" },
             }
           }
       },
@@ -56,13 +66,20 @@ namespace exsdk {
           new ShaderInfo() {
             type = "pbr",
             properties = new List<ShaderProperty>() {
-              new ShaderProperty() { name = "_MainTex", type = "tex2d", mapping = "albedoTexture" },
-              new ShaderProperty() { name = "_MetallicTex", type = "tex2d", mapping = "metallicTexture" },
-              new ShaderProperty() { name = "_RoughnessTex", type = "tex2d", mapping = "roughnessTexture" },
-              new ShaderProperty() { name = "_NormalTex", type = "tex2d", mapping = "normalTexture" },
-              new ShaderProperty() { name = "_AOTex", type = "tex2d", mapping = "aoTexture" },
-              new ShaderProperty() { name = "_OpacityTex", type = "tex2d", mapping = "opacityTexture" },
-              new ShaderProperty() { name = "_EmissionTex", type = "tex2d", mapping = "emissionTexture" },
+              new ShaderProperty() { name = "_Albedo", type = "color", mapping = "albedo" },
+              new ShaderProperty() { name = "USE_ALBEDO_TEXTURE", type = "key", mapping = "USE_ALBEDO_TEXTURE" },
+              new ShaderProperty() { name = "_AlbedoTexture", type = "tex2d", mapping = "albedoTexture" },
+              new ShaderProperty() { name = "_Metallic", type = "float", mapping = "metallic" },
+              new ShaderProperty() { name = "USE_METALLIC_TEXTURE", type = "key", mapping = "USE_METALLIC_TEXTURE" },
+              new ShaderProperty() { name = "_MetallicTexture", type = "tex2d", mapping = "metallicTexture" },
+              new ShaderProperty() { name = "_Roughness", type = "float", mapping = "roughness" },
+              new ShaderProperty() { name = "USE_ROUGHNESS_TEXTURE", type = "key", mapping = "USE_ROUGHNESS_TEXTURE" },
+              new ShaderProperty() { name = "_RoughnessTexture", type = "tex2d", mapping = "roughnessTexture" },
+              new ShaderProperty() { name = "_AO", type = "float", mapping = "ao" },
+              new ShaderProperty() { name = "USE_AO_TEXTURE", type = "key", mapping = "USE_AO_TEXTURE" },
+              new ShaderProperty() { name = "_AOTexture", type = "tex2d", mapping = "aoTexture" },
+              new ShaderProperty() { name = "USE_NORMAL_TEXTURE", type = "key", mapping = "USE_NORMAL_TEXTURE" },
+              new ShaderProperty() { name = "_normalTexture", type = "tex2d", mapping = "normalTexture" },
             }
           }
       },
