@@ -53,6 +53,11 @@ namespace exsdk {
       }
 
       string currentScenePath = SceneManager.GetActiveScene().path;
+      if (SceneManager.GetActiveScene().isDirty) {
+        if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) {
+          return;
+        }
+      }
 
       // get data from scene
       var prefabs = new List<Object>();

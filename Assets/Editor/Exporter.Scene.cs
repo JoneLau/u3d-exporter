@@ -360,17 +360,23 @@ namespace exsdk {
                 val = prop.value.stringField;
               } else if (item.type == PropType.Reference) {
                 // val = prop.value.objectField;
-                // if prefab reference another prefab,it will be null in asset
-                string assetID = Utils.AssetID(prop.value.objectField);
+                Object refObj = prop.value.objectField;
+                // is asset               
+                string assetID = Utils.AssetID(refObj);
                 if (!string.IsNullOrEmpty(assetID)) {
-                  if (PrefabUtility.GetPrefabType(prop.value.objectField) != PrefabType.None) {
-                    if (PrefabUtility.FindPrefabRoot(prop.value.objectField as GameObject) != prop.value.objectField) {
+                  if (PrefabUtility.GetPrefabType(refObj) != PrefabType.None) {
+                    if (PrefabUtility.FindPrefabRoot(refObj as GameObject) != refObj) {
                       Debug.LogWarning("Cannot refer to prefab child");
                     }
                   }
                   val = assetID;
+                } else {
+                  // if go is prefab,the refenrence will be null
+                  if (string.IsNullOrEmpty(Utils.AssetID(_go))) {
+                    val = Utils.refPathLookup(refObj as GameObject, null);
+                  }
                 }
-              } 
+              }
 
               comp.properties.Add(item.name, val);
               break;
@@ -457,6 +463,13 @@ namespace exsdk {
                   if (PrefabUtility.FindPrefabRoot(mod.objectReference as GameObject) != mod.objectReference) {
                     Debug.LogWarning("Cannot refer to prefab child");
                   }
+                }
+              } else {
+                // in same prefab
+                if (PrefabUtility.FindPrefabRoot(mod.objectReference as GameObject) == PrefabUtility.FindPrefabRoot(_go)) {
+                  jsonMod.value = Utils.refPathLookup(mod.objectReference as GameObject, PrefabUtility.FindPrefabRoot(mod.objectReference as GameObject));
+                } else {
+                  jsonMod.value = Utils.refPathLookup(mod.objectReference as GameObject, null);
                 }
               }
             }

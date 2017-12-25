@@ -575,5 +575,24 @@ namespace exsdk {
 
       return new string[] { "center", "center" };
     }
+
+    public static string refPathLookup(GameObject go, GameObject root) {
+      string path = go.name;
+      Transform parent = go.transform;
+
+      while (true) {
+        parent = parent.parent;
+
+        if (root == null && parent == null) {
+          break;
+        } else if (parent.gameObject == root) {
+          break;
+        }
+
+        path = parent.name + "/" + path;
+      }
+
+      return path;
+    }
   }
 }
