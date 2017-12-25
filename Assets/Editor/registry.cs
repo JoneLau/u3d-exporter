@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 
 namespace exsdk {
-  public class Registery {
+  public class Registry {
 
     // shaderInfos
     public static Dictionary<string, ShaderInfo> shaderInfos = new Dictionary<string, ShaderInfo> {

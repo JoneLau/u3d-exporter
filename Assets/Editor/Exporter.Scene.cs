@@ -410,7 +410,7 @@ namespace exsdk {
       });
 
       foreach (var mod in mods) {
-        ModProperty propertyModInfo = Registery.propertyModInfos.Find(x => x.name == mod.propertyPath);
+        ModProperty propertyModInfo = Registry.propertyModInfos.Find(x => x.name == mod.propertyPath);
         if (propertyModInfo != null) {
           JSON_Modification jsonMod = new JSON_Modification();
 

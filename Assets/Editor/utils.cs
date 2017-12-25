@@ -268,7 +268,7 @@ namespace exsdk {
 
     public static ShaderInfo GetShaderInfo(Material _mat) {
       ShaderInfo shaderInfo;
-      if (Registery.shaderInfos.TryGetValue(_mat.shader.name, out shaderInfo) == false) {
+      if (Registry.shaderInfos.TryGetValue(_mat.shader.name, out shaderInfo) == false) {
         return null;
       }
 
@@ -277,7 +277,7 @@ namespace exsdk {
 
     public static ComponentModInfo GetComponentModInfo(string typename) {
       ComponentModInfo compModInfo;
-      if (Registery.componentModInfos.TryGetValue(typename, out compModInfo) == false) {
+      if (Registry.componentModInfos.TryGetValue(typename, out compModInfo) == false) {
         return null;
       }
 
@@ -289,7 +289,7 @@ namespace exsdk {
 
       // get shader info
       ShaderInfo shaderInfo;
-      if (Registery.shaderInfos.TryGetValue(_mat.shader.name, out shaderInfo) == false) {
+      if (Registry.shaderInfos.TryGetValue(_mat.shader.name, out shaderInfo) == false) {
         Debug.LogWarning("Unregisterred Shader: " + _mat.shader.name + " for material: " + _mat.name);
         return results;
       }
