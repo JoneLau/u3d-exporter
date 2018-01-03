@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+using UnityEditor.SceneManagement;
+
 namespace exsdk {
   [CustomEditor(typeof(ScriptComponent))]
   public class ScriptComponentEditor : Editor {
@@ -20,6 +22,8 @@ namespace exsdk {
       scriptComp.desc = (ScriptCompDesc)EditorGUILayout.ObjectField("desc", scriptComp.desc, typeof(ScriptCompDesc), false);
       EditorGUILayout.EndHorizontal();
       if (EditorGUI.EndChangeCheck()) {
+        serializedObject.ApplyModifiedProperties();
+        EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
         scriptComp.resetProperties();
         serializedObject.Update();
       }
