@@ -641,7 +641,7 @@ namespace exsdk {
       }
 
       // data
-      byte[] data = new byte[_bufInfo.data.Length + offsetBuffer];
+      byte[] data = new byte[offsetBuffer];
       int offset = 0;
 
       System.Buffer.BlockCopy(_bufInfo.data, 0, data, offset, _bufInfo.data.Length);
