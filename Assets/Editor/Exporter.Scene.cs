@@ -287,7 +287,7 @@ namespace exsdk {
       Image image = _go.GetComponent<Image>();
       if (image) {
         JSON_Component comp = new JSON_Component();
-        comp.type = "Sprite";
+        comp.type = "Image";
 
         var type = "simple";
         if (image.type == Image.Type.Simple) {
@@ -316,7 +316,7 @@ namespace exsdk {
       if (txt) {
         JSON_Component comp = new JSON_Component();
         string[] aligns = Utils.textAlignment(txt.alignment);
-        comp.type = "Label";
+        comp.type = "Text";
 
         comp.enabled = txt.enabled;
         comp.properties.Add("font", Utils.AssetID(txt.font));
@@ -361,7 +361,7 @@ namespace exsdk {
               } else if (item.type == PropType.Reference) {
                 // val = prop.value.objectField;
                 Object refObj = prop.value.objectField;
-                // is asset               
+                // is asset
                 string assetID = Utils.AssetID(refObj);
                 if (!string.IsNullOrEmpty(assetID)) {
                   if (PrefabUtility.GetPrefabType(refObj) != PrefabType.None) {
