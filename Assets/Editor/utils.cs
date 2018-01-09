@@ -543,37 +543,37 @@ namespace exsdk {
       return rootBone;
     }
 
-    public static string[] textAlignment(TextAnchor _align) {
+    public static string textAlignment(TextAnchor _align) {
       switch (_align) {
         case TextAnchor.UpperLeft:
-          return new string[] { "left", "top" };
+          return "top-left";
 
         case TextAnchor.UpperCenter:
-          return new string[] { "center", "top" };
+          return "top-center";
 
         case TextAnchor.UpperRight:
-          return new string[] { "right", "top" };
+          return "top-right";
 
         case TextAnchor.MiddleLeft:
-          return new string[] { "left", "center" };
+          return "middle-left";
 
         case TextAnchor.MiddleCenter:
-          return new string[] { "center", "center" };
+          return "middle-center";
 
         case TextAnchor.MiddleRight:
-          return new string[] { "right", "center" };
+          return "middle-right";
 
         case TextAnchor.LowerLeft:
-          return new string[] { "left", "bottom" };
+          return "bottom-left";
 
         case TextAnchor.LowerCenter:
-          return new string[] { "center", "bottom" };
+          return "bottom-center";
 
         case TextAnchor.LowerRight:
-          return new string[] { "right", "bottom" };
+          return "bottom-right";
       }
 
-      return new string[] { "center", "center" };
+      return "top-left";
     }
 
     public static string refPathLookup(GameObject go, GameObject root) {

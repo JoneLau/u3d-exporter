@@ -315,15 +315,14 @@ namespace exsdk {
       Text txt = _go.GetComponent<Text>();
       if (txt) {
         JSON_Component comp = new JSON_Component();
-        string[] aligns = Utils.textAlignment(txt.alignment);
+        string align = Utils.textAlignment(txt.alignment);
         comp.type = "Text";
 
         comp.enabled = txt.enabled;
         comp.properties.Add("font", Utils.AssetID(txt.font));
         comp.properties.Add("text", txt.text);
         comp.properties.Add("fontSize", txt.fontSize);
-        comp.properties.Add("horizontalAlign", aligns[0]);
-        comp.properties.Add("verticalAlign", aligns[1]);
+        comp.properties.Add("align", align);
         comp.properties.Add("color", new float[4] { txt.color.r, txt.color.g, txt.color.b, txt.color.a });
 
         result.Add(comp);
