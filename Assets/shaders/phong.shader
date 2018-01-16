@@ -39,9 +39,9 @@ Shader "u3d-exporter/phong" {
       }
 #if USE_DIFFUSE_TEXTURE
       sampler2D _DiffuseTexture;
-#else
-      fixed4 _DiffuseColor;
 #endif
+      fixed4 _DiffuseColor;
+
 #if USE_SPECULAR_TEXTURE
       sampler2D _SpecularTexture;
 #else
@@ -66,7 +66,7 @@ Shader "u3d-exporter/phong" {
 
       void surf (Input IN, inout SurfaceOutput o) {
 #if USE_DIFFUSE_TEXTURE
-        fixed4 c = tex2D(_DiffuseTexture, IN.uv_DiffuseTexture);
+        fixed4 c = _DiffuseColor * tex2D(_DiffuseTexture, IN.uv_DiffuseTexture);
 #else
         fixed4 c = _DiffuseColor;
 #endif

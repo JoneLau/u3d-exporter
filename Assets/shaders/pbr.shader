@@ -35,9 +35,9 @@
 
 #if USE_ALBEDO_TEXTURE
     sampler2D _AlbedoTexture;
-#else
-    fixed4 _Albedo;
 #endif
+    fixed4 _Albedo;
+
 #if USE_METALLIC_TEXTURE
     sampler2D _MetallicTexture;
 #else
@@ -67,7 +67,7 @@
 
     void surf (Input IN, inout SurfaceOutputStandard o) {
 #if USE_ALBEDO_TEXTURE
-      fixed4 c = tex2D(_AlbedoTexture, IN.uv_AlbedoTexture);
+      fixed4 c = _Albedo * tex2D(_AlbedoTexture, IN.uv_AlbedoTexture);
 #else
       fixed4 c = _Albedo;
 #endif
