@@ -9,7 +9,7 @@ Shader "u3d-exporter/phong" {
     _EmissiveColor ("Emissive Color", Color) = (0,0,0,1)
     [Toggle(USE_EMISSIVE_TEXTURE)] _USE_EMISSIVE_TEXTURE("Use Emissive Texture", Int) = 0
     _EmissiveTexture ("Emissive Texture", 2D) = "black" {}
-    _Glossiness ("Glossiness", Float) = 10
+    _Glossiness ("Glossiness", Range (0, 1)) = 0.5
     [Toggle(USE_NORMAL_TEXTURE)] _USE_NORMAL_TEXTURE("Use Normal Texture", Int) = 0
     [Normal]_NormalTexture ("Normal Texture", 2D) = "bump" {}
   }
@@ -31,7 +31,7 @@ Shader "u3d-exporter/phong" {
         half ndl = max(0.0, dot(s.Normal, lightDir));
         half ndh = max(0.0, dot(s.Normal, h));
         ndh = (ndl == 0.0) ? 0.0: ndh;
-        ndh = pow(ndh, max(1.0, s.Gloss));
+        ndh = pow(ndh, max(1.0, s.Gloss * 128.0));
         half4 c;
         c.rgb = (s.Albedo * _LightColor0.rgb * ndl + _LightColor0.rgb * s.Specular * ndh) * atten + s.Emission;
         c.a = s.Alpha;
