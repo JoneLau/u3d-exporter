@@ -45,7 +45,7 @@ namespace exsdk {
               new ShaderProperty() { name = "_EmissiveTexture", type = "tex2d", mapping = "emissiveTexture", mappingTiling = "emissiveTiling", mappingOffset = "emissiveOffset" },
               new ShaderProperty() { name = "_Glossiness", type = "float", mapping = "glossiness" },
               new ShaderProperty() { name = "USE_NORMAL_TEXTURE", type = "key", mapping = "USE_NORMAL_TEXTURE" },
-              new ShaderProperty() { name = "_normalTexture", type = "tex2d", mapping = "normalTexture", mappingTiling = "normalTiling", mappingOffset = "normalOffset" },
+              new ShaderProperty() { name = "_NormalTexture", type = "tex2d", mapping = "normalTexture", mappingTiling = "normalTiling", mappingOffset = "normalOffset" },
             }
           }
       },
