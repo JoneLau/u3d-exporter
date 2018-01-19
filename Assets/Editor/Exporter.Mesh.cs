@@ -1,9 +1,11 @@
 using UnityEngine;
+using UnityEditor;
 
 using System.Collections;
 using System.Collections.Generic;
 
 using System.IO;
+using System.Linq;
 
 namespace exsdk {
   public partial class Exporter {
@@ -19,16 +21,19 @@ namespace exsdk {
         return true;
       });
 
-      // get meshes
-      List<Mesh> meshes = new List<Mesh>();
-      RecurseNode(_prefab, _go => {
-        MeshFilter meshFilter = _go.GetComponent<MeshFilter>();
-        if (meshFilter && meshes.IndexOf(meshFilter.sharedMesh) == -1 ) {
-          meshes.Add(meshFilter.sharedMesh);
-        }
+      string assetPath = AssetDatabase.GetAssetPath(_prefab);
+      var meshes = AssetDatabase.LoadAllAssetsAtPath(assetPath).OfType<Mesh>().ToList();
 
-        return true;
-      });
+      // get meshes
+      // List<Mesh> meshes = new List<Mesh>();
+      // RecurseNode(_prefab, _go => {
+      //   MeshFilter meshFilter = _go.GetComponent<MeshFilter>();
+      //   if (meshFilter && meshes.IndexOf(meshFilter.sharedMesh) == -1 ) {
+      //     meshes.Add(meshFilter.sharedMesh);
+      //   }
+
+      //   return true;
+      // });
 
       // dump nodes
       foreach (GameObject go in nodes) {
