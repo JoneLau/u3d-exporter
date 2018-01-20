@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Zed_base_TX_CM
-  m_Shader: {fileID: 4800000, guid: 23cc0495c9d6f4cfe971fcda61b25a0b, type: 3}
+  m_Shader: {fileID: 4800000, guid: 3c2b17213bec744d397ef981a56ce059, type: 3}
   m_ShaderKeywords: ETC1_EXTERNAL_ALPHA USE_DIFFUSE_TEXTURE _EMISSION
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
@@ -120,5 +120,5 @@ Material:
     - _EmissiveColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutlineColor: {r: 0.07586217, g: 1, b: 0, a: 1}
     - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SpecularColor: {r: 0, g: 0, b: 0, a: 1}
     - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
